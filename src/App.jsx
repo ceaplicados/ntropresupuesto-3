@@ -1,6 +1,4 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
@@ -8,26 +6,77 @@ function App() {
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <header>
+        <nav className='navbar'>
+          <div className="container-fluid">
+            <button type="button" className="btn text-light" data-bs-toggle="offcanvas" data-bs-target="#lateral-menu">
+              <span className="material-symbols-outlined">
+                menu
+              </span>
+            </button>
+            <button type="button" className="btn btn-outline-light" data-bs-dismiss="offcanvas">Iniciar sesión</button>
+          </div>
+        </nav>
+      </header>
+      <section className='container' id='breadcrumb'>
+        <nav aria-label="breadcrumb">
+          <ol className="breadcrumb">
+            <li className="breadcrumb-item">
+              <a href="/"><img src='/img/logo.svg'/></a>
+            </li>
+            <li className="breadcrumb-item active" aria-current="page">
+              Gasto federalizado
+            </li>
+          </ol>
+        </nav>
+      </section>
+      <div id="lateral-menu" className='offcanvas offcanvas-start' data-bs-scroll="true" tabIndex="-1">
+        <div className="offcanvas-header">
+          <a className='offcanvas-title text-start' href="/">
+            <img className='offcanvas-logo' src="/img/logo_blanco.svg" alt="#NuestroPresupuesto"/>
+          </a>
+          <div className='align-self-start'>
+            <button type="button" className="btn text-light" data-bs-dismiss="offcanvas">
+              <span className="material-symbols-outlined">close</span>
+            </button>
+          </div>
+        </div>
+        <hr/>
+        <div className="offcanvas-body">
+          <nav>
+            <h3>Presupuestos</h3>
+            <ul className="offcanvas-menu">
+              <li>
+                <a href="/">
+                  <span className="material-symbols-outlined">dashboard</span>
+                  Gasto federalizado
+                </a>
+              </li>
+              <li>
+                <a href="/JAL">
+                  <span className="material-symbols-outlined">dashboard</span>
+                  Jalisco
+                </a>
+              </li>
+              <li>
+                <a href="/CDMX">
+                  <span className="material-symbols-outlined">dashboard</span>
+                  Ciudad de México
+                </a>
+              </li>
+            </ul>
+            <h3>Comunidad</h3>
+            <ul className="offcanvas-menu">
+              <li>
+                <a href='/cuadernos'>
+                  <span className="material-symbols-outlined">book_5</span>
+                  Cuadernos
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
   )
 }
