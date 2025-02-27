@@ -1,24 +1,32 @@
-import { useState } from 'react'
+import { useState,useEffect } from 'react'
 import './App.css'
+import Header from './Header';
+import OffcanvasMenu from './OffcanvasMenu';
+import GastoFederalizado from './GastoFederalizado';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [inpc,setInpc] = useState({});
+
+  useEffect(() => {
+    fetch('https://api.nuestropresupuesto.mx/INPC')
+      .then(response => response.json())
+      .then(data => {
+        setInpc(data);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }, []);
+
+  const updateSelectedYear = (e) => {
+    setSelectedYear(e.value);
+  };
 
   return (
     <>
-      <header>
-        <nav className='navbar'>
-          <div className="container-fluid">
-            <button type="button" className="btn text-light" data-bs-toggle="offcanvas" data-bs-target="#lateral-menu">
-              <span className="material-symbols-outlined">
-                menu
-              </span>
-            </button>
-            <button type="button" className="btn btn-outline-light" data-bs-dismiss="offcanvas">Iniciar sesión</button>
-          </div>
-        </nav>
-      </header>
-      <section className='container' id='breadcrumb'>
+      <Header/>
+      <section className='container d-flex justify-content-between' id='breadcrumb'>
         <nav aria-label="breadcrumb">
           <ol className="breadcrumb">
             <li className="breadcrumb-item">
@@ -29,54 +37,25 @@ function App() {
             </li>
           </ol>
         </nav>
-      </section>
-      <div id="lateral-menu" className='offcanvas offcanvas-start' data-bs-scroll="true" tabIndex="-1">
-        <div className="offcanvas-header">
-          <a className='offcanvas-title text-start' href="/">
-            <img className='offcanvas-logo' src="/img/logo_blanco.svg" alt="#NuestroPresupuesto"/>
-          </a>
-          <div className='align-self-start'>
-            <button type="button" className="btn text-light" data-bs-dismiss="offcanvas">
-              <span className="material-symbols-outlined">close</span>
-            </button>
+        <div className='row row-cols-lg-auto align-items-top'>
+          <div className='col-12'>A valores del </div>
+          <div className='col-12'>
+            <select className="form-select form-select-sm" value={selectedYear} onChange={(e) => updateSelectedYear(e.target)}>
+              {Object.keys(inpc).map(year => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
-        <hr/>
-        <div className="offcanvas-body">
-          <nav>
-            <h3>Presupuestos</h3>
-            <ul className="offcanvas-menu">
-              <li>
-                <a href="/">
-                  <span className="material-symbols-outlined">dashboard</span>
-                  Gasto federalizado
-                </a>
-              </li>
-              <li>
-                <a href="/JAL">
-                  <span className="material-symbols-outlined">dashboard</span>
-                  Jalisco
-                </a>
-              </li>
-              <li>
-                <a href="/CDMX">
-                  <span className="material-symbols-outlined">dashboard</span>
-                  Ciudad de México
-                </a>
-              </li>
-            </ul>
-            <h3>Comunidad</h3>
-            <ul className="offcanvas-menu">
-              <li>
-                <a href='/cuadernos'>
-                  <span className="material-symbols-outlined">book_5</span>
-                  Cuadernos
-                </a>
-              </li>
-            </ul>
-          </nav>
-        </div>
-      </div>
+      </section>
+      <section className='container' id='workspace'>
+        <h1>Dashboard <small>Gasto federalizado</small></h1>
+        <p className='subtitle'>Miles de millones de pesos a valores del {selectedYear}</p>
+      </section>
+      <GastoFederalizado />
+      <OffcanvasMenu />
     </>
   )
 }

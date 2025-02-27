@@ -3,58 +3,6 @@
   min-height: 100vh;
 }
 
-header{
-  background: #303030;
-}
-.offcanvas{
-  background: #1c1c1c;
-  color: white;
-}
-.offcanvas a{
-  color: white;
-  transition: .15s ease-in-out;
-}
-.offcanvas-header .btn:hover{
-  color: #BDCC3F !important;
-}
-.offcanvas hr{
-  width: calc(100% - 2rem);
-  margin-left: 1rem;
-  color: #CCC;
-}
-.offcanvas-logo{
-  max-width: 50%;
-}
-.offcanvas-body {
-  padding: 0px;
-}
-.offcanvas nav h3{
-  text-align: left;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  font-size: 1.3rem;
-  padding-bottom: .5rem;
-}
-.offcanvas ul.offcanvas-menu{
-  list-style: none;
-  text-align: left;
-  padding: 1rem;
-  padding-top: 0px;
-  margin: 0px;
-  background: #303030;
-  margin-bottom: 2em;
-}
-.offcanvas ul.offcanvas-menu li {
-  padding-top: 1.5rem;
-  margin-left: .5rem;
-}
-.offcanvas ul.offcanvas-menu li:hover a{
-  color: #BDCC3F;
-}
-.offcanvas ul.offcanvas-menu li .material-symbols-outlined{
-  vertical-align: bottom;
-  margin-right: .5rem;
-}
 .breadcrumb-item img {
   max-height: 2em;
 }
@@ -63,6 +11,18 @@ header{
   line-height: 2em;
 }
 section#breadcrumb {
-  margin: 1rem;
+  margin-top: 1rem;
   border-bottom: 1px solid #ccc;
+  margin-bottom: 4rem;
+}
+h1 small {
+  font-weight: 100;
+  font-size: 0.5em;
+}
+
+p.subtitle {
+  color: #ABABAB;
+  margin-top: -.5rem;
+  font-size: .9rem;
+  margin-bottom: 2rem;
 }

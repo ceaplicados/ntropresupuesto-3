@@ -1,0 +1,49 @@
+.offcanvas{
+    background: #1c1c1c;
+    color: white;
+  }
+  .offcanvas a{
+    color: white;
+    transition: .15s ease-in-out;
+  }
+  .offcanvas-header .btn:hover{
+    color: #BDCC3F !important;
+  }
+  .offcanvas hr{
+    width: calc(100% - 2rem);
+    margin-left: 1rem;
+    color: #CCC;
+  }
+  .offcanvas-logo{
+    max-width: 50%;
+  }
+  .offcanvas-body {
+    padding: 0px;
+  }
+  .offcanvas nav h3{
+    text-align: left;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    font-size: 1.3rem;
+    padding-bottom: .5rem;
+  }
+  .offcanvas ul.offcanvas-menu{
+    list-style: none;
+    text-align: left;
+    padding: 1rem;
+    padding-top: 0px;
+    margin: 0px;
+    background: #303030;
+    margin-bottom: 2em;
+  }
+  .offcanvas ul.offcanvas-menu li {
+    padding-top: 1.5rem;
+    margin-left: .5rem;
+  }
+  .offcanvas ul.offcanvas-menu li:hover a{
+    color: #BDCC3F;
+  }
+  .offcanvas ul.offcanvas-menu li .material-symbols-outlined{
+    vertical-align: bottom;
+    margin-right: .5rem;
+  }
