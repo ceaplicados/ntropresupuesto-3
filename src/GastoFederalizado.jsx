@@ -5,7 +5,9 @@ import {Chart as ChartJS,
     PointElement,
     LineElement,
     Legend,
-    Tooltip,} from 'chart.js';
+    Tooltip,
+    Filler,
+} from 'chart.js';
 import { Chart } from 'react-chartjs-2';
 import './GastoFederalizado.css'
 
@@ -15,7 +17,8 @@ ChartJS.register(
     PointElement,
     LineElement,
     Legend,
-    Tooltip
+    Tooltip,
+    Filler,
   );
 
 function GastoFederalizado({selectedYear,inpc}) {
@@ -26,16 +29,17 @@ function GastoFederalizado({selectedYear,inpc}) {
             data: [],
             borderColor: 'rgb(140, 180, 193)',
             backgroundColor: 'rgba(140, 180, 193, 0.5)',
+            fill: true,
+            tension: 0.3,
           },],
     });
 
     const optionsPresupuesto = {
         responsive: true,
         plugins: {
-            title: {
-                display: true,
-                text: 'Presupuesto federal',
-            },
+            legend: {
+                display: false,
+            }
         },
     };
 
@@ -56,12 +60,7 @@ function GastoFederalizado({selectedYear,inpc}) {
             ));
             setDataPresupuesto({
                 labels: labelsGraph,
-                datasets: [{
-                    label: 'Presupuesto federal',
-                    data: valuesGraph,
-                    borderColor: 'rgb(140, 180, 193)',
-                    backgroundColor: 'rgba(140, 180, 193, 0.5)',
-                  },],
+                datasets: [{...dataPresupuesto.datasets[0], data: valuesGraph}],
             });
             
         })
@@ -77,7 +76,6 @@ function GastoFederalizado({selectedYear,inpc}) {
             chart.data.labels=dataPresupuesto.labels;
             let dataChart=[];
             if(inpc[selectedYear]){
-                console.log('inpc[selectedYear]',inpc[selectedYear]);
                 for(let i=0;i<dataPresupuesto.labels.length;i++){
                     dataChart.push(dataPresupuesto.datasets[0].data[i]*inpc[selectedYear]/inpc[dataPresupuesto.labels[i]]);
                 }
@@ -92,11 +90,14 @@ function GastoFederalizado({selectedYear,inpc}) {
         <>
         <div className='row'>
             <div className='col-md-12 col-lg-6'>
+            <h3 className='text-center'>Presupuesto federal</h3>
             <Chart 
                 ref={chartRefPresupuesto}
                 type='line' 
                 data={dataPresupuesto}  
                 options={optionsPresupuesto}
+                width='100%'
+                height='50vw'
             />
             </div>
         </div>
