@@ -26,3 +26,9 @@ p.subtitle {
   font-size: .9rem;
   margin-bottom: 2rem;
 }
+.tableContainer {
+  font-size: .8rem;
+  width: 100%;
+  overflow-x: auto;
+  display: block;
+}

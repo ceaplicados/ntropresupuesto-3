@@ -30,21 +30,21 @@ function GastoFederalizado({selectedYear,inpc}) {
     const [configChartPresupuesto, setConfigChartPresupuesto] = useState({
         labels: [],
         datasets: [{
-            label: 'Presupuesto federal',
+            label: 'Gasto federalizado',
             data: [],
             borderColor: 'rgb(140, 180, 193)',
-            backgroundColor: 'rgba(140, 180, 193, 0.5)',
-            fill: true,
+            backgroundColor: 'rgba(140, 180, 193, 1)',
+            fill: false,
             tension: 0.3,
           },],
     });
     const [configDiferenciaPresupuesto, setConfigDiferenciaPresupuesto] = useState({
         labels: [],
         datasets: [{
-            label: 'Presupuesto federal',
+            label: 'Diferencia gasto federalizado',
             data: [],
             borderColor: 'rgb(140, 180, 193)',
-            backgroundColor: 'rgba(140, 180, 193, 0.5)',
+            backgroundColor: 'rgba(140, 180, 193, 1)',
             fill: true
           },],
     });
@@ -52,7 +52,7 @@ function GastoFederalizado({selectedYear,inpc}) {
         responsive: true,
         plugins: {
             legend: {
-                display: false,
+                display: true,
             }
         },
     };
@@ -60,7 +60,7 @@ function GastoFederalizado({selectedYear,inpc}) {
         responsive: true,
         plugins: {
             legend: {
-                display: false,
+                display: true,
             },
             tooltip: {
                 callbacks: {
@@ -93,7 +93,7 @@ function GastoFederalizado({selectedYear,inpc}) {
 
     // Obtener los datos del API
     useEffect(() => {
-        fetch('https://api.nuestropresupuesto.mx/Federal/Presupuesto')
+        fetch('https://api.nuestropresupuesto.mx/Federal/GastoFederalizado')
           .then(response => response.json())
           .then(data => {
             setDataPresupuesto(data);
@@ -115,10 +115,17 @@ function GastoFederalizado({selectedYear,inpc}) {
             monto
         ));
 
-        let dataChart=[];
+        let dataChartParticipaciones=[];
+        let dataChartAportaciones=[];
+        let dataChartConvenios=[];
+        let dataChartSubsidios=[];
+
         if(inpc[selectedYear]){
             for(let i=0;i<labelsGraph.length;i++){
-                dataChart.push(valuesGraph[i]*inpc[selectedYear]/inpc[labelsGraph[i]]);
+                dataChartParticipaciones.push(valuesGraph[i].Participaciones*inpc[selectedYear]/inpc[labelsGraph[i]]);
+                dataChartAportaciones.push(valuesGraph[i].Aportaciones*inpc[selectedYear]/inpc[labelsGraph[i]]);
+                dataChartConvenios.push(valuesGraph[i].Convenios*inpc[selectedYear]/inpc[labelsGraph[i]]);
+                dataChartSubsidios.push(valuesGraph[i].Subsidios*inpc[selectedYear]/inpc[labelsGraph[i]]);
             }
         }
 
@@ -126,10 +133,33 @@ function GastoFederalizado({selectedYear,inpc}) {
         if (chartHistorico) {
             chartHistorico.data.labels=labelsGraph;
             
-            chartHistorico.data.datasets[0].data=dataChart;
+            chartHistorico.data.datasets[0].data=dataChartParticipaciones;
             setConfigChartPresupuesto({
                 labels: labelsGraph,
-                datasets: [{...configChartPresupuesto.datasets[0], data: dataChart}],
+                datasets: [
+                    {...configChartPresupuesto.datasets[0], 
+                        label: 'Participaciones',
+                        data: dataChartParticipaciones
+                    },
+                    {...configChartPresupuesto.datasets[0], 
+                        label: 'Aportaciones',
+                        data: dataChartAportaciones,
+                        borderColor: 'rgb(149, 171, 130)',
+                        backgroundColor: 'rgba(149, 171, 130, 1)',
+                    },
+                    {...configChartPresupuesto.datasets[0], 
+                        label: 'Convenios',
+                        data: dataChartConvenios,
+                        borderColor: 'rgb(189, 144, 91)',
+                        backgroundColor: 'rgba(189, 144, 91, 1)',
+                    },
+                    {...configChartPresupuesto.datasets[0], 
+                        label: 'Subsidios',
+                        data: dataChartSubsidios,
+                        borderColor: 'rgb(217, 91, 91)',
+                        backgroundColor: 'rgba(217, 91, 91, 1)',
+                    },
+                ],
             });
             chartHistorico.update();
         }
@@ -138,29 +168,49 @@ function GastoFederalizado({selectedYear,inpc}) {
             labelsGraph.shift()
             chartDiferencia.data.labels=labelsGraph;
             
-            let dataChartDiferencia=[];
-            let dataChartBorderColor=[];
-            let dataChartBackgroundColor=[];
-            for(let i=1;i<dataChart.length;i++){
-                dataChartDiferencia.push((dataChart[i]-dataChart[i-1])/dataChart[i-1]*100);
-                if(dataChart[i]-dataChart[i-1]>0){
-                    dataChartBorderColor.push('rgb(140, 180, 193)');
-                    dataChartBackgroundColor.push('rgba(140, 180, 193, 0.5)');
-                }else{
-                    dataChartBorderColor.push('rgb(217, 91, 91)');
-                    dataChartBackgroundColor.push('rgba(217, 91, 91, 0.5)');
-                }
+            let dataChartDiferenciaParticipaciones=[];
+            for(let i=1;i<dataChartParticipaciones.length;i++){
+                dataChartDiferenciaParticipaciones.push(dataChartParticipaciones[i] && dataChartParticipaciones[i-1] ? (dataChartParticipaciones[i]-dataChartParticipaciones[i-1])/dataChartParticipaciones[i-1]*100 : null);
             }
-            console.log(dataChartDiferencia);
+            let dataChartDiferenciaAportaciones=[];
+            for(let i=1;i<dataChartParticipaciones.length;i++){
+                dataChartDiferenciaAportaciones.push(dataChartAportaciones[i] && dataChartAportaciones[i-1] ? (dataChartAportaciones[i]-dataChartAportaciones[i-1])/dataChartAportaciones[i-1]*100 : null);
+            }
+            let dataChartDiferenciaConvenios=[];
+            for(let i=1;i<dataChartConvenios.length;i++){
+                dataChartDiferenciaConvenios.push(dataChartConvenios[i] && dataChartConvenios[i-1] ? (dataChartConvenios[i]-dataChartConvenios[i-1])/dataChartConvenios[i-1]*100 : null);
+            }
+            let dataChartDiferenciaSubsidios=[];
+            for(let i=1;i<dataChartSubsidios.length;i++){
+                dataChartDiferenciaSubsidios.push(dataChartSubsidios[i] && dataChartSubsidios[i-1] ? (dataChartSubsidios[i]-dataChartSubsidios[i-1])/dataChartSubsidios[i-1]*100 : null);
+            }
             setConfigDiferenciaPresupuesto({
                 labels: labelsGraph,
-                datasets: [{...configDiferenciaPresupuesto.datasets[0], 
-                    data: dataChartDiferencia,
-                    borderColor: dataChartBorderColor,
-                    backgroundColor: dataChartBackgroundColor}],
+                datasets: [
+                    {...configDiferenciaPresupuesto.datasets[0], 
+                        label: 'Participaciones',
+                        data: dataChartDiferenciaParticipaciones,
+                    },
+                    {...configDiferenciaPresupuesto.datasets[0], 
+                        label: 'Aportaciones',
+                        data: dataChartDiferenciaAportaciones,
+                        borderColor: 'rgb(149, 171, 130)',
+                        backgroundColor: 'rgba(149, 171, 130, 1)',
+                    },
+                    {...configDiferenciaPresupuesto.datasets[0], 
+                        label: 'Convenios',
+                        data: dataChartDiferenciaConvenios,
+                        borderColor: 'rgb(189, 144, 91)',
+                        backgroundColor: 'rgb(189, 144, 91)',
+                    },
+                    {...configDiferenciaPresupuesto.datasets[0], 
+                        label: 'Subsidios',
+                        data: dataChartDiferenciaSubsidios,
+                        borderColor: 'rgb(217, 91, 91)',
+                        backgroundColor: 'rgb(217, 91, 91)',
+                    },
+                ],
             });
-            chartDiferencia.data.datasets[0].data=dataChartDiferencia;
-            chartDiferencia.data.datasets[0].data=dataChartDiferencia;
             chartDiferencia.update();
         }
     }
@@ -169,13 +219,44 @@ function GastoFederalizado({selectedYear,inpc}) {
     const tablaPresupuesto = () => {
         let tabla = [];
         for(let i=0;i<configChartPresupuesto.labels.length;i++){
-            let monto=configChartPresupuesto.datasets[0].data[i]*inpc[selectedYear]/inpc[configChartPresupuesto.labels[i]];
-            let montoAnterior = i==0 ? 0 : configChartPresupuesto.datasets[0].data[i-1]*inpc[selectedYear]/inpc[configChartPresupuesto.labels[i-1]];
+            let colsMontos = [];
+            let colsDiferencias = [];
+            // Participaciones
+            let monto= configChartPresupuesto.datasets[0].data[i] ? configChartPresupuesto.datasets[0].data[i] : null;
+            let montoAnterior = i==0 ? null : configChartPresupuesto.datasets[0].data[i-1];
+            colsMontos.push(monto);
+            colsDiferencias.push(montoAnterior && monto ?  ((monto-montoAnterior)/montoAnterior) : null);
+
+            // Aportaciones
+            monto=configChartPresupuesto.datasets[1].data[i] ? configChartPresupuesto.datasets[1].data[i] : null;
+            montoAnterior = i==0 ? null : configChartPresupuesto.datasets[1].data[i-1];
+            colsMontos.push(monto);
+            colsDiferencias.push(montoAnterior && monto ?  ((monto-montoAnterior)/montoAnterior) : null);
+
+            // Convenios
+            monto=configChartPresupuesto.datasets[2].data[i] ? configChartPresupuesto.datasets[2].data[i] : null;
+            montoAnterior = i==0 ? null : configChartPresupuesto.datasets[2].data[i-1];
+            colsMontos.push(monto);
+            colsDiferencias.push(montoAnterior && monto ?  ((monto-montoAnterior)/montoAnterior) : null);
+
+            // Subsidios
+            monto=configChartPresupuesto.datasets[3].data[i] ? configChartPresupuesto.datasets[3].data[i] : null;
+            montoAnterior = i==0 ? null : configChartPresupuesto.datasets[3].data[i-1];
+            colsMontos.push(monto);
+            colsDiferencias.push(montoAnterior && monto ?  ((monto-montoAnterior)/montoAnterior) : null);
+            
             tabla.push(
                 <tr key={configChartPresupuesto.labels[i]}>
-                    <td>{configChartPresupuesto.labels[i]}</td>
-                    <td className='text-end'>{monto.toLocaleString("en-MX", {style:"decimal",maximumFractionDigits:2, minimumFractionDigits: 2})}</td>
-                    <td className='text-end'>{ i==0 ? '-' :  ((monto-montoAnterior)/montoAnterior).toLocaleString("en-MX", {style:"percent", minimumFractionDigits: 2}) }</td>
+                    <td key={'yearLabel'+configChartPresupuesto.labels[i]}>{configChartPresupuesto.labels[i]}</td>
+                    {
+                        colsMontos.map((monto,index) => (
+                            <td key={'Monto'+configChartPresupuesto.labels[i]+'_'+index} className='text-end'>{ monto ? monto.toLocaleString("en-MX", {style:"decimal",maximumFractionDigits:2, minimumFractionDigits: 2}) : '-'}</td>
+                        ))
+                }{
+                        colsDiferencias.map((diferencia,index) => (
+                            <td key={'Diferencia'+configChartPresupuesto.labels[i]+'_'+index} className={ diferencia && diferencia>0 ? 'text-end': 'text-end text-danger' }>{ diferencia ? diferencia.toLocaleString("en-MX", {style:"percent", minimumFractionDigits: 2}) : '-' }</td>
+                        ))
+                    }
                 </tr>
             );
         }
@@ -187,10 +268,32 @@ function GastoFederalizado({selectedYear,inpc}) {
     }
     return (
         <>
-        <div className='row'>
-            <div className='col-12'>
-                <h3 className='text-center'>Presupuesto federal</h3>
+        <div className='row mb-2'>
+            <div className='col'>
+                <h3 className='text-center'>Gasto federalizado</h3>
             </div>
+            <div className='opcionesGraph col text-end'>
+                    <button 
+                        className={ showGraphPresupuesto=='historico' ? 'btn btn-outline-secondary active' : 'btn btn-outline-secondary ' }
+                        title='Presupuesto histórico'
+                        onClick={()=>setShowGraphPresupuesto('historico')}
+                        >
+                        <span className="material-symbols-outlined">show_chart</span>
+                    </button>
+                    <button 
+                        className={ showGraphPresupuesto=='diferencia' ? 'btn btn-outline-secondary active' : 'btn btn-outline-secondary ' }  
+                        title='Diferencia anual'
+                        onClick={()=>setShowGraphPresupuesto('diferencia')}
+                        >
+                        <span className="material-symbols-outlined">waterfall_chart</span>
+                    </button>
+                    <span className='verticalDivider'></span>
+                    <button className={ showTablePresupuesto ? 'btn btn-outline-secondary active' : 'btn btn-outline-secondary' } title='Mostrar tabla' onClick={toggleTablePresupuesto}>
+                        <span className="material-symbols-outlined">table_chart</span>
+                    </button>
+            </div>
+        </div>
+        <div className='row mb-4'>
             <div className='col-md-12 col-lg-6'>
                 { showGraphPresupuesto=='historico' ? 
                 <Chart 
@@ -214,46 +317,38 @@ function GastoFederalizado({selectedYear,inpc}) {
                 : null }
             </div>
             <div className='col-md-12 col-lg-6'>
-                <div className='opcionesGraph text-end mb-4'>
-                    <button 
-                        className={ showGraphPresupuesto=='historico' ? 'btn btn-outline-secondary active' : 'btn btn-outline-secondary ' }
-                        title='Presupuesto histórico'
-                        onClick={()=>setShowGraphPresupuesto('historico')}
-                        >
-                        <span className="material-symbols-outlined">show_chart</span>
-                    </button>
-                    <button 
-                        className={ showGraphPresupuesto=='diferencia' ? 'btn btn-outline-secondary active' : 'btn btn-outline-secondary ' }  
-                        title='Presupuesto histórico'
-                        onClick={()=>setShowGraphPresupuesto('diferencia')}
-                        >
-                        <span className="material-symbols-outlined">waterfall_chart</span>
-                    </button>
-                    <span className='verticalDivider'></span>
-                    <button className={ showTablePresupuesto ? 'btn btn-outline-secondary active' : 'btn btn-outline-secondary' } title='Mostrar tabla' onClick={toggleTablePresupuesto}>
-                        <span className="material-symbols-outlined">table_chart</span>
-                    </button>
-                </div>
-                { !showTablePresupuesto ? 
                 <div className='texto'>
-                    <p>Muestra el presupuesto total que se establece en la Ley de Egresos de cada año.  En ella cada poder y organismo autónomo establece en qué y para qué se va a gastar el monto solicitado, y cada año es aprobada por la Cámara de Diputados.</p>
-                    <p>De aquí se pagan todos los gastos de todas las instituciones a nivel federal, así como los programas sociales, inversiones y deuda federales.  Una parte de este monto se pasa a los estados y municipios, quienes deben de tener sus propios ingresos como complemento a lo que les da la federación.</p>
+                    <p>Son las distintas formas en las que la federación envía recursos a los estados y municipios.</p>
+                    <p>Las transferencias...</p>
                 </div>
-                : null }
+            </div>
+            <div className='col-12 mt-3'>
+                <div className='tableContainer'>
                 { showTablePresupuesto ? 
-                <table className='table table-striped table-bordered'>
-                    <thead>
-                        <tr>
-                            <th>Año</th>
-                            <th>Monto <small>(mmdp del {selectedYear})</small></th>
-                            <th>Diferencia</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {tablaPresupuesto()}
-                    </tbody>
-                </table>
-                : null }
+                    <table className='table table-striped table-bordered'>
+                        <thead>
+                            <tr>
+                                <th rowSpan='2'>Año</th>
+                                <th colSpan='4'>Monto <small>(mmdp del {selectedYear})</small></th>
+                                <th colSpan='4'>Diferencia</th>
+                            </tr>
+                            <tr>
+                                <th>Participaciones</th>
+                                <th>Aportaciones</th>
+                                <th>Convenios</th>
+                                <th>Subsidios</th>
+                                <th>Participaciones</th>
+                                <th>Aportaciones</th>
+                                <th>Convenios</th>
+                                <th>Subsidios</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {tablaPresupuesto()}
+                        </tbody>
+                    </table>
+                    : null }
+                </div>
             </div>
         </div>
         </>

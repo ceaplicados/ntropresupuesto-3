@@ -3,6 +3,7 @@ import './App.css'
 import Header from './Header';
 import OffcanvasMenu from './OffcanvasMenu';
 import GastoFederalizado from './GastoFederalizado';
+import PresupuestoFederal from './PresupuestoFederal';
 
 function App() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
@@ -53,6 +54,7 @@ function App() {
       <section className='container' id='workspace'>
         <h1>Dashboard <small>Gasto federalizado</small></h1>
         <p className='subtitle'>Miles de millones de pesos a valores del {selectedYear}</p>
+        <PresupuestoFederal selectedYear={selectedYear} inpc={inpc}/>
         <GastoFederalizado selectedYear={selectedYear} inpc={inpc}/>
       </section>
       <OffcanvasMenu />
