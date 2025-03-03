@@ -56,6 +56,7 @@ function App() {
         <p className='subtitle'>Miles de millones de pesos a valores del {selectedYear}</p>
         <PresupuestoFederal selectedYear={selectedYear} inpc={inpc}/>
         <GastoFederalizado selectedYear={selectedYear} inpc={inpc}/>
+        <p className='mt-4'>Elaborado con los datos publicados por Transparencia Presupuestaria en <a href='https://www.transparenciapresupuestaria.gob.mx/' target='_blank'>transparenciapresupuestaria.gob.mx</a></p>
       </section>
       <OffcanvasMenu />
     </>

@@ -22,3 +22,6 @@ th small{
     display: block;
     font-size: .7em;
 }
+td.Total{
+    font-weight: bold;
+}

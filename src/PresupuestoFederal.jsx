@@ -6,6 +6,7 @@ import {Chart as ChartJS,
     LineElement,
     BarElement,
     Legend,
+    Title,
     Tooltip,
     Filler,
 } from 'chart.js';
@@ -20,6 +21,7 @@ ChartJS.register(
     LineElement,
     BarElement,
     Legend,
+    Title,
     Tooltip,
     Filler,
   );
@@ -55,6 +57,10 @@ function PresupuestoFederal({selectedYear,inpc}) {
             legend: {
                 display: false,
             },
+            title: {
+                display: true,
+                text: 'Histórico de presupuesto federal',
+            },
             tooltip: {
                 callbacks: {
                     label: function(context) {
@@ -73,6 +79,10 @@ function PresupuestoFederal({selectedYear,inpc}) {
         plugins: {
             legend: {
                 display: false,
+            },
+            title: {
+                display: true,
+                text: 'Diferencia anual',
             },
             tooltip: {
                 callbacks: {
@@ -133,9 +143,6 @@ function PresupuestoFederal({selectedYear,inpc}) {
 
         const chartHistorico = chartRefPresupuesto.current;
         if (chartHistorico) {
-            chartHistorico.data.labels=labelsGraph;
-            
-            chartHistorico.data.datasets[0].data=dataChart;
             setConfigChartPresupuesto({
                 labels: labelsGraph,
                 datasets: [{...configChartPresupuesto.datasets[0], data: dataChart}],
