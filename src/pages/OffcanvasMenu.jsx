@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import './OffcanvasMenu.css'
 
-function OffcanvasMenu() {
+function OffcanvasMenu({searchParams}) {
     return (
         <>
         <div id="lateral-menu" className='offcanvas offcanvas-start' data-bs-scroll="true" tabIndex="-1">
@@ -27,7 +27,7 @@ function OffcanvasMenu() {
                     </a>
                 </li>
                 <li>
-                    <a href="/JAL">
+                    <a href={"/JAL"+ (searchParams.get('i') ? '?i='+searchParams.get('i') : '')}>
                     <span className="material-symbols-outlined">dashboard</span>
                     Jalisco
                     </a>
