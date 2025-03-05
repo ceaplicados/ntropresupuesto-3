@@ -22,6 +22,7 @@ function Estado({estado}) {
 
   const updateSelectedYear = (e) => {
     setSelectedYear(e.value);
+    setSearchParams({i: e.value});
   };
 
   return (
