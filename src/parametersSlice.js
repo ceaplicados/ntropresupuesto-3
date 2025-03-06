@@ -19,7 +19,6 @@ export const parametersSlice = createSlice({
         state.estados = action.payload
     },
     setSearchParams: (state, action) => {
-        console.log('reduccer setSearchParams',action.payload);
         state.searchParams = action.payload
     }
   }

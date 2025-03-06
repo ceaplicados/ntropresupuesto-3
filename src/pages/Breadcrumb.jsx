@@ -11,16 +11,34 @@ function Breadcrumb() {
     const inpc = useSelector(state => state.parameters.inpc)
     const estados = useSelector(state => state.parameters.estados)
 
-    // Obtener los valores del INPC de la API
+    // valores del INPC de la API
     useEffect(() => {
-        fetch('https://api.nuestropresupuesto.mx/INPC')
-          .then(response => response.json())
-          .then(data => {
-            dispatch(setInpc(data));
-          })
-          .catch(error => {
-            console.error(error);
-          });
+        // obtener versiones de los datasets
+        fetch('https://api.nuestropresupuesto.mx/Datos')
+            .then(response => response.json())
+            .then(data => {
+                // obtener la versión actual del dataset INPC
+                let datsetINPC = data.filter((dataset) => {
+                    return dataset.dataset == "/INPC"
+                })
+                let versionINPC = datsetINPC.version || 0;                
+                if(versionINPC!==parseInt(localStorage.getItem("versionINPC"))){
+                    // obtener la versión actualizada del dataset INPC
+                    fetch('https://api.nuestropresupuesto.mx/INPC')
+                        .then(response => response.json())
+                        .then(data => {
+                            dispatch(setInpc(data));
+                            localStorage.setItem('INPC', JSON.stringify(data));
+                            localStorage.setItem('versionINPC', versionINPC);
+                        })
+                        .catch(error => {
+                            console.error(error);
+                        });
+                }else{
+                    // utilizar el INPC del localStorage
+                    dispatch(setInpc(JSON.parse(localStorage.getItem('INPC'))));
+                }
+            })
       }, []);
 
       // Obtener el listado de estados de la API si es que no está en localStorage
