@@ -1,0 +1,13 @@
+
+.breadcrumb-item img {
+    max-height: 2em;
+  }
+  
+  .breadcrumb-item {
+    line-height: 2em;
+  }
+  section#breadcrumb {
+    margin-top: 1rem;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 4rem;
+  }

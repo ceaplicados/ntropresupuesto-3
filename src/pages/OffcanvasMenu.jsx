@@ -1,7 +1,9 @@
-import { useState } from 'react'
+import { useSelector } from 'react-redux'
 import './OffcanvasMenu.css'
 
-function OffcanvasMenu({searchParams}) {
+function OffcanvasMenu() {
+    const searchParams = useSelector(state => state.parameters.searchParams)
+
     return (
         <>
         <div id="lateral-menu" className='offcanvas offcanvas-start' data-bs-scroll="true" tabIndex="-1">
@@ -27,7 +29,7 @@ function OffcanvasMenu({searchParams}) {
                     </a>
                 </li>
                 <li>
-                    <a href={"/JAL"+ (searchParams.get('i') ? '?i='+searchParams.get('i') : '')}>
+                    <a href={"/JAL"+ (searchParams.i ? '?i='+searchParams.i : '')}>
                     <span className="material-symbols-outlined">dashboard</span>
                     Jalisco
                     </a>

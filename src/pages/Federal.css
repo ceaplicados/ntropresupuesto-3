@@ -3,18 +3,6 @@
   min-height: 100vh;
 }
 
-.breadcrumb-item img {
-  max-height: 2em;
-}
-
-.breadcrumb-item {
-  line-height: 2em;
-}
-section#breadcrumb {
-  margin-top: 1rem;
-  border-bottom: 1px solid #ccc;
-  margin-bottom: 4rem;
-}
 h1 small {
   font-weight: 100;
   font-size: 0.5em;
