@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import { selectNewYear, setInpc, setSearchParams } from '../parametersSlice'
+import { selectNewYear, setInpc, setSearchParams, setEstados } from '../parametersSlice'
 import './Breadcrumb.css'
 
 function Breadcrumb() {
@@ -9,7 +9,9 @@ function Breadcrumb() {
     const [urlVariables,setUrlVariables] = useSearchParams();
     const selectedYear = useSelector(state => state.parameters.selectedYear)
     const inpc = useSelector(state => state.parameters.inpc)
+    const estados = useSelector(state => state.parameters.estados)
 
+    // Obtener los valores del INPC de la API
     useEffect(() => {
         fetch('https://api.nuestropresupuesto.mx/INPC')
           .then(response => response.json())
@@ -21,13 +23,33 @@ function Breadcrumb() {
           });
       }, []);
 
+      // Obtener el listado de estados de la API si es que no está en localStorage
+      useEffect(() => {
+        var estadosLocal=localStorage.getItem('estados');
+        if(estadosLocal){
+            dispatch(setEstados(JSON.parse(estadosLocal)));
+        }else{
+            fetch('https://api.nuestropresupuesto.mx/Estados')
+            .then(response => response.json())
+            .then(data => {
+                localStorage.setItem('estados',JSON.stringify(data));
+                dispatch(setEstados(data));
+            })
+            .catch(error => {
+                console.error(error);
+            });
+        }
+      },[]);
+
+    // Obtener la variable del selectedYear de la URL
       useEffect(() => {
         if(urlVariables.get('i')){
             dispatch(setSearchParams({i: urlVariables.get('i')})) 
             dispatch(selectNewYear(urlVariables.get('i')))
         }
       },[]);
-
+    
+    // Cambiar el valor del selectedYear y actualizarlo en variable de la URL
     const updateSelectedYear = (e) => {
         setUrlVariables({i: e.value});
         dispatch(setSearchParams({i: e.value}));

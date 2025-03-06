@@ -9,7 +9,7 @@ function App() {
         <BrowserRouter>
         <Routes>
           <Route index element={<Federal />} />
-          <Route path="JAL" element={<Estado estado="14" />} />
+          <Route path="JAL" element={<Estado idEstado="14" />} />
         </Routes>
       </BrowserRouter>
     </Provider>
