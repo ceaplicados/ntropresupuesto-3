@@ -1,20 +1,28 @@
 import { useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import { selectNewYear, setInpc, setSearchParams, setEstados } from '../parametersSlice'
+import { selectNewYear, setInpc, setSearchParams, setEstados, setApi_url } from '../parametersSlice'
 import './Breadcrumb.css'
+import config_param from '../../config/config'
 
 function Breadcrumb() {
     const dispatch = useDispatch();
+    const api_url=useSelector(state => state.parameters.api_url)
     const [urlVariables,setUrlVariables] = useSearchParams();
     const selectedYear = useSelector(state => state.parameters.selectedYear)
     const inpc = useSelector(state => state.parameters.inpc)
     const estados = useSelector(state => state.parameters.estados)
 
+    // Poner el valor a los parámetros
+    useEffect(() => {
+        dispatch(setApi_url(config_param.api_url));
+      },[]);
+
     // valores del INPC de la API
     useEffect(() => {
-        // obtener versiones de los datasets
-        fetch('https://api.nuestropresupuesto.mx/Datos')
+        if(api_url){
+            // obtener versiones de los datasets
+            fetch(api_url+'/Datos')
             .then(response => response.json())
             .then(data => {
                 // obtener la versión actual del dataset INPC
@@ -24,7 +32,7 @@ function Breadcrumb() {
                 let versionINPC = datsetINPC.version || 0;                
                 if(versionINPC!==parseInt(localStorage.getItem("versionINPC"))){
                     // obtener la versión actualizada del dataset INPC
-                    fetch('https://api.nuestropresupuesto.mx/INPC')
+                    fetch(api_url+'/INPC')
                         .then(response => response.json())
                         .then(data => {
                             dispatch(setInpc(data));
@@ -39,25 +47,28 @@ function Breadcrumb() {
                     dispatch(setInpc(JSON.parse(localStorage.getItem('INPC'))));
                 }
             })
-      }, []);
+        }
+      }, [api_url]);
 
       // Obtener el listado de estados de la API si es que no está en localStorage
       useEffect(() => {
-        var estadosLocal=localStorage.getItem('estados');
-        if(estadosLocal){
-            dispatch(setEstados(JSON.parse(estadosLocal)));
-        }else{
-            fetch('https://api.nuestropresupuesto.mx/Estados')
-            .then(response => response.json())
-            .then(data => {
-                localStorage.setItem('estados',JSON.stringify(data));
-                dispatch(setEstados(data));
-            })
-            .catch(error => {
-                console.error(error);
-            });
+        if(api_url){
+            var estadosLocal=localStorage.getItem('estados');
+            if(estadosLocal){
+                dispatch(setEstados(JSON.parse(estadosLocal)));
+            }else{
+                fetch(api_url+'/Estados')
+                .then(response => response.json())
+                .then(data => {
+                    localStorage.setItem('estados',JSON.stringify(data));
+                    dispatch(setEstados(data));
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+            }
         }
-      },[]);
+      },[api_url]);
 
     // Obtener la variable del selectedYear de la URL
       useEffect(() => {

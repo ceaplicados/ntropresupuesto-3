@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useSelector } from 'react-redux'
 import {Chart as ChartJS,
     LinearScale,
     CategoryScale,
@@ -26,6 +27,7 @@ ChartJS.register(
   );
 
 function GastoFederalizado({selectedYear,inpc}) {
+    const api_url=useSelector(state => state.parameters.api_url)
     const [showTablePresupuesto, setShowTablePresupuesto] = useState(false);
     const [dataPresupuesto, setDataPresupuesto] = useState({});
     const [showGraphPresupuesto, setShowGraphPresupuesto] = useState('historico');
@@ -161,15 +163,17 @@ function GastoFederalizado({selectedYear,inpc}) {
 
     // Obtener los datos del API
     useEffect(() => {
-        fetch('https://api.nuestropresupuesto.mx/Federal/GastoFederalizado')
-          .then(response => response.json())
-          .then(data => {
-            setDataPresupuesto(data);
-        })
-        .catch(error => {
-            console.error(error);
-        });
-    }, []);
+        if(api_url){
+            fetch(api_url+'/Federal/GastoFederalizado')
+            .then(response => response.json())
+            .then(data => {
+                setDataPresupuesto(data);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+        }
+    }, [api_url]);
     
     // actualizar el gráfico cuando cambien los datos, el año seleccionado o el INPC
     useEffect(() => {

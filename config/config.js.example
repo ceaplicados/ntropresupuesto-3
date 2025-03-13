@@ -1,0 +1,4 @@
+const config_param = {
+    api_url: "URL-DE-LA-API"
+}
+export default config_param;

@@ -6,7 +6,8 @@ export const parametersSlice = createSlice({
     selectedYear: new Date().getFullYear(),
     inpc: {},
     estados: [],
-    searchParams: {}
+    searchParams: {},
+    api_url: null
   },
   reducers: {
     selectNewYear: (state, action) => {
@@ -20,11 +21,14 @@ export const parametersSlice = createSlice({
     },
     setSearchParams: (state, action) => {
         state.searchParams = action.payload
-    }
+    },
+    setApi_url: (state, action) => {
+      state.api_url = action.payload
+  }
   }
 })
 
 // Action creators are generated for each case reducer function
-export const { selectNewYear, setInpc, setSearchParams, setEstados } = parametersSlice.actions
+export const { selectNewYear, setInpc, setSearchParams, setEstados, setApi_url } = parametersSlice.actions
 
 export default parametersSlice.reducer
