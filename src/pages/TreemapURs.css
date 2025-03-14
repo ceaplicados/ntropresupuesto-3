@@ -1,0 +1,8 @@
+.treemap{
+    width: 100%;
+    min-height: calc(100vh - 2em);
+}
+.treemap svg{
+    margin-bottom: 4rem;
+    border: 1px solid #DDDDDD;
+}

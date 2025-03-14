@@ -11,7 +11,7 @@ export const parametersSlice = createSlice({
   },
   reducers: {
     selectNewYear: (state, action) => {
-        state.selectedYear = action.payload
+        state.selectedYear = parseInt(action.payload)
     },
     setInpc: (state, action) => {
         state.inpc = action.payload
