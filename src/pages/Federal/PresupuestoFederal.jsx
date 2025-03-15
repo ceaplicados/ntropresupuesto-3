@@ -271,23 +271,21 @@ function PresupuestoFederal({selectedYear,inpc}) {
                 </div>
             </div>
             <div className='col-12 mt-3'>
-                <div className='tableContainer'>
-                    { showTablePresupuesto ? 
-                    <table className='table table-striped table-bordered'>
-                        <thead>
-                            <tr>
-                                <th key='labelYear'>Año</th>
-                                {configChartPresupuesto.labels.map(year => (
-                                    <th key={year}>{year}</th>
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {tablaPresupuesto()}
-                        </tbody>
-                    </table>
-                    : null }
-                </div>
+                { showTablePresupuesto ? 
+                <table className='table table-striped table-bordered table-responsive'>
+                    <thead>
+                        <tr>
+                            <th key='labelYear'>Año</th>
+                            {configChartPresupuesto.labels.map(year => (
+                                <th key={year}>{year}</th>
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {tablaPresupuesto()}
+                    </tbody>
+                </table>
+                : null }
             </div>
         </div>
         </>

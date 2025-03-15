@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Provider } from 'react-redux'
 import store from './store'
-import Federal from "./pages/Federal";
-import Estado from "./pages/Estado";
+import Federal from "./pages/Federal/Federal";
+import Estado from "./pages/Estado/Estado";
 function App() {
   return (
       <Provider store={store}> 

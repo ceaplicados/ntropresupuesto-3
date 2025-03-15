@@ -1,0 +1,20 @@
+th{
+    cursor: pointer;
+}
+th span.material-symbols-outlined{
+    color: gray;
+    vertical-align: bottom;
+    margin-left: .25em;
+}
+td.font-monospace{
+    font-size: .9rem;
+}
+tfoot{
+    font-weight: bold;
+    border-top: solid;
+
+}
+
+tfoot .totalFiltro td{
+    background: #f2f2f2;
+}

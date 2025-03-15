@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { setPresupuestoUR, setUnidadesPresupuestales, setActualEstado } from '../estadoSlice'
+import { setPresupuestoUR, setUnidadesPresupuestales, setActualEstado } from '../../estadoSlice'
 
-import './Federal.css'
-import Header from './Header';
-import Breadcrumb from './Breadcrumb'
-import OffcanvasMenu from './OffcanvasMenu';
+import Header from '../Header';
+import Breadcrumb from '../Breadcrumb'
+import OffcanvasMenu from '../OffcanvasMenu';
 import TreemapURs from './TreemapURs';
+import TablaURs from './TablaURs';
 
 function Estado({idEstado}) {
   const dispatch = useDispatch();
@@ -90,24 +90,6 @@ function Estado({idEstado}) {
     }
   },[dataPresupuestoURs,selectedYear,inpc])
   
-  const tablaMontos = () => {
-    let tableBody=null;
-    if(dataPresupuesto.versionPresupuesto){
-      let totalPresupuesto=dataPresupuesto.presupuesto.reduce( (total,partida) => {
-        return total+partida.Monto
-      }, 0);
-      tableBody=dataPresupuesto.presupuesto.map((partida) => {
-        return (<tr key={partida.Id}>
-          <td>{partida.Clave}</td>
-          <td>{partida.Nombre}</td>
-          <td className='text-end'>{partida.Monto.toLocaleString("en-MX", {style:"decimal",maximumFractionDigits:2, minimumFractionDigits: 2})}</td>
-          <td className='text-end'>{(partida.Monto/totalPresupuesto).toLocaleString("en-MX", {style:"percent", minimumFractionDigits: 1})}</td>
-        </tr>)
-      });
-    }
-    return tableBody;
-  }
-  
   return (
     <>
     <Header/>
@@ -117,18 +99,7 @@ function Estado({idEstado}) {
         <h1>{estadoActual.Nombre} <small>Presupuesto estatal</small></h1>
         <p className='subtitle'>{ dataPresupuesto.versionPresupuesto ? dataPresupuesto.versionPresupuesto.Tipo+' '+dataPresupuesto.versionPresupuesto.Anio : '' } a valores del {selectedYear}</p>
         <TreemapURs />
-        <table className='table table-striped table-bordered'>
-          <thead>
-            <tr>
-              <th>Clave</th>
-              <th>Unidad Responsable</th>
-              <th>Presupuesto { dataPresupuesto.versionPresupuesto ? dataPresupuesto.versionPresupuesto.Anio : '' }
-              </th>
-              <th>% Total</th>
-            </tr>
-          </thead>
-          <tbody>{tablaMontos()}</tbody>
-        </table>
+        <TablaURs />
       </section>
     </>
   )

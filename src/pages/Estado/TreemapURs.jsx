@@ -40,9 +40,6 @@ const TreemapURs = () => {
                 });
                 return node;
             });
-
-            // {name: "", children: []}
-            // {name: "", value: ###}
             
             setDataTreemap(data);
             console.log(data);

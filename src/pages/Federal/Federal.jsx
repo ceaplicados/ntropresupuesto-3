@@ -1,8 +1,8 @@
 import { useSelector } from 'react-redux'
 import './Federal.css'
-import Header from './Header';
-import Breadcrumb from './Breadcrumb'
-import OffcanvasMenu from './OffcanvasMenu';
+import Header from '../Header';
+import Breadcrumb from '../Breadcrumb'
+import OffcanvasMenu from '../OffcanvasMenu';
 import GastoFederalizado from './GastoFederalizado';
 import PresupuestoFederal from './PresupuestoFederal';
 
