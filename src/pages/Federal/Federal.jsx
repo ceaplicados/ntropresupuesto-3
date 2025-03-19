@@ -9,11 +9,13 @@ import PresupuestoFederal from './PresupuestoFederal';
 function Federal() {
   const selectedYear = useSelector(state => state.parameters.selectedYear)
   const inpc = useSelector(state => state.parameters.inpc)
-
+  const breadcrumb=[{
+    texto: "Gasto federalizado"
+  }];
   return (
     <>
     <Header/>
-    <Breadcrumb/>
+    <Breadcrumb breadcrumb={breadcrumb}/>
     <OffcanvasMenu />
 
       <section className='container' id='workspace'>

@@ -82,7 +82,7 @@ const TablaURs = () => {
         <>
         <div className='row mb-3'>
             <div className='col-12 mb-3'>
-                <h3>Unidades Responsables</h3>
+                <h3>Unidades Responsables <small>¿Quién se lo gasta?</small></h3>
             </div>
             <div className='col-xs-12 col-md-6 col-lg-4'>
                 <div className='input-group flex-nowrap'>

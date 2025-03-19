@@ -7,6 +7,7 @@ import Breadcrumb from '../Breadcrumb'
 import OffcanvasMenu from '../OffcanvasMenu';
 import TreemapURs from './TreemapURs';
 import TablaURs from './TablaURs';
+import './Estado.css'
 
 function Estado({idEstado}) {
   const dispatch = useDispatch();
@@ -19,6 +20,7 @@ function Estado({idEstado}) {
   const [estadoActual,setEstadoActual]=useState({});
   const [presupuestoActual,setPresupuestoActual]=useState(null);
   const [dataPresupuestoURs,setDataPresupuestoURs]=useState({});
+  const [breadcrumb,setBreadcrumb]=useState([]);
   
   // Guardar un objeto de estado en el estadoActual de acuerdo al idEstado
   useEffect(() => {
@@ -26,6 +28,9 @@ function Estado({idEstado}) {
     if(filter.length>0){
       setEstadoActual(filter[0])
       dispatch(setActualEstado(filter[0]));
+      setBreadcrumb([{
+        texto: filter[0].Nombre
+      }]);
     };
   },[estados,idEstado]);
 
@@ -93,7 +98,7 @@ function Estado({idEstado}) {
   return (
     <>
     <Header/>
-    <Breadcrumb/>
+    <Breadcrumb breadcrumb={breadcrumb}/>
     <OffcanvasMenu />
       <section className='container' id='workspace'>
         <h1>{estadoActual.Nombre} <small>Presupuesto estatal</small></h1>

@@ -5,7 +5,7 @@ import { selectNewYear, setInpc, setSearchParams, setEstados, setApi_url } from 
 import './Breadcrumb.css'
 import config_param from '../../config/config'
 
-function Breadcrumb() {
+function Breadcrumb({breadcrumb}) {
     const dispatch = useDispatch();
     const api_url=useSelector(state => state.parameters.api_url)
     const [urlVariables,setUrlVariables] = useSearchParams();
@@ -93,9 +93,19 @@ function Breadcrumb() {
             <li className="breadcrumb-item">
             <a href="/"><img src='/img/logo.svg'/></a>
             </li>
-            <li className="breadcrumb-item active" aria-current="page">
-            Gasto federalizado
-            </li>
+            {
+                breadcrumb.map((page) => {
+                    if(page.url){
+                        return (<a href={page.url}><li key={page.url} className="breadcrumb-item" aria-current="page">
+                            {page.texto}
+                            </li></a>)
+                    }else{
+                        return (<li key='actual' className="breadcrumb-item active" aria-current="page">
+                            {page.texto}
+                            </li>)
+                    }
+                })
+            }
         </ol>
         </nav>
         <div className='row row-cols-lg-auto align-items-top'>
