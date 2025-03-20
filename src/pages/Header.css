@@ -1,4 +1,25 @@
 header{
     background: #303030;
   }
-  
+#menuUsuario {
+  color: white;
+  padding-right: 1rem;
+}
+a#menuUsuarioDropdown {
+  padding: 0px;
+}
+#menuUsuario img{
+  margin-right: 1rem;
+  max-height: 3rem;
+  border-radius: 3rem;
+}
+#menuUsuario .nombre-usuario{
+  padding-right: .5rem;
+}
+#menuUsuario .dropdown-menu-dark{
+  background: #303030;
+}
+header nav.navbar {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}

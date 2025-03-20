@@ -9,6 +9,13 @@ export const parametersSlice = createSlice({
     searchParams: {},
     toasts: [],
     api_url: null,
+    user: {
+      UUID: null,
+      sobrenombre: null,
+      accessToken: null,
+      expiresIn: null,
+      image: null
+    },
   },
   reducers: {
     selectNewYear: (state, action) => {
@@ -31,11 +38,14 @@ export const parametersSlice = createSlice({
     },
     setApi_url: (state, action) => {
       state.api_url = action.payload
+    },
+    updateUser: (state, action) => {
+      state.user = {...action.payload}
     }
   }
 })
 
 // Action creators are generated for each case reducer function
-export const { selectNewYear, setInpc, setSearchParams, setEstados, setApi_url, addToast, hideToast } = parametersSlice.actions
+export const { selectNewYear, setInpc, setSearchParams, setEstados, setApi_url, addToast, hideToast, updateUser } = parametersSlice.actions
 
 export default parametersSlice.reducer
