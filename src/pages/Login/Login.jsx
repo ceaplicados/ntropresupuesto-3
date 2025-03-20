@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { addToast } from '../../parametersSlice'
 import Header from '../Header';
@@ -6,6 +7,7 @@ import OffcanvasMenu from '../OffcanvasMenu';
 import { GoogleLogin } from '@react-oauth/google';
 import './Login.css'
 import { useEffect } from 'react';
+import { useCookies } from 'react-cookie'
 
 function Login() {
     const api_url = useSelector(state => state.parameters.api_url);
@@ -13,7 +15,22 @@ function Login() {
     const breadcrumb=[{
         texto: "Iniciar sesión"
     }];
+    const [userUUID,setUserUUID]=useState(null);
+    const [cookies, setCookie] = useCookies(['jwt'])
     
+    useEffect( () => {
+        if(api_url && cookies.accessToken){
+            console.log(cookies.accessToken)
+            let token=cookies.accessToken;
+            fetch(api_url+'/User',{headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+
+            }})
+                .then(response => response.json())
+                .then( data => console.log(data) )
+        }
+    },[cookies,api_url])
     return (
         <>
         <Header/>
@@ -27,19 +44,23 @@ function Login() {
                     <p>Si ya cuentas con una cuenta registrada inicia sesión:</p>
                     <GoogleLogin
                         onSuccess={credentialResponse => {
-                            //const decoded = jwtDecode(credentialResponse.credential);
                             const data_post = {
                                 credential: credentialResponse.credential
                                 };
                             fetch(api_url+'/auth/Google', {
                                 method: 'POST',
+                                credentials: 'include',
                                 headers: {
                                     'Content-Type': 'application/json'
                                 },
                                 body: JSON.stringify(data_post)
                                 })
                                 .then(response => response.json())
-                                .then(data => {console.log(data)})
+                                .then(data => {
+                                    console.log(data)
+                                    setCookie('accessToken',data.accessToken);
+                                    setUserUUID(data.accessToken)
+                                })
                                 .catch(error => {
                                     dispatch(addToast({texto: 'Error al iniciar sesión en la API'}))
                                     console.error(error);
