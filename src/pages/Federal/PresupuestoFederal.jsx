@@ -1,31 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
-import {Chart as ChartJS,
-    LinearScale,
-    CategoryScale,
-    PointElement,
-    LineElement,
-    BarElement,
-    Legend,
-    Title,
-    Tooltip,
-    Filler,
-} from 'chart.js';
+import ChartJS from 'chart.js/auto';
 import { Chart } from 'react-chartjs-2';
 import './PresupuestoFederal.css'
 import { callback } from 'chart.js/helpers';
 
-ChartJS.register(
-    LinearScale,
-    CategoryScale,
-    PointElement,
-    LineElement,
-    BarElement,
-    Legend,
-    Title,
-    Tooltip,
-    Filler,
-  );
 
 function PresupuestoFederal({selectedYear,inpc}) {
     const api_url=useSelector(state => state.parameters.api_url)
