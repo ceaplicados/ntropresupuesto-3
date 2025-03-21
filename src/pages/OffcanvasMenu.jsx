@@ -8,7 +8,7 @@ function OffcanvasMenu() {
         <>
         <div id="lateral-menu" className='offcanvas offcanvas-start' data-bs-scroll="true" tabIndex="-1">
             <div className="offcanvas-header">
-            <a className='offcanvas-title text-start' href="/">
+            <a className='offcanvas-title text-start' href={"/"+ (searchParams.i ? '?i='+searchParams.i : '')}>
                 <img className='offcanvas-logo' src="/img/logo_blanco.svg" alt="#NuestroPresupuesto"/>
             </a>
             <div className='align-self-start'>
@@ -23,7 +23,7 @@ function OffcanvasMenu() {
                 <h3>Presupuestos</h3>
                 <ul className="offcanvas-menu">
                 <li>
-                    <a href="/">
+                    <a href={"/"+ (searchParams.i ? '?i='+searchParams.i : '')}>
                     <span className="material-symbols-outlined">dashboard</span>
                     Gasto federalizado
                     </a>
@@ -35,7 +35,7 @@ function OffcanvasMenu() {
                     </a>
                 </li>
                 <li>
-                    <a href="/CDMX">
+                    <a href={"/CDMX"+ (searchParams.i ? '?i='+searchParams.i : '')}>
                     <span className="material-symbols-outlined">dashboard</span>
                     Ciudad de México
                     </a>

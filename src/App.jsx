@@ -17,6 +17,7 @@ function App() {
             <Routes>
               <Route index element={<Federal />} />
               <Route path="JAL" element={<Estado idEstado="14" />} />
+              <Route path="CDMX" element={<Estado idEstado="9" />} />
               <Route path="login" element={<Login />} />
             </Routes>
             </BrowserRouter>
