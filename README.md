@@ -1,5 +1,5 @@
 # ntropresupuesto-3
-Versión 3.0 de la app de #NuestroPresupuesto
+Versión 3.0 de la app de #NuestroPresupuesto, preview disponible en [https://new.nuestropresupuesto.mx](https://new.nuestropresupuesto.mx).
 
 `<BlueSky>` : <https://bsky.app/profile/ntropresupuesto.bsky.social>
 
