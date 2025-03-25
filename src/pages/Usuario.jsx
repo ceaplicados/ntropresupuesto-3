@@ -117,7 +117,7 @@ function Usuario() {
                     </div>
                     <div className='mb-3'>
                         <label className='form-label' htmlFor='sobrenombre'>Sobrenombre</label>
-                        <input type='text' className='form-control' id='sobrenombre' value={datosUsuario.Sobrenombre} onChange={(e) => setDatosUsuario({...datosUsuario,Sobrenombre: e.targe.valuet})}/>
+                        <input type='text' className='form-control' id='sobrenombre' value={datosUsuario.Sobrenombre} onChange={(e) => setDatosUsuario({...datosUsuario,Sobrenombre: e.targe.value})}/>
                     </div>
                     <div className='mb-3'>
                         <label className='form-label' htmlFor='email'>Correo electrónico</label>
