@@ -7,6 +7,7 @@ import { CookiesProvider } from 'react-cookie'
 import Federal from "./pages/Federal/Federal";
 import Estado from "./pages/Estado/Estado";
 import Login from "./pages/Login/Login";
+import Cuadernos from "./pages/Cuadernos/Cuadernos";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
               <Route path="JAL" element={<Estado idEstado="14" />} />
               <Route path="CDMX" element={<Estado idEstado="9" />} />
               <Route path="login" element={<Login />} />
+              <Route path="cuadernos" element={<Cuadernos />} />
             </Routes>
             </BrowserRouter>
           </CookiesProvider>
