@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useCookies } from 'react-cookie'
+import { logoutUser } from '../../parametersSlice'
 
 import Header from '../Header';
 import Breadcrumb from '../Breadcrumb'
@@ -43,9 +44,9 @@ function Cuadernos() {
             data=response.json();
           }else{
             // La sesión caducó
-            token=null;
             setCookie('accessToken',null);
             removeCookie('accessToken');
+            dispatch(logoutUser());
           }
           return data;
         })
@@ -97,7 +98,7 @@ function Cuadernos() {
           </li>          
         </ul>
         </>) : null }
-        <div className="tab-content" id="myTabContent">
+        <div className="tab-content" id="tabContentCuadernos">
           <div className={ user.UUID ? "tab-pane fade" : "tab-pane fade show active"} id="publicos" role="tabpanel" aria-labelledby="publicos-tab">
             <h3>Cuadernos públicos</h3>
             <p className='mb-4'>Son cuadernos que han creado usuarios de #NuestroPresupuesto para consulta pública.</p>

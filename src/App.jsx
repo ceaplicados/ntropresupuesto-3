@@ -8,6 +8,7 @@ import Federal from "./pages/Federal/Federal";
 import Estado from "./pages/Estado/Estado";
 import Login from "./pages/Login/Login";
 import Cuadernos from "./pages/Cuadernos/Cuadernos";
+import Usuario from "./pages/Usuario";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
               <Route path="CDMX" element={<Estado idEstado="9" />} />
               <Route path="login" element={<Login />} />
               <Route path="cuadernos" element={<Cuadernos />} />
+              <Route path="profile" element={<Usuario />} />
             </Routes>
             </BrowserRouter>
           </CookiesProvider>

@@ -41,11 +41,20 @@ export const parametersSlice = createSlice({
     },
     updateUser: (state, action) => {
       state.user = {...action.payload}
+    },
+    logoutUser: (state, action) => {
+      state.user = {
+        UUID: null,
+        sobrenombre: null,
+        accessToken: null,
+        expiresIn: null,
+        image: null
+      }
     }
   }
 })
 
 // Action creators are generated for each case reducer function
-export const { selectNewYear, setInpc, setSearchParams, setEstados, setApi_url, addToast, hideToast, updateUser } = parametersSlice.actions
+export const { selectNewYear, setInpc, setSearchParams, setEstados, setApi_url, addToast, hideToast, updateUser, logoutUser } = parametersSlice.actions
 
 export default parametersSlice.reducer

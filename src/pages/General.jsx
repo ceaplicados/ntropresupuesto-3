@@ -5,7 +5,7 @@ import { selectNewYear, setInpc, setSearchParams, setEstados, setApi_url, update
 import config_param from '../../config/config'
 import { useCookies } from 'react-cookie'
 
-function General({breadcrumb, ocultarDeflactor}) {
+function General({breadcrumb, ocultarDeflactor, redirectLogin}) {
     const dispatch = useDispatch();
     const api_url=useSelector(state => state.parameters.api_url)
     const [urlVariables,setUrlVariables] = useSearchParams();
@@ -117,6 +117,9 @@ function General({breadcrumb, ocultarDeflactor}) {
             token=null;
             setCookie('accessToken',null);
             removeCookie('accessToken');
+            if(redirectLogin){
+              window.location.href='/login';
+            }
           }
           return data;
         })

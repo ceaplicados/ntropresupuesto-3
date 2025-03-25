@@ -23,3 +23,55 @@ header nav.navbar {
   padding-top: 5px;
   padding-bottom: 5px;
 }
+#menuUsuario span.material-symbols-outlined {
+  vertical-align: bottom;
+  margin-right: .5rem;
+}
+
+#menuUsuario .dropdown-item {
+  margin: .5rem;
+}
+
+@keyframes btnThinking {
+  0%{
+    width: 10%;
+    left: 0px;
+    opacity: 1;
+  }
+  50%{
+    width: 100%;
+    left: 0%;
+    opacity: .5;
+  }
+  100%{
+    width: 10%;
+    left: 90%;
+    opacity: 1;
+  }
+}
+.thinking {
+  position: relative;
+  background: #a2aab5;
+  border-color: #a2aab5;
+  cursor: wait;
+}
+.thinking:before {
+  content: " ";
+  position: absolute;
+  width: 100%;
+  height: 5px;
+  bottom: 0px;
+  background: #2B88D9;
+  animation-name: btnThinking;
+  animation-duration: 1s;
+  animation-direction: alternate;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+  transition: .2s ease-in-out;
+}
+.thinking.btn-outline-danger {
+  background: unset;
+}
+.thinking.btn-danger:before, .thinking.btn-outline-danger:before {
+  background: #E74C12;
+}

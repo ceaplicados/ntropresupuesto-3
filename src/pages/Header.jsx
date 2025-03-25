@@ -1,7 +1,7 @@
 import { useEffect,useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import General from './General'
-import {hideToast, updateUser} from '../parametersSlice'
+import {hideToast, logoutUser} from '../parametersSlice'
 import Toast from 'react-bootstrap/Toast';
 import ToastContainer from 'react-bootstrap/ToastContainer';
 import './Header.css'
@@ -23,10 +23,10 @@ function Header() {
       return (
         <>
           <Toast key={'toast_'+index} show={toast.show ? true : false} delay={3000} autohide onClose={() => toggleToastShow({index}) }>
-            <Toast.Header >
+            <Toast.Header key={'toast_header_'+index} >
               <strong className="me-auto">#NuestroPresupuesto</strong>
             </Toast.Header>
-            <Toast.Body>{toast.texto}</Toast.Body>
+            <Toast.Body key={'toast_body_'+index} >{toast.texto}</Toast.Body>
           </Toast>
         </>
       )
@@ -36,15 +36,8 @@ function Header() {
 
   const cerrarSesion = () => {
     setCookie('accessToken',null);
-      removeCookie('accessToken');
-      const user = {
-        UUID: null,
-        sobrenombre: null,
-        accessToken: null,
-        expiresIn: null,
-        image: null
-      }
-      dispatch(updateUser(user))
+    removeCookie('accessToken');
+    dispatch(logoutUser())
   }
 
   return (
@@ -70,7 +63,9 @@ function Header() {
                         <span className='nombre-usuario'>¡Hola {user.sobrenombre}!</span>
                       </a>
                       <ul className="dropdown-menu dropdown-menu-dark" aria-labelledby="menuUsuarioDropdown">
-                        <li><a className="dropdown-item" onClick={ cerrarSesion }>Cerrar sesión</a></li>
+                        <li key='menuCuadernos'><a className="dropdown-item" href='/cuadernos'><span className="material-symbols-outlined">book_5</span> Mis cuadernos</a></li>
+                        <li key='menuProfile'><a className="dropdown-item" href='/profile'><span className="material-symbols-outlined">account_circle</span> Mi perfil</a></li>
+                        <li key='menuLogout'><a className="dropdown-item" onClick={ cerrarSesion }><span className="material-symbols-outlined">logout</span>Cerrar sesión</a></li>
                       </ul>
                     </li>
                   </ul>

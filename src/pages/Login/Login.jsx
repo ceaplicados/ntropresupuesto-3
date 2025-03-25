@@ -60,6 +60,7 @@ function Login() {
                                                     image: null
                                                 }
                                                 dispatch(updateUser(user)); 
+                                                window.location.href='/profile';
                                             }
                                         })
                                         .catch(error => {
