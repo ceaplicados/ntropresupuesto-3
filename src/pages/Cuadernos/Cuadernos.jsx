@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import { useCookies } from 'react-cookie'
 
 import Header from '../Header';
 import Breadcrumb from '../Breadcrumb'
@@ -13,11 +14,12 @@ function Cuadernos() {
   const [cuadernosPublicos, setCuadernosPublicos] = useState([]);
   const [cuadernosPublicosFiltrados, setCuadernosPublicosFiltrados] = useState([]);
   const [filtroCuadernos, setFiltroCuadernos] = useState('');
+  const [cookies, setCookie, removeCookie] = useCookies(['jwt'])
   const [misCuadernos, setMisCuadernos] = useState([]);
 
-  // obtener la lista de cuadernos públicos
   useEffect(() => {
     if(api_url){
+      // obtener la lista de cuadernos públicos
       fetch(api_url+'/Cuadernos')
       .then(response => response.json())
       .then(data => {
@@ -26,8 +28,31 @@ function Cuadernos() {
       .catch(error => {
           console.error(error);
       });
+
+      // obtener la lista de cuadernos del usuario
+      if(user.UUID && user.accessToken){
+        let token=user.accessToken;
+        fetch(api_url+'/Cuadernos/User',{headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+
+        }})
+        .then(response => {
+          let data=[];
+          if(response.ok){
+            data=response.json();
+          }else{
+            // La sesión caducó
+            token=null;
+            setCookie('accessToken',null);
+            removeCookie('accessToken');
+          }
+          return data;
+        })
+        .then( data => setMisCuadernos(data))
+      }
     }
-  },[api_url]);
+  },[api_url,user]);
 
   // filtrar cuadernos públicos
   useEffect(() => {
@@ -47,6 +72,11 @@ function Cuadernos() {
   const breadcrumb=[{
       texto: "Cuadernos de trabajo"
   }];
+
+  const showCuadernosPublicos = () => {
+    var triggerEl = document.querySelector('#tabsCuadernos a[data-bs-target="#publicos"]')
+    bootstrap.Tab.getInstance(triggerEl).show()
+  }
 
   return (
     <>
@@ -101,7 +131,26 @@ function Cuadernos() {
           { user.UUID ? ( <>
           <div className="tab-pane fade show active" id="mis-cuadernos" role="tabpanel" aria-labelledby="mis-cuadernos-tab">
             <h3>Mis cuadernos</h3>
-            <div className="row">
+            <div className="d-flex flex-wrap">
+            {
+            misCuadernos.length>0 ?
+              misCuadernos.map((cuaderno) => (
+                  <div className="col-12 col-md-6 col-lg-4 mb-4" key={cuaderno.Id}>
+                    <div className="card">
+                      <div className="card-body">
+                        <h5 className="card-title">{cuaderno.Nombre}</h5>
+                        <p className="card-text">{cuaderno.Descripcion}</p>
+                        
+                      </div>
+                      <div className="card-footer">
+                        <img src={user.image} className="owner-img" alt={user.sobrenombre} />
+                      </div>
+                    </div>
+                  </div>
+                ))
+              :
+              (<><p className='mt-4'>No tienes cuadernos registrados, <a href='#' onClick={showCuadernosPublicos}>ver cuadernos públicos</a>.</p></>)
+              }
             </div>
           </div>
           </>) : null }

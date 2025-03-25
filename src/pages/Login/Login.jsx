@@ -28,6 +28,7 @@ function Login() {
                         { user.UUID ? 
                         (<>
                             <p>¡Hola {user.sobrenombre}!</p>
+                            <p><a className='btn btn-primary' href='/Cuadernos'>Ir a mis cuadernos</a></p>
                             <p>Si quieres iniciar sesión con otra cuenta, primero cierra tu sesión actual dando clic sobre tu nombre en el menú superior.</p>
                         </>) 
                         : 
