@@ -14,7 +14,8 @@ export const parametersSlice = createSlice({
       sobrenombre: null,
       accessToken: null,
       expiresIn: null,
-      image: null
+      image: null,
+      init: false
     },
   },
   reducers: {
@@ -48,7 +49,8 @@ export const parametersSlice = createSlice({
         sobrenombre: null,
         accessToken: null,
         expiresIn: null,
-        image: null
+        image: null,
+        init: true
       }
     }
   }

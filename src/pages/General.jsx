@@ -87,7 +87,8 @@ function General({breadcrumb, ocultarDeflactor, redirectLogin}) {
             sobrenombre: null,
             accessToken: cookies.accessToken,
             expiresIn: null,
-            image: null
+            image: null,
+            init: true
           }
           dispatch(updateUser(user)); 
         }
@@ -127,7 +128,8 @@ function General({breadcrumb, ocultarDeflactor, redirectLogin}) {
           const newUser={...user,
             UUID: data.UUID,
             sobrenombre: data.Sobrenombre,
-            image: data.Image
+            image: data.Image,
+            init: true
           }
           dispatch(updateUser(newUser)); 
         })

@@ -57,7 +57,8 @@ function Login() {
                                                     sobrenombre: null,
                                                     accessToken: data.access_token,
                                                     expiresIn: data.expires_in,
-                                                    image: null
+                                                    image: null,
+                                                    init: true
                                                 }
                                                 dispatch(updateUser(user)); 
                                                 window.location.href='/profile';

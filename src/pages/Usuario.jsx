@@ -48,11 +48,21 @@ function Usuario() {
                 return data;
             })
             .then(data => {
+                for (const [key, value] of Object.entries(data)) {
+                    if(value===null){
+                        data[key]='';
+                    }
+                }
                 setDatosUsuario(data);
             })
             .catch(error => {
                 console.error(error);
             });
+        }else if(user.init && api_url){
+            setCookie('accessToken',null);
+            removeCookie('accessToken');
+            dispatch(logoutUser());
+            window.location.href='/login';
         }
     },[api_url,user]);
 
@@ -68,7 +78,7 @@ function Usuario() {
                 method: 'PUT',
                 body: JSON.stringify(datosUsuario)
                 }
-        )
+            )
             .then( response => {
                 let data={}
                 if(response.ok){
@@ -84,6 +94,11 @@ function Usuario() {
                 return data;
             })
             .then(data => {
+                for (const [key, value] of Object.entries(data)) {
+                    if(value===null){
+                        data[key]='';
+                    }
+                }
                 setDatosUsuario(data);
             })
             .catch(error => {
