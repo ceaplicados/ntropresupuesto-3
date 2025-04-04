@@ -157,6 +157,13 @@ function Usuario() {
                     </div>
                 </div>
             </div>
+            <div className='col-xs-12 col-md-6'>
+                <div className='card'>
+                    <h3>Mis cuadernos</h3>
+                    <p>La herramienta de cuadernos de trabajo te permite realizar colaborativamente análisis y comparaciones del presupuesto histórico usando todos los datos de #NuestroPresupuesto.</p>
+                    <p className='text-end'><a className='btn btn-primary' href='/cuadernos'>Ir</a></p>
+                </div>
+            </div>
         </div>
     </section>
     </>

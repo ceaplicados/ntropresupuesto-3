@@ -1,0 +1,96 @@
+#tabContentCuadernos .card {
+    margin: .5em;
+    height: 100%;
+    max-height: 20rem;
+}
+
+img.owner-img, ul.users-imgs li img {
+    max-height: 3rem;
+    border-radius: 2rem;
+    max-width: 3rem;
+    background: gray;
+}
+
+ul.users-imgs {
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+    display: inline-block;
+    transition: .15s ease-in-out;
+    margin-left: 1rem;
+}
+
+ul.users-imgs li {
+    display: inline-block;
+    margin: 0px;
+    padding: 0px;
+    margin-left: -2rem;
+    transition: .15s ease-in-out;
+}
+
+ul.users-imgs:hover{
+    margin-left: -5px;
+}
+ul.users-imgs:hover li {
+    margin-left: -5px
+}
+
+#tablaDatos td.dato {
+    font-size: .9rem;
+    font-weight: 200;
+    position: relative;
+}
+
+#tablaDatos td.dato b {
+    font-weight: 500;
+    margin-right: .5rem;
+}
+
+#tablaDatos td.dato span.tipo {
+    display: block;
+    font-size: .7rem;
+}
+
+#tablaDatos td.dato span.Mostrar {
+    position: absolute;
+    right: .25rem;
+    font-size: .7rem;
+    bottom: .25rem;
+    font-weight: 300;
+    font-style: italic;
+}
+
+#tablaDatos td.dato span.Estado {
+    position: absolute;
+    right: .25rem;
+    top: .25rem;
+    font-size: .7rem;
+    font-weight: 300;
+    color: white;
+    background: #999999;
+    padding-left: .2rem;
+    padding-right: .2rem;
+}
+#tablaDatos td.Graph {
+    text-align: center;
+}
+#tablaDatos td.Graph span{
+    color: #CCCCCC;
+}
+#tablaDatos td.Graph span.active{
+    color: #D95B5B;
+}
+#tablaDatos td.font-monospace{
+    font-size: .7rem;
+    vertical-align: middle;
+    text-align: right;
+}
+#tablaDatos td.font-monospace .anio {
+    display: block;
+    font-size: .6rem;
+    color: #666666;
+}
+
+#tablaDatos td.font-monospace .anio b {
+    margin-right: .2rem;
+}

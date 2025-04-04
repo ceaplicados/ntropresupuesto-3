@@ -4,8 +4,33 @@
     max-height: 20rem;
 }
 
-img.owner-img {
+img.owner-img, ul.users-imgs li img {
     max-height: 3rem;
     border-radius: 2rem;
     max-width: 3rem;
+    background: gray;
+}
+
+ul.users-imgs {
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+    display: inline-block;
+    transition: .15s ease-in-out;
+    margin-left: 1rem;
+}
+
+ul.users-imgs li {
+    display: inline-block;
+    margin: 0px;
+    padding: 0px;
+    margin-left: -2rem;
+    transition: .15s ease-in-out;
+}
+
+ul.users-imgs:hover{
+    margin-left: -5px;
+}
+ul.users-imgs:hover li {
+    margin-left: -5px
 }

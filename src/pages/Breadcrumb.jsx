@@ -21,16 +21,17 @@ function Breadcrumb({breadcrumb, ocultarDeflactor}) {
         <>
         <section className='container d-flex justify-content-between' id='breadcrumb'>
         <nav aria-label="breadcrumb">
-        <ol className="breadcrumb">
-            <li className="breadcrumb-item">
+        <ol key={'breadcrumb'} className="breadcrumb">
+            <li key={'Home'} className="breadcrumb-item">
             <a href={"/"+ (searchParams.i ? '?i='+searchParams.i : '')}><img src='/img/logo.svg'/></a>
             </li>
             {
                 breadcrumb.map((page) => {
                     if(page.url){
-                        return (<a href={page.url}><li key={page.url} className="breadcrumb-item" aria-current="page">
-                            {page.texto}
-                            </li></a>)
+                        return (<>
+                            <li key={page.url} className="breadcrumb-item" aria-current="page">
+                                <a href={page.url}>{page.texto}</a>
+                            </li></>)
                     }else{
                         return (<li key='actual' className="breadcrumb-item active" aria-current="page">
                             {page.texto}

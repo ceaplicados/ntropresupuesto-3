@@ -58,7 +58,6 @@ function Cuadernos() {
   // filtrar cuadernos públicos
   useEffect(() => {
     if(filtroCuadernos.length>0){
-      console.log('Filtrando cuadernos',filtroCuadernos);
       let cuadernosFiltrados=cuadernosPublicos.filter((cuaderno) => { 
         cuaderno.Descripcion=cuaderno.Descripcion ? cuaderno.Descripcion : '';
         return cuaderno.Nombre.toUpperCase().indexOf(filtroCuadernos.toUpperCase())>=0 || cuaderno.Descripcion.toUpperCase().indexOf(filtroCuadernos.toUpperCase())>=0 || cuaderno.Owner.Sobrenombre.toUpperCase().indexOf(filtroCuadernos.toUpperCase())>=0
@@ -121,8 +120,20 @@ function Cuadernos() {
                       <p className="card-text">{cuaderno.Descripcion}</p>
                       
                     </div>
-                    <div className="card-footer">
-                      <img src={cuaderno.Owner.Image} className="owner-img" alt={cuaderno.Owner.Sobrenombre} />
+                    <div className="card-footer d-flex justify-content-between">
+                      <div className='users'>
+                        <img src={cuaderno.Owner.Image} className="owner-img" alt={cuaderno.Owner.Sobrenombre}  title={cuaderno.Owner.Sobrenombre}/>
+                        <ul className='users-imgs'>
+                          { 
+                          cuaderno.Usuarios.map((usuario) => {
+                            return (<li key={usuario.UUID}>
+                              <img src={usuario.Image} className="owner-img" alt={usuario.Sobrenombre} title={usuario.Sobrenombre} />
+                            </li>)
+                          }) 
+                          }
+                        </ul>
+                      </div>
+                      <a href={'/cuaderno/'+cuaderno.Id}><button className='btn btn-primary'>Ir</button></a>
                     </div>
                   </div>
                 </div>
@@ -143,8 +154,20 @@ function Cuadernos() {
                         <p className="card-text">{cuaderno.Descripcion}</p>
                         
                       </div>
-                      <div className="card-footer">
-                        <img src={user.image} className="owner-img" alt={user.sobrenombre} />
+                      <div className="card-footer d-flex justify-content-between">
+                        <div className='users'>
+                          <img src={cuaderno.Owner.Image} className="owner-img" alt={cuaderno.Owner.Sobrenombre} title={cuaderno.Owner.Sobrenombre} />
+                          <ul className='users-imgs'>
+                            { 
+                            cuaderno.Usuarios.map((usuario) => {
+                              return (<li key={usuario.UUID}>
+                                <img src={usuario.Image} className="owner-img" alt={usuario.Sobrenombre}  title={usuario.Sobrenombre}/>
+                              </li>)
+                            }) 
+                            }
+                          </ul>
+                        </div>
+                        <a href={'/cuaderno/'+cuaderno.Id}><button className='btn btn-primary'>Ir</button></a>
                       </div>
                     </div>
                   </div>

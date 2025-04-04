@@ -97,7 +97,7 @@ function General({breadcrumb, ocultarDeflactor, redirectLogin}) {
 
   // actualizar los datos del usuario
   useEffect(() => {
-    if(api_url && user.accessToken){
+    if(api_url && user.accessToken && !user.init){
       if(!user.UUID){
         let token=user.accessToken;
         fetch(api_url+'/User',{headers: {
