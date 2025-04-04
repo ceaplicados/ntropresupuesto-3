@@ -103,7 +103,7 @@ function DetalleCuaderno() {
                             });
                             dato=dato[0].monto;
                             if(dato){
-                                dato=dato*inpc[anio.Anio]/inpc[selectedYear];
+                                dato=dato*inpc[selectedYear]/inpc[anio.Anio];
                             }
                             return dato
                         }
@@ -122,8 +122,8 @@ function DetalleCuaderno() {
                             dato=dato[0];
                             let result={
                                 anio: anio.Anio,
-                                monto: dato.monto*inpc[anio.Anio]/inpc[selectedYear],
-                                montoAnterior: datoAnterior.monto*inpc[anio.Anio-1]/inpc[selectedYear]
+                                monto: dato.monto*inpc[selectedYear]/inpc[anio.Anio],
+                                montoAnterior: datoAnterior.monto*inpc[selectedYear]/inpc[anio.Anio-1]
                             }
                             return result;
                         }
