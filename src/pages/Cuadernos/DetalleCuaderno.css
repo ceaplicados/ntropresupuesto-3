@@ -34,7 +34,14 @@ ul.users-imgs:hover{
 ul.users-imgs:hover li {
     margin-left: -5px
 }
-
+#chart{
+    height: calc(100vh - 2rem);
+    width: 100%;
+}
+#chart canvas{
+    height: calc(100vh - 2rem);
+    width: 100%;
+}
 #tablaDatos td.dato {
     font-size: .9rem;
     font-weight: 200;
