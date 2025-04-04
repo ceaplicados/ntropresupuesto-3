@@ -95,36 +95,51 @@ function DetalleCuaderno() {
                     let versionPresupuesto=versionesEstado[0].versiones.filter((versiones) => {
                         return versiones.Anio == anio.Anio
                     });
-                    versionPresupuesto=versionPresupuesto[0];
-                    if(renglon.Mostrar == "monto"){
-                        let dato=renglonData.data.filter((data) => {
-                            return data.version==versionPresupuesto.Id
-                        });
-                        dato=dato[0].monto;
-                        if(dato){
-                            dato=dato*inpc[anio.Anio]/inpc[selectedYear];
+                    if(versionPresupuesto.length>0){
+                        versionPresupuesto=versionPresupuesto[0];
+                        if(renglon.Mostrar == "monto"){
+                            let dato=renglonData.data.filter((data) => {
+                                return data.version==versionPresupuesto.Id
+                            });
+                            dato=dato[0].monto;
+                            if(dato){
+                                dato=dato*inpc[anio.Anio]/inpc[selectedYear];
+                            }
+                            return dato
                         }
-                        return dato
-                    }
-                    if(renglon.Mostrar == "YoY"){
-                        let versionPresupuestoAnterior=versionesEstado[0].versiones.filter((versiones) => {
-                            return versiones.Anio == (anio.Anio-1)
-                        });
-                        versionPresupuestoAnterior=versionPresupuestoAnterior[0];
-                        let datoAnterior=renglonData.data.filter((data) => {
-                            return data.version==versionPresupuestoAnterior.Id
-                        });
-                        datoAnterior=datoAnterior[0];
-                        let dato=renglonData.data.filter((data) => {
-                            return data.version==versionPresupuesto.Id
-                        });
-                        dato=dato[0];
-                        let result={
-                            anio: anio.Anio,
-                            monto: dato.monto*inpc[anio.Anio]/inpc[selectedYear],
-                            montoAnterior: datoAnterior.monto*inpc[anio.Anio-1]/inpc[selectedYear]
+                        if(renglon.Mostrar == "YoY"){
+                            let versionPresupuestoAnterior=versionesEstado[0].versiones.filter((versiones) => {
+                                return versiones.Anio == (anio.Anio-1)
+                            });
+                            versionPresupuestoAnterior=versionPresupuestoAnterior[0];
+                            let datoAnterior=renglonData.data.filter((data) => {
+                                return data.version==versionPresupuestoAnterior.Id
+                            });
+                            datoAnterior=datoAnterior[0];
+                            let dato=renglonData.data.filter((data) => {
+                                return data.version==versionPresupuesto.Id
+                            });
+                            dato=dato[0];
+                            let result={
+                                anio: anio.Anio,
+                                monto: dato.monto*inpc[anio.Anio]/inpc[selectedYear],
+                                montoAnterior: datoAnterior.monto*inpc[anio.Anio-1]/inpc[selectedYear]
+                            }
+                            return result;
                         }
-                        return result;
+                    }else{
+                        // No existe un presupuesto para ese estado / año
+                        if(renglon.Mostrar == "monto"){
+                            return null;
+                        }
+                        if(renglon.Mostrar == "YoY"){
+                            let result={
+                                anio: anio.Anio,
+                                monto: null,
+                                montoAnterior: null
+                            }
+                            return result;
+                        }
                     }
                 })
                 return result;
@@ -140,13 +155,36 @@ function DetalleCuaderno() {
             return(<>
             <tr key={'renglon_'+renglon.Id}>
                 <td className='dato'>
+                    { renglon.Filtro ? (<>
                     <b>{renglon.Filtro.Clave}</b>
-                    {renglon.Filtro.Nombre}
+                    {renglon.Filtro.Nombre}</>) : null
+                    }
+                    { renglon.TipoFiltro=="Estado" ? (<>
+                    <b>{(() => {
+                        let estado=estados.filter((itemEstado) => { return itemEstado.Id == parseInt(renglon.Estado) });
+                        return estado[0].Nombre
+                    })()}</b>
+                    </>) : null
+                    }
+                    { renglon.Tipo=="ProgramaPresupuestal" ? (<>
+                    <b>{renglon.Referencia.Clave}</b>
+                    {renglon.Referencia.Nombre}</>) : null
+                    }
                     <span className='tipo'>{
                         (() => {
                             switch(renglon.Tipo) {
                                 case "Total":
                                     return "Presupuesto total";
+                                case "CapituloGasto":
+                                    return (<>Capitulo de gasto<br/><b>{renglon.Referencia.Clave}</b>{renglon.Referencia.Nombre}</>);
+                                case "ConceptoGeneral":
+                                    return (<>Concepto general<br/><b>{renglon.Referencia.Clave}</b>{renglon.Referencia.Nombre}</>);
+                                case "PartidaGenerica":
+                                    return (<>Partida genérica<br/><b>{renglon.Referencia.Clave}</b>{renglon.Referencia.Nombre}</>);
+                                case "ObjetoGasto":
+                                    return (<>Objeto de gasto<br/><b>{renglon.Referencia.Clave}</b>{renglon.Referencia.Nombre}</>);
+                                case "ProgramaPresupuestal":
+                                    return "Programa presupuestal";
                                 default:
                                     return "Otro";
                             }
