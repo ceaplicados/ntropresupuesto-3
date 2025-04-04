@@ -152,11 +152,16 @@ function DetalleCuaderno() {
                             let versionPresupuestoAnterior=versionesEstado[0].versiones.filter((versiones) => {
                                 return versiones.Anio == (anio.Anio-1)
                             });
-                            versionPresupuestoAnterior=versionPresupuestoAnterior[0];
-                            let datoAnterior=renglonData.data.filter((data) => {
-                                return data.version==versionPresupuestoAnterior.Id
-                            });
-                            datoAnterior=datoAnterior[0];
+                            let datoAnterior={
+                                monto: null
+                            };
+                            if(versionPresupuestoAnterior.length>0){
+                                versionPresupuestoAnterior=versionPresupuestoAnterior[0];
+                                datoAnterior=renglonData.data.filter((data) => {
+                                    return data.version==versionPresupuestoAnterior.Id
+                                });
+                                datoAnterior=datoAnterior[0];
+                            }
                             let dato=renglonData.data.filter((data) => {
                                 return data.version==versionPresupuesto.Id
                             });
@@ -189,6 +194,13 @@ function DetalleCuaderno() {
         }
     },[selectedYear,datosCuaderno]);
 
+    const getColor = (index) => {
+        if (index < _colores.length) {
+            return _colores[index];
+        } else {
+            return _colores[index % _colores.length];
+        }
+    }
     // Actualizar gráfica
     useEffect(() => {
         if(datosTabla.length>0){
@@ -196,7 +208,6 @@ function DetalleCuaderno() {
                 return anio.Anio
             })
             let datasets=datosTabla.map((renglon,index) => {
-                console.log(renglon)
                 let data=[];
                 if(renglon.Mostrar=="YoY"){
                     data=renglon.datos.map((dato) => {
@@ -210,8 +221,8 @@ function DetalleCuaderno() {
                 let dataset={
                     label: renglon.label,
                     data: data,
-                    borderColor: _colores[index],
-                    backgroundColor: _colores[index],
+                    borderColor: getColor(index),
+                    backgroundColor: getColor(index),
                     fill: false,
                     tension: 0.3,
                   };

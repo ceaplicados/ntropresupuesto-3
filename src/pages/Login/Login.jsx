@@ -71,7 +71,6 @@ function Login() {
                                 }}
                                 onError={() => {
                                     dispatch(addToast({texto: 'Error al iniciar sesión en Google'}))
-                                    console.log('Login Failed');
                                 }}
                                 />                    
                         </>)}

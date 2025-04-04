@@ -52,7 +52,6 @@ const TablaURs = () => {
                     return total+partida.Monto
                 }, 0);
                 setTotalFiltro(sumaFiltro);
-                console.log(sumaFiltro);
             }
 
             let campoReorder=orderBy.Campo;

@@ -42,7 +42,6 @@ const TreemapURs = () => {
             });
             
             setDataTreemap(data);
-            console.log(data);
         }
     },[dataPresupuesto,actualEstado,unidadesPresupuestales]);
 
