@@ -1,3 +1,19 @@
 #tablaHistorico .font-monospace{
     font-size: .8rem;
 }
+.opcionesGraph button.btn {
+    line-height: 1em;
+    padding: .5rem;
+    margin-left: .25rem;
+    margin-right: .25rem;
+}
+
+.opcionesGraph .verticalDivider {
+    margin-left: .5rem;
+    margin-right: .5rem;
+    display: inline-block;
+    width: 1px;
+    height: 2rem;
+    border: 1px solid #BDCC3F;
+    vertical-align: middle;
+}
