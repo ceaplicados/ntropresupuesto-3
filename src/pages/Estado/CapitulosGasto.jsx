@@ -7,7 +7,10 @@ const CapitulosGasto = ({estadoActual, presupuestoActual}) => {
     const [capitulosGasto,setCapitulosGasto] = useState([]);
     const api_url=useSelector(state => state.parameters.api_url);
     const _colores = useSelector(state => state.parameters.colores);
+    const selectedYear = useSelector(state => state.parameters.selectedYear)
+    const inpc = useSelector(state => state.parameters.inpc)
     const [rowsTabla,setRowsTabla] = useState([]);
+    const [totalPresupuesto,setTotalPresupuesto] = useState(null);
     const [orderBy,setOrderBy] = useState({Campo: 'Clave', Orden: 'ASC'});
     const [configChart, setConfigChart] = useState({
         labels: [],
@@ -52,7 +55,6 @@ const CapitulosGasto = ({estadoActual, presupuestoActual}) => {
             fetch(url)
             .then(response => response.json())
             .then(data => {  
-                // deflactar valores
                 let presupuesto=data.presupuesto.map((capitulo, index) => {
                     return {
                         ...capitulo,
@@ -60,26 +62,6 @@ const CapitulosGasto = ({estadoActual, presupuestoActual}) => {
                     }
                 });
                 setCapitulosGasto(presupuesto);
-                let labels=presupuesto.map((capitulo) => {
-                    return capitulo.Clave+' - '+capitulo.Nombre;
-                });
-                let dataChart=presupuesto.map((capitulo) => {
-                    return capitulo.Monto;
-                });
-                let backgroundColor=presupuesto.map((capitulo,index) => {
-                    return getColor(index);
-                });
-                setConfigChart({
-                    labels: labels,
-                    datasets: [{
-                        label: 'Capítulos de gasto',
-                        data: dataChart,
-                        backgroundColor: backgroundColor,
-                    }],
-                });
-                if(chartRef.current){
-                    chartRef.current.update();
-                }
             })
             .catch(error => {
                 console.error(error);
@@ -110,11 +92,16 @@ const CapitulosGasto = ({estadoActual, presupuestoActual}) => {
     }
 
     useEffect( () => {
-        let valoresTabla=[...capitulosGasto];
-        let totalPresupuesto=valoresTabla.reduce( (total,capitulo) => {
+        let valoresTabla=capitulosGasto.map((capitulo) => {
+            return {
+                ...capitulo,
+                Monto: capitulo.Monto*inpc[selectedYear]/inpc[presupuestoActual.Anio],
+            }
+        });
+        let total=valoresTabla.reduce( (total,capitulo) => {
             return total+capitulo.Monto
         }, 0);
-
+        setTotalPresupuesto(total);
         let tableBody=null;
         let campoReorder=orderBy.Campo;
         if(campoReorder==='Porcentaje'){
@@ -129,20 +116,40 @@ const CapitulosGasto = ({estadoActual, presupuestoActual}) => {
             return (<tr key={capitulo.Clave}>
                 <td><span className='leyenda' style={{backgroundColor: capitulo.color}}></span>{capitulo.Clave} - {capitulo.Nombre}</td>
                 <td className='text-end font-monospace'>{capitulo.Monto.toLocaleString("en-MX", {style:"decimal",maximumFractionDigits:2, minimumFractionDigits: 2})}</td>
-                <td className='text-end font-monospace'>{(capitulo.Monto/totalPresupuesto).toLocaleString("en-MX", {style:"percent", minimumFractionDigits: 1})}</td>
+                <td className='text-end font-monospace'>{(capitulo.Monto/total).toLocaleString("en-MX", {style:"percent", minimumFractionDigits: 1})}</td>
             </tr>)
         });
         setRowsTabla(tableBody);
-    },[capitulosGasto,orderBy]);
+
+        let labels=valoresTabla.map((capitulo) => {
+            return capitulo.Clave+' - '+capitulo.Nombre;
+        });
+        let dataChart=valoresTabla.map((capitulo) => {
+            return capitulo.Monto;
+        });
+        let backgroundColor=valoresTabla.map((capitulo,index) => {
+            return getColor(index);
+        });
+        setConfigChart({
+            labels: labels,
+            datasets: [{
+                label: 'Capítulos de gasto',
+                data: dataChart,
+                backgroundColor: backgroundColor,
+            }],
+        });
+        if(chartRef.current){
+            chartRef.current.update();
+        }
+    },[capitulosGasto,orderBy,selectedYear]);
 
     return (
         <>
-        <div className='row mb-3'>
+        <div className='row mb-4'>
             <div className='col-12 mb-3'>
                 <h3>Capítulos de gasto <small>¿En qué se gasta?</small></h3>
             </div>
             <div className='col-xs-12 col-md-6'>
-                <div className='card'>
                     <Chart
                         ref={chartRef}
                         type='pie' 
@@ -151,7 +158,6 @@ const CapitulosGasto = ({estadoActual, presupuestoActual}) => {
                         width='100%'
                         height='50vw'
                     />
-                </div>
             </div>
             <div className='col-xs-12 col-md-6'>
                 <table className='table table-striped table-bordered table-responsive' id='tablaCapitulosGasto'>
@@ -162,7 +168,7 @@ const CapitulosGasto = ({estadoActual, presupuestoActual}) => {
                                 { orderBy.Campo==='Clave' ? (<span className="material-symbols-outlined">arrow_circle_{ orderBy.Orden==='ASC' ? 'down' : 'up' }</span>) : null }
                             </th>
                             <th onClick={changeOrder} data-order="Monto">
-                                Presupuesto { /*presupuestoActual ? presupuestoActual.Anio : '' */ }
+                                Presupuesto { presupuestoActual ? presupuestoActual.Anio : ''  }
                                 { orderBy.Campo==='Monto' ? (<span className="material-symbols-outlined">arrow_circle_{ orderBy.Orden==='ASC' ? 'down' : 'up' }</span>) : null }
                             </th>
                             <th onClick={changeOrder} data-order="Porcentaje">
@@ -174,6 +180,13 @@ const CapitulosGasto = ({estadoActual, presupuestoActual}) => {
                     <tbody>
                         {rowsTabla}
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <td className='text-end'>Total:</td>
+                            <td className='font-monospace text-end'>{totalPresupuesto ? totalPresupuesto.toLocaleString("en-MX", {style:"decimal",maximumFractionDigits:2, minimumFractionDigits: 2}) : null}</td>
+                            <td className='font-monospace text-end'>100%</td>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
         </div>

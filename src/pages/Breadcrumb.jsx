@@ -19,7 +19,7 @@ function Breadcrumb({breadcrumb, ocultarDeflactor}) {
 
     return (
         <>
-        <section className='container d-flex justify-content-between' id='breadcrumb'>
+        <section className='container d-flex justify-content-between sticky-top' id='breadcrumb'>
         <nav aria-label="breadcrumb">
         <ol key={'breadcrumb'} className="breadcrumb">
             <li key={'Home'} className="breadcrumb-item">
@@ -41,7 +41,7 @@ function Breadcrumb({breadcrumb, ocultarDeflactor}) {
             }
         </ol>
         </nav>
-        <div className='row row-cols-lg-auto align-items-top'>
+        <div className='row row-cols-lg-auto align-items-center'>
             { ocultarDeflactor!== false ? 
             (
             <>
