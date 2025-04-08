@@ -6,6 +6,7 @@ import Header from '../Header';
 import Breadcrumb from '../Breadcrumb'
 import OffcanvasMenu from '../OffcanvasMenu';
 import TreemapURs from './TreemapURs';
+import Historico from './Historico';
 import CapitulosGasto from './CapitulosGasto';
 import TablaURs from './TablaURs';
 import './Estado.css'
@@ -105,6 +106,7 @@ function Estado({idEstado}) {
         <h1>{estadoActual.Nombre} <small>Presupuesto estatal</small></h1>
         <p className='subtitle'>{ dataPresupuesto.versionPresupuesto ? dataPresupuesto.versionPresupuesto.Tipo+' '+dataPresupuesto.versionPresupuesto.Anio : '' } a valores del {selectedYear}</p>
         <TreemapURs />
+        <Historico estadoActual={estadoActual}/>
         <CapitulosGasto estadoActual={estadoActual} presupuestoActual={presupuestoActual}/>
         <TablaURs />
       </section>
