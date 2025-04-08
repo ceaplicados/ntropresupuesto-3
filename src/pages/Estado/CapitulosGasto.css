@@ -1,0 +1,7 @@
+#tablaCapitulosGasto span.leyenda {
+    width: 2rem;
+    height: 1.25rem;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: .5rem;
+}

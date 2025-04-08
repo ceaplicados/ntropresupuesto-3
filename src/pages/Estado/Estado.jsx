@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { setPresupuestoUR, setUnidadesPresupuestales, setActualEstado } from '../../estadoSlice'
 
@@ -6,6 +6,7 @@ import Header from '../Header';
 import Breadcrumb from '../Breadcrumb'
 import OffcanvasMenu from '../OffcanvasMenu';
 import TreemapURs from './TreemapURs';
+import CapitulosGasto from './CapitulosGasto';
 import TablaURs from './TablaURs';
 import './Estado.css'
 
@@ -18,7 +19,7 @@ function Estado({idEstado}) {
   const dataPresupuesto = useSelector(state => state.estado.presupuestoUR)
   const unidadesPresupuestales = useSelector(state => state.estado.unidadesPresupuestales)
   const [estadoActual,setEstadoActual]=useState({});
-  const [presupuestoActual,setPresupuestoActual]=useState(null);
+  const [presupuestoActual,setPresupuestoActual]=useState({});
   const [dataPresupuestoURs,setDataPresupuestoURs]=useState({});
   const [breadcrumb,setBreadcrumb]=useState([]);
   
@@ -39,9 +40,9 @@ function Estado({idEstado}) {
     if(api_url && estadoActual.Codigo){
         let url=api_url+'/'+estadoActual.Codigo+'/URs/Presupuesto';
         let fetchData=false;
-        if(dataPresupuestoURs.versionPresupuesto && presupuestoActual){
-          if(dataPresupuestoURs.versionPresupuesto.Id!==presupuestoActual){
-            url+='?v='+presupuestoActual;
+        if(dataPresupuestoURs.versionPresupuesto && presupuestoActual.Id){
+          if(dataPresupuestoURs.versionPresupuesto.Id!==presupuestoActual.Id){
+            url+='?v='+presupuestoActual.Id;
             fetchData=true;
           }
         }else{
@@ -52,7 +53,7 @@ function Estado({idEstado}) {
           .then(response => response.json())
           .then(data => {  
             setDataPresupuestoURs(data);
-            setPresupuestoActual(data.versionPresupuesto.Id);
+            setPresupuestoActual(data.versionPresupuesto);
           })
           .catch(error => {
               console.error(error);
@@ -104,6 +105,7 @@ function Estado({idEstado}) {
         <h1>{estadoActual.Nombre} <small>Presupuesto estatal</small></h1>
         <p className='subtitle'>{ dataPresupuesto.versionPresupuesto ? dataPresupuesto.versionPresupuesto.Tipo+' '+dataPresupuesto.versionPresupuesto.Anio : '' } a valores del {selectedYear}</p>
         <TreemapURs />
+        <CapitulosGasto estadoActual={estadoActual} presupuestoActual={presupuestoActual}/>
         <TablaURs />
       </section>
     </>
