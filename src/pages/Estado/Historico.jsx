@@ -144,7 +144,7 @@ const Historico = ({estadoActual}) => {
                     tension: 0.3
                 }]
             });
-            if(chartRef.current){
+            if(chartRef.current && showGraphPresupuesto === 'historico'){
                 chartRef.current.update();
             }   
             let labelsDiferencias = [...labels]
@@ -156,11 +156,11 @@ const Historico = ({estadoActual}) => {
                     borderColor: dataChartBorderColor,
                     backgroundColor: dataChartBackgroundColor}],
             });
-            if(chartRefDiferencias.current){
+            if(chartRefDiferencias.current && showGraphPresupuesto === 'diferencia'){
                 chartRefDiferencias.current.update();
             }
         }
-    },[historico,selectedYear]);
+    },[historico,selectedYear,showGraphPresupuesto]);
     return(<>
     <div className='row mb-4'>
         <div className='col-12 mb-2'>

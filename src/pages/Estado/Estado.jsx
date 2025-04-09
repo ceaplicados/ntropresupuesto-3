@@ -9,6 +9,7 @@ import TreemapURs from './TreemapURs';
 import Historico from './Historico';
 import CapitulosGasto from './CapitulosGasto';
 import TablaURs from './TablaURs';
+import ProgramasPresupuestales from './ProgramasPresupuestales';
 import './Estado.css'
 
 function Estado({idEstado}) {
@@ -109,6 +110,7 @@ function Estado({idEstado}) {
         <Historico estadoActual={estadoActual}/>
         <CapitulosGasto estadoActual={estadoActual} presupuestoActual={presupuestoActual}/>
         <TablaURs />
+        <ProgramasPresupuestales estadoActual={estadoActual} presupuestoActual={presupuestoActual}/>
       </section>
     </>
   )

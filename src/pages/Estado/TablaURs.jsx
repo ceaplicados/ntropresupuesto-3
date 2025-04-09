@@ -92,7 +92,7 @@ const TablaURs = () => {
                 </div>
             </div>
         </div>
-        <table className='table table-striped table-bordered table-responsive'>
+        <table className='table table-striped table-bordered table-responsive mb-4'>
           <thead>
             <tr>
                 <th onClick={changeOrder} data-order="Clave">
