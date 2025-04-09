@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams, Link } from 'react-router-dom'
 import { selectNewYear, setSearchParams } from '../parametersSlice'
 import './Breadcrumb.css'
 
@@ -23,14 +23,17 @@ function Breadcrumb({breadcrumb, ocultarDeflactor}) {
         <nav aria-label="breadcrumb">
         <ol key={'breadcrumb'} className="breadcrumb">
             <li key={'Home'} className="breadcrumb-item">
-            <a href={"/"+ (searchParams.i ? '?i='+searchParams.i : '')}><img src='/img/logo.svg'/></a>
+            <Link to={{
+                pathname:"/", 
+                search:(searchParams.i ? '?i='+searchParams.i : '')
+            }}><img src='/img/logo.svg'/></Link>
             </li>
             {
                 breadcrumb.map((page) => {
                     if(page.url){
                         return (<>
                             <li key={page.url} className="breadcrumb-item" aria-current="page">
-                                <a href={page.url}>{page.texto}</a>
+                                <Link to={page.url}>{page.texto}</Link>
                             </li></>)
                     }else{
                         return (<li key='actual' className="breadcrumb-item active" aria-current="page">

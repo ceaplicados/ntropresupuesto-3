@@ -1,5 +1,6 @@
 import { useEffect,useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import { Link } from 'react-router-dom'
 import General from './General'
 import {hideToast, logoutUser} from '../parametersSlice'
 import Toast from 'react-bootstrap/Toast';
@@ -63,9 +64,9 @@ function Header() {
                         <span className='nombre-usuario'>¡Hola {user.sobrenombre}!</span>
                       </a>
                       <ul className="dropdown-menu dropdown-menu-dark" aria-labelledby="menuUsuarioDropdown">
-                        <li key='menuCuadernos'><a className="dropdown-item" href='/cuadernos'><span className="material-symbols-outlined">book_5</span> Mis cuadernos</a></li>
-                        <li key='menuProfile'><a className="dropdown-item" href='/profile'><span className="material-symbols-outlined">account_circle</span> Mi perfil</a></li>
-                        <li key='menuLogout'><a className="dropdown-item" onClick={ cerrarSesion }><span className="material-symbols-outlined">logout</span>Cerrar sesión</a></li>
+                        <li key='menuCuadernos'><Link className="dropdown-item" to='/cuadernos'><span className="material-symbols-outlined">book_5</span> Mis cuadernos</Link></li>
+                        <li key='menuProfile'><Link className="dropdown-item" to='/profile'><span className="material-symbols-outlined">account_circle</span> Mi perfil</Link></li>
+                        <li key='menuLogout'><Link className="dropdown-item" onClick={ cerrarSesion }><span className="material-symbols-outlined">logout</span>Cerrar sesión</Link></li>
                       </ul>
                     </li>
                   </ul>
@@ -75,9 +76,9 @@ function Header() {
             </>)
             :
             (<>
-            <a href='/login'>
+            <Link to='/login'>
               <button type="button" className="btn btn-outline-light" data-bs-dismiss="offcanvas">Iniciar sesión</button>
-            </a>
+            </Link>
             </>)
             }
           </div>

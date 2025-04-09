@@ -40,6 +40,9 @@
     padding-top: 1.5rem;
     margin-left: .5rem;
   }
+  .offcanvas ul.offcanvas-menu li a.active{
+    color: #BDCC3F;
+  }
   .offcanvas ul.offcanvas-menu li:hover a{
     color: #BDCC3F;
   }

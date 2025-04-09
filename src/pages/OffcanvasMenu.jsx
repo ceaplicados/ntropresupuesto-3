@@ -1,4 +1,5 @@
 import { useSelector } from 'react-redux'
+import { NavLink, Link } from "react-router";
 import './OffcanvasMenu.css'
 
 function OffcanvasMenu() {
@@ -8,9 +9,12 @@ function OffcanvasMenu() {
         <>
         <div id="lateral-menu" className='offcanvas offcanvas-start' data-bs-scroll="true" tabIndex="-1">
             <div className="offcanvas-header">
-            <a className='offcanvas-title text-start' href={"/"+ (searchParams.i ? '?i='+searchParams.i : '')}>
-                <img className='offcanvas-logo' src="/img/logo_blanco.svg" alt="#NuestroPresupuesto"/>
-            </a>
+            <Link className='offcanvas-title text-start' to={{
+                pathname: "/",
+                search: searchParams.i ? '?i='+searchParams.i : ''
+            }} end>
+                <img className='offcanvas-logo' src="/img/logo_blanco.svg" alt="#NuestroPresupuesto"  data-bs-dismiss="offcanvas"/>
+            </Link>
             <div className='align-self-start'>
                 <button type="button" className="btn text-light" data-bs-dismiss="offcanvas">
                 <span className="material-symbols-outlined">close</span>
@@ -22,32 +26,41 @@ function OffcanvasMenu() {
             <nav>
                 <h3>Presupuestos</h3>
                 <ul className="offcanvas-menu">
-                <li>
-                    <a href={"/"+ (searchParams.i ? '?i='+searchParams.i : '')}>
+                <li data-bs-dismiss="offcanvas">
+                    <NavLink to={{
+                        pathname: "/",
+                        search: (searchParams.i ? '?i='+searchParams.i : '')
+                    }} end>
                     <span className="material-symbols-outlined">dashboard</span>
                     Gasto federalizado
-                    </a>
+                    </NavLink>
                 </li>
-                <li>
-                    <a href={"/JAL"+ (searchParams.i ? '?i='+searchParams.i : '')}>
+                <li data-bs-dismiss="offcanvas">
+                    <NavLink to={{
+                        pathname:"/JAL", 
+                        search: (searchParams.i ? '?i='+searchParams.i : '')
+                    }}  end>
                     <span className="material-symbols-outlined">dashboard</span>
                     Jalisco
-                    </a>
+                    </NavLink>
                 </li>
-                <li>
-                    <a href={"/CDMX"+ (searchParams.i ? '?i='+searchParams.i : '')}>
+                <li data-bs-dismiss="offcanvas">
+                    <NavLink to={{
+                        pathname: "/CDMX",
+                        search: (searchParams.i ? '?i='+searchParams.i : '')
+                    }} end>
                     <span className="material-symbols-outlined">dashboard</span>
                     Ciudad de México
-                    </a>
+                    </NavLink>
                 </li>
                 </ul>
                 <h3>Comunidad</h3>
                 <ul className="offcanvas-menu">
-                <li>
-                    <a href='/cuadernos'>
+                <li data-bs-dismiss="offcanvas">
+                    <NavLink to='/cuadernos' end>
                     <span className="material-symbols-outlined">book_5</span>
                     Cuadernos
-                    </a>
+                    </NavLink>
                 </li>
                 </ul>
             </nav>

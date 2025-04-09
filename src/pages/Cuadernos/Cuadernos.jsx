@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useCookies } from 'react-cookie'
+import { Link } from 'react-router-dom'
 import { logoutUser } from '../../parametersSlice'
 
 import Header from '../Header';
@@ -133,7 +134,7 @@ function Cuadernos() {
                           }
                         </ul>
                       </div>
-                      <a href={'/cuaderno/'+cuaderno.Id}><button className='btn btn-primary'>Ir</button></a>
+                      <Link to={'/cuaderno/'+cuaderno.Id}><button className='btn btn-primary'>Ir</button></Link>
                     </div>
                   </div>
                 </div>
@@ -167,7 +168,7 @@ function Cuadernos() {
                             }
                           </ul>
                         </div>
-                        <a href={'/cuaderno/'+cuaderno.Id}><button className='btn btn-primary'>Ir</button></a>
+                        <Link to={'/cuaderno/'+cuaderno.Id}><button className='btn btn-primary'>Ir</button></Link>
                       </div>
                     </div>
                   </div>
