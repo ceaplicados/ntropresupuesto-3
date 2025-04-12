@@ -68,6 +68,7 @@ function Estado({idEstado}) {
           const data = response?.data;
           dispatch(setUnidadesPresupuestales(data));
         }
+        getPresupuestoURs(url);
     }   
   }, [estadoActual]);
 
