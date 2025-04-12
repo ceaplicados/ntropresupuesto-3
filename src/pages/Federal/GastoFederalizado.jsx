@@ -1,12 +1,11 @@
 import { useState, useEffect, useRef } from 'react'
-import { useSelector } from 'react-redux'
 import ChartJS from 'chart.js/auto';
 import { Chart } from 'react-chartjs-2';
+import axios from '../../api/axios'
 import './GastoFederalizado.css'
 
 
 function GastoFederalizado({selectedYear,inpc}) {
-    const api_url=useSelector(state => state.parameters.api_url)
     const [showTablePresupuesto, setShowTablePresupuesto] = useState(false);
     const [dataPresupuesto, setDataPresupuesto] = useState({});
     const [showGraphPresupuesto, setShowGraphPresupuesto] = useState('historico');
@@ -142,17 +141,13 @@ function GastoFederalizado({selectedYear,inpc}) {
 
     // Obtener los datos del API
     useEffect(() => {
-        if(api_url){
-            fetch(api_url+'/Federal/GastoFederalizado')
-            .then(response => response.json())
-            .then(data => {
-                setDataPresupuesto(data);
-            })
-            .catch(error => {
-                console.error(error);
-            });
+        const obtenerGastoFederalizado = async () => {
+            const response = await axios('/Federal/GastoFederalizado');
+            const data = response?.data;
+            setDataPresupuesto(data);
         }
-    }, [api_url]);
+        obtenerGastoFederalizado();
+    }, []);
     
     // actualizar el gráfico cuando cambien los datos, el año seleccionado o el INPC
     useEffect(() => {

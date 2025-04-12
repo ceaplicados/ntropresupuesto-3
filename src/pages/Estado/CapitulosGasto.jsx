@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { Chart } from 'react-chartjs-2';
+import axios from  '../../api/axios'
 import './CapitulosGasto.css';
 
 const CapitulosGasto = ({estadoActual, presupuestoActual}) => {
     const [capitulosGasto,setCapitulosGasto] = useState([]);
-    const api_url=useSelector(state => state.parameters.api_url);
     const _colores = useSelector(state => state.parameters.colores);
     const selectedYear = useSelector(state => state.parameters.selectedYear)
     const inpc = useSelector(state => state.parameters.inpc)
@@ -51,10 +51,10 @@ const CapitulosGasto = ({estadoActual, presupuestoActual}) => {
 
     useEffect(() => {
         if(presupuestoActual.Id && estadoActual.Codigo){
-            let url=api_url+'/'+estadoActual.Codigo+'/CapituloGasto?v='+presupuestoActual.Id;
-            fetch(url)
-            .then(response => response.json())
-            .then(data => {  
+            let url='/'+estadoActual.Codigo+'/CapituloGasto?v='+presupuestoActual.Id;
+            const getPresupuestoCapituloGasto = async (url) => {
+                const response = await axios(url);
+                const data = response?.data;
                 let presupuesto=data.presupuesto.map((capitulo, index) => {
                     return {
                         ...capitulo,
@@ -62,10 +62,8 @@ const CapitulosGasto = ({estadoActual, presupuestoActual}) => {
                     }
                 });
                 setCapitulosGasto(presupuesto);
-            })
-            .catch(error => {
-                console.error(error);
-            });
+            }
+            getPresupuestoCapituloGasto(url);
         }
     },[estadoActual,presupuestoActual]);
     

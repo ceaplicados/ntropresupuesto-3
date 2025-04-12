@@ -1,9 +1,9 @@
-import { useState, useEffect, use } from 'react'
+import { useState, useEffect } from 'react'
+import axios from '../../api/axios'
 import { useSelector } from 'react-redux'
 
 const ProgramasPresupuestales = ({estadoActual,presupuestoActual}) => {
     const dataPresupuesto = useSelector(state => state.estado.presupuestoUR);
-    const api_url=useSelector(state => state.parameters.api_url);
     const selectedYear = useSelector(state => state.parameters.selectedYear)
     const inpc = useSelector(state => state.parameters.inpc)
     const [busqueda,setBusqueda] = useState('');
@@ -35,22 +35,19 @@ const ProgramasPresupuestales = ({estadoActual,presupuestoActual}) => {
     }
     // Obtener los datos de la API
     useEffect(() => {
-        if(api_url && estadoActual.Id && presupuestoActual.Id){
-            let url=api_url+'/'+estadoActual.Codigo+'/Programas?v='+presupuestoActual.Id;
+        if(estadoActual.Id && presupuestoActual.Id){
+            let url='/'+estadoActual.Codigo+'/Programas?v='+presupuestoActual.Id;
             if(busqueda.trim().length>=4){
                 url+='&b='+busqueda;
             }
-            fetch(url)
-            .then(response => response.json())
-            .then(data => {
+            const getProgramas = async (url) => {
+                const response = await axios(url);
+                const data = response?.data;
                 setProgramas(data.programas);
-                //setOrderBy({Campo: 'Monto', Orden: 'DESC'});
-            })
-            .catch(error => {
-                console.error(error);
-            });
+            }
+            getProgramas(url);
         }
-    }, [busqueda,api_url,estadoActual,presupuestoActual]);
+    }, [busqueda,estadoActual,presupuestoActual]);
 
     // Deflactar los datos y ordenarlos
     useEffect(() => {

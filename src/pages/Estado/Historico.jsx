@@ -1,10 +1,10 @@
-import { useState, useEffect, useRef, use } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { Chart } from 'react-chartjs-2';
+import axios from '../../api/axios';
 import './Historico.css';
 
 const Historico = ({estadoActual}) => {
-    const api_url=useSelector(state => state.parameters.api_url);
     const selectedYear = useSelector(state => state.parameters.selectedYear)
     const inpc = useSelector(state => state.parameters.inpc)
     const [historico,setHistorico] = useState([]);
@@ -84,19 +84,17 @@ const Historico = ({estadoActual}) => {
     };
 
     useEffect(() => {
-        if(api_url && estadoActual.Codigo){
-            let url=api_url+'/'+estadoActual.Codigo+'/Historico';
-            fetch(url)
-            .then(response => response.json())
-            .then(data => {  
+        if(estadoActual.Codigo){
+            let url='/'+estadoActual.Codigo+'/Historico';
+            const getHistorico = async (url) => {
+                const response = await axios(url);
+                const data = response?.data;
                 setHistorico(data);
-            })
-            .catch(error => {
-                console.error(error);
-            });
+            }
+            getHistorico(url);
         }
 
-    },[api_url,estadoActual]);
+    },[estadoActual]);
 
     useEffect(() => {
         if(historico.length>0){

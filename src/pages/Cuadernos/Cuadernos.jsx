@@ -1,60 +1,40 @@
 import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { useCookies } from 'react-cookie'
+import axios from '../../api/axios';
+import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import { Link } from 'react-router-dom'
 import { logoutUser } from '../../parametersSlice'
 
-import Header from '../Header';
-import Breadcrumb from '../Breadcrumb'
-import OffcanvasMenu from '../OffcanvasMenu';
 import  './Cuadernos.css';
 
 function Cuadernos() {
   const dispatch = useDispatch();
-  const api_url=useSelector(state => state.parameters.api_url);
+  const axiosPrivate = useAxiosPrivate();
   const user = useSelector(state => state.parameters.user);
   const [cuadernosPublicos, setCuadernosPublicos] = useState([]);
   const [cuadernosPublicosFiltrados, setCuadernosPublicosFiltrados] = useState([]);
   const [filtroCuadernos, setFiltroCuadernos] = useState('');
-  const [cookies, setCookie, removeCookie] = useCookies(['jwt'])
   const [misCuadernos, setMisCuadernos] = useState([]);
 
   useEffect(() => {
-    if(api_url){
       // obtener la lista de cuadernos públicos
-      fetch(api_url+'/Cuadernos')
-      .then(response => response.json())
-      .then(data => {
+      const getCuadernosPublicos = async () => {
+        const response = await axios('/Cuadernos');
+        const data =  response?.data;
         setCuadernosPublicos(data);
-      })
-      .catch(error => {
-          console.error(error);
-      });
+      }
+      getCuadernosPublicos();      
 
       // obtener la lista de cuadernos del usuario
-      if(user.UUID && user.accessToken){
-        let token=user.accessToken;
-        fetch(api_url+'/Cuadernos/User',{headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-
-        }})
-        .then(response => {
-          let data=[];
-          if(response.ok){
-            data=response.json();
-          }else{
-            // La sesión caducó
-            setCookie('accessToken',null);
-            removeCookie('accessToken');
-            dispatch(logoutUser());
-          }
-          return data;
-        })
-        .then( data => setMisCuadernos(data))
+      if(user.UUID){
+        const getCuadernosUsuario = async () => {
+          const response = await axiosPrivate.get('/Cuadernos/User');
+          const data =  response?.data;
+          setMisCuadernos(data)
+        }
+        getCuadernosUsuario();
       }
-    }
-  },[api_url,user]);
+  },[user]);
 
   // filtrar cuadernos públicos
   useEffect(() => {
@@ -81,10 +61,6 @@ function Cuadernos() {
 
   return (
     <>
-    <Header/>
-    <Breadcrumb breadcrumb={breadcrumb} ocultarDeflactor={false}/>
-    <OffcanvasMenu />
-
       <section className='container' id='workspace'>
         <h1>Cuadernos <small>de trabajo</small></h1>
         <p className='subtitle'>Espacios de análisis creados por usuarios de #NuestroPresupuesto</p>

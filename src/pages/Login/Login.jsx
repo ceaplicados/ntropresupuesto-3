@@ -1,26 +1,48 @@
-import { useSelector, useDispatch } from 'react-redux'
-import { addToast, updateUser } from '../../parametersSlice'
-import Header from '../Header';
-import Breadcrumb from '../Breadcrumb'
-import OffcanvasMenu from '../OffcanvasMenu';
+import { useSelector, useDispatch } from 'react-redux';
+import { addToast } from '../../parametersSlice';
+import { Link, useNavigate, useLocation} from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 import './Login.css'
-import { useCookies } from 'react-cookie'
+import useAuth from '../../hooks/useAuth';
+import axios from '../../api/axios';
 
 function Login() {
-    const api_url = useSelector(state => state.parameters.api_url);
     const user = useSelector(state => state.parameters.user);
+    
+    const { setAuth } = useAuth();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from?.pathname || "/profile";
+
     const dispatch = useDispatch();
     const breadcrumb=[{
         texto: "Iniciar sesión"
     }];
-    const [cookies, setCookie] = useCookies(['jwt'])
+
+    const handleCredentialResponse = async (credentialResponse) => {
+        try{
+            const response = await axios.post('/auth/Google',
+                JSON.stringify({ credential: credentialResponse}),
+                { withCredentials: true });
+
+            const accessToken = response?.data?.access_token;
+            
+            setAuth({ accessToken });
+            navigate(from, { replace: true })
+        } 
+        catch (error) {
+            if(!error?.response){
+                dispatch(addToast({texto: 'Error de red'}))
+            }else if(error.response?.status===400){
+                dispatch(addToast({texto: 'Error de credenciales'}))
+            }else{
+                dispatch(addToast({texto: 'Error al iniciar sesión'}))
+            }
+        }  
+    }
     
     return (
         <>
-        <Header/>
-        <Breadcrumb breadcrumb={breadcrumb} ocultarDeflactor={false}/>
-        <OffcanvasMenu />
             <script src="https://accounts.google.com/gsi/client" async></script>
             <section className='container' id='workspace'>
                 <div className='row'>
@@ -28,7 +50,7 @@ function Login() {
                         { user.UUID ? 
                         (<>
                             <p>¡Hola {user.sobrenombre}!</p>
-                            <p><a className='btn btn-primary' href='/Cuadernos'>Ir a mis cuadernos</a></p>
+                            <p><Link className='btn btn-primary' to='/Cuadernos'>Ir a mis cuadernos</Link></p>
                             <p>Si quieres iniciar sesión con otra cuenta, primero cierra tu sesión actual dando clic sobre tu nombre en el menú superior.</p>
                         </>) 
                         : 
@@ -37,37 +59,7 @@ function Login() {
                             <p>Si ya cuentas con una cuenta registrada inicia sesión:</p>
                             <GoogleLogin
                                 onSuccess={credentialResponse => {
-                                    const data_post = {
-                                        credential: credentialResponse.credential
-                                        };
-                                    fetch(api_url+'/auth/Google', {
-                                        method: 'POST',
-                                        credentials: 'include',
-                                        headers: {
-                                            'Content-Type': 'application/json'
-                                        },
-                                        body: JSON.stringify(data_post)
-                                        })
-                                        .then(response => response.json())
-                                        .then(data => {
-                                            setCookie('accessToken',data.access_token);
-                                            if(user.accessToken!==data.access_token){
-                                                const user={
-                                                    UUID: null,
-                                                    sobrenombre: null,
-                                                    accessToken: data.access_token,
-                                                    expiresIn: data.expires_in,
-                                                    image: null,
-                                                    init: true
-                                                }
-                                                dispatch(updateUser(user)); 
-                                                window.location.href='/profile';
-                                            }
-                                        })
-                                        .catch(error => {
-                                            dispatch(addToast({texto: 'Error al iniciar sesión en la API'}))
-                                            console.error(error);
-                                        });
+                                    handleCredentialResponse(credentialResponse);
                                 }}
                                 onError={() => {
                                     dispatch(addToast({texto: 'Error al iniciar sesión en Google'}))

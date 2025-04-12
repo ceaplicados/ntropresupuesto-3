@@ -1,10 +1,8 @@
-import { useState, useEffect, use } from 'react'
+import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import axios from '../../api/axios'
 import { setPresupuestoUR, setUnidadesPresupuestales, setActualEstado } from '../../estadoSlice'
 
-import Header from '../Header';
-import Breadcrumb from '../Breadcrumb'
-import OffcanvasMenu from '../OffcanvasMenu';
 import TreemapURs from './TreemapURs';
 import Historico from './Historico';
 import CapitulosGasto from './CapitulosGasto';
@@ -14,7 +12,6 @@ import './Estado.css'
 
 function Estado({idEstado}) {
   const dispatch = useDispatch();
-  const api_url=useSelector(state => state.parameters.api_url);
   const selectedYear = useSelector(state => state.parameters.selectedYear)
   const inpc = useSelector(state => state.parameters.inpc)
   const estados = useSelector(state => state.parameters.estados)
@@ -39,8 +36,8 @@ function Estado({idEstado}) {
 
   // Obtener el presupuesto por URs del API
   useEffect(() => {
-    if(api_url && estadoActual.Codigo){
-        let url=api_url+'/'+estadoActual.Codigo+'/URs/Presupuesto';
+    if(estadoActual.Codigo){
+        let url='/'+estadoActual.Codigo+'/URs/Presupuesto';
         let fetchData=false;
         if(dataPresupuestoURs.versionPresupuesto && presupuestoActual.Id){
           if(dataPresupuestoURs.versionPresupuesto.Id!==presupuestoActual.Id){
@@ -51,33 +48,28 @@ function Estado({idEstado}) {
           fetchData=true;
         }
         if(fetchData){
-          fetch(url)
-          .then(response => response.json())
-          .then(data => {  
+          const getDataPresupuesto = async (url) => {
+            const response = await axios(url)
+            const data = response?.data
             setDataPresupuestoURs(data);
             setPresupuestoActual(data.versionPresupuesto);
-          })
-          .catch(error => {
-              console.error(error);
-          });
+          }
+          getDataPresupuesto(url);
         }
     }   
-  }, [api_url,estadoActual,presupuestoActual]);
+  }, [estadoActual,presupuestoActual]);
 
   // Obtener el presupuesto por URs del API
   useEffect(() => {
-    if(api_url && estadoActual.Codigo){
-        let url=api_url+'/'+estadoActual.Codigo+'/UPs';
-        fetch(url)
-        .then(response => response.json())
-        .then(data => {  
+    if(estadoActual.Codigo){
+        let url='/'+estadoActual.Codigo+'/UPs';
+        const getPresupuestoURs = async (url) => {
+          const response = await axios(url);
+          const data = response?.data;
           dispatch(setUnidadesPresupuestales(data));
-        })
-        .catch(error => {
-            console.error(error);
-        });
+        }
     }   
-  }, [api_url,estadoActual]);
+  }, [estadoActual]);
 
   // deflactar el presupuesto de las URs
   useEffect(() => {
@@ -100,9 +92,6 @@ function Estado({idEstado}) {
   
   return (
     <>
-    <Header/>
-    <Breadcrumb breadcrumb={breadcrumb}/>
-    <OffcanvasMenu />
       <section className='container' id='workspace'>
         <h1>{estadoActual.Nombre} <small>Presupuesto estatal</small></h1>
         <p className='subtitle'>{ dataPresupuesto.versionPresupuesto ? dataPresupuesto.versionPresupuesto.Tipo+' '+dataPresupuesto.versionPresupuesto.Anio : '' } a valores del {selectedYear}</p>

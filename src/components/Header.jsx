@@ -2,17 +2,17 @@ import { useEffect,useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 import General from './General'
-import {hideToast, logoutUser} from '../parametersSlice'
+import { hideToast } from '../parametersSlice'
+import useLogout from '../hooks/useLogout';
 import Toast from 'react-bootstrap/Toast';
 import ToastContainer from 'react-bootstrap/ToastContainer';
 import './Header.css'
-import { useCookies } from 'react-cookie'
 
 function Header() {
   const toasts = useSelector(state => state.parameters.toasts);
   const user = useSelector(state => state.parameters.user);
+  const logout = useLogout();
   const [toastList,setToastList]=useState([]);
-  const [cookies, setCookie, removeCookie] = useCookies(['jwt'])
   const dispatch = useDispatch();
 
   const toggleToastShow = (index) => {
@@ -34,12 +34,6 @@ function Header() {
     })
   )
   },[toasts])
-
-  const cerrarSesion = () => {
-    setCookie('accessToken',null);
-    removeCookie('accessToken');
-    dispatch(logoutUser())
-  }
 
   return (
     <>
@@ -66,7 +60,7 @@ function Header() {
                       <ul className="dropdown-menu dropdown-menu-dark" aria-labelledby="menuUsuarioDropdown">
                         <li key='menuCuadernos'><Link className="dropdown-item" to='/cuadernos'><span className="material-symbols-outlined">book_5</span> Mis cuadernos</Link></li>
                         <li key='menuProfile'><Link className="dropdown-item" to='/profile'><span className="material-symbols-outlined">account_circle</span> Mi perfil</Link></li>
-                        <li key='menuLogout'><Link className="dropdown-item" onClick={ cerrarSesion }><span className="material-symbols-outlined">logout</span>Cerrar sesión</Link></li>
+                        <li key='menuLogout'><Link className="dropdown-item" onClick={ logout }><span className="material-symbols-outlined">logout</span>Cerrar sesión</Link></li>
                       </ul>
                     </li>
                   </ul>

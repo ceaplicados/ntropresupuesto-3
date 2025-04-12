@@ -1,19 +1,18 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Chart } from 'react-chartjs-2';
+import axios from '../../api/axios';
+import useAxiosPrivate from '../../hooks/useAxiosPrivate'
 import { selectNewYear } from '../../parametersSlice'
 import './DetalleCuaderno.css'
-import Header from '../Header';
-import Breadcrumb from '../Breadcrumb'
-import OffcanvasMenu from '../OffcanvasMenu';
 
 function DetalleCuaderno() {
-    const location = useLocation();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const axiosPrivate = useAxiosPrivate();
     const selectedYear = useSelector(state => state.parameters.selectedYear);
-    const api_url=useSelector(state => state.parameters.api_url);
-    const user = useSelector(state => state.parameters.user);
     const inpc = useSelector(state => state.parameters.inpc)
     const estados = useSelector(state => state.parameters.estados)
     const _colores = useSelector(state => state.parameters.colores);
@@ -70,29 +69,29 @@ function DetalleCuaderno() {
 
     // obtener el detalle del cuaderno
     useEffect( () => {
-        if(api_url && user.init){
-            let headers={};
-            if(user.accessToken){
-                let token=user.accessToken;
-                headers={
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
+        const path=location.pathname.split('/');
+        const idCuaderno=path[2];
+
+        const getDetalleCuaderno = async (idCuaderno) => {
+            try{
+                const response = await axios('/Cuadernos/'+idCuaderno);
+                const data = response?.data;
+                setDatosCuaderno(data);
+            }
+            catch(err){
+                // cuaderno privado
+                try{
+                    const response = await axiosPrivate.get('/Cuadernos/'+idCuaderno);
+                    const data = response?.data;
+                    setDatosCuaderno(data);
+                }
+                catch(err){
+                    navigate('/cuadernos', { state: {from: location }, replace: true })
                 }
             }
-
-            let path=location.pathname.split('/');
-            let idCuaderno=path[2];
-
-            fetch(api_url+'/Cuadernos/'+idCuaderno,{headers: headers})
-            .then(response => response.json())
-            .then(data => {
-                setDatosCuaderno(data);
-            })
-            .catch(error => {
-                console.error(error);
-            });
         }
-    },[api_url,user]);
+        getDetalleCuaderno(idCuaderno);
+    },[]);
 
     // Actualizar el breadcrumb con los datos del cuaderno
     useEffect( () => {
@@ -341,10 +340,6 @@ function DetalleCuaderno() {
 
   return (
     <>
-    <Header/>
-    <Breadcrumb breadcrumb={breadcrumb}/>
-    <OffcanvasMenu />
-
       <section className='container' id='workspace'>
         <h1>{datosCuaderno.Nombre} <small>{datosCuaderno.Publico ? 'Cuaderno público' : 'Cuaderno privado'}</small></h1>
         <p className='subtitle'>{datosCuaderno.Descripcion}</p>

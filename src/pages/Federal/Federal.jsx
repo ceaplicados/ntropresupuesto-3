@@ -1,8 +1,5 @@
 import { useSelector } from 'react-redux'
 import './Federal.css'
-import Header from '../Header';
-import Breadcrumb from '../Breadcrumb'
-import OffcanvasMenu from '../OffcanvasMenu';
 import GastoFederalizado from './GastoFederalizado';
 import PresupuestoFederal from './PresupuestoFederal';
 
@@ -14,10 +11,6 @@ function Federal() {
   }];
   return (
     <>
-    <Header/>
-    <Breadcrumb breadcrumb={breadcrumb}/>
-    <OffcanvasMenu />
-
       <section className='container' id='workspace'>
         <h1>Dashboard <small>Gasto federalizado</small></h1>
         <p className='subtitle'>Miles de millones de pesos a valores del {selectedYear}</p>

@@ -1,20 +1,18 @@
 import { useState, useEffect, use } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { useCookies } from 'react-cookie'
-import { addToast, logoutUser} from '../parametersSlice'
-
-import Header from './Header';
-import Breadcrumb from './Breadcrumb'
-import OffcanvasMenu from './OffcanvasMenu';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import useAxiosPrivate from '../hooks/useAxiosPrivate';
+import { addToast, updateUser, logoutUser} from '../parametersSlice'
 
 import './Usuario.css';
 
 function Usuario() {
     const dispatch = useDispatch();
-    const api_url=useSelector(state => state.parameters.api_url);
+    const navigate = useNavigate();
+    const location = useLocation();
+    const axiosPrivate = useAxiosPrivate();
     const user = useSelector(state => state.parameters.user);
     const estados = useSelector(state => state.parameters.estados);
-    const [cookies, setCookie, removeCookie] = useCookies(['jwt']);
     const [updatingUser, setUpdatingUser]=useState(false);
 
     const [datosUsuario,setDatosUsuario]=useState({
@@ -27,83 +25,56 @@ function Usuario() {
     });
 
     useEffect(() => {
-        if(api_url && datosUsuario.Email==='' && user.accessToken){
-            // obtener los datos del usuario
-            let token=user.accessToken;
-            fetch(api_url+'/User',{headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-
-            }})
-            .then( response => {
-                let data={}
-                if(response.ok){
-                    data=response.json();
-                }else{
-                    setCookie('accessToken',null);
-                    removeCookie('accessToken');
-                    dispatch(logoutUser());
-                    window.location.href='/login';
-                }
-                return data;
-            })
-            .then(data => {
-                for (const [key, value] of Object.entries(data)) {
+        const fetchUserData = async () => {
+            try {
+                const response = await axiosPrivate.get('/User');
+                for (const [key, value] of Object.entries(response.data)) {
                     if(value===null){
-                        data[key]='';
+                        response.data[key]='';
                     }
                 }
-                setDatosUsuario(data);
-            })
-            .catch(error => {
-                console.error(error);
-            });
-        }else if(user.init && api_url){
-            setCookie('accessToken',null);
-            removeCookie('accessToken');
-            dispatch(logoutUser());
-            window.location.href='/login';
-        }
-    },[api_url,user]);
+                setDatosUsuario(response.data);
+                dispatch(updateUser({
+                    ...user,
+                    UUID: response.data.UUID,
+                    sobrenombre: response.data.Sobrenombre,
+                    image: response.data.Image
+                }))
+            } catch (err) {
+                console.log(err);
+                dispatch(logoutUser());
+                navigate('/login', { state: {from: location }, replace: true })
+            }
+        };
 
-    const updateUsuario = () => {
+        fetchUserData();
+    }, [axiosPrivate]);
+    
+    const updateUsuario = async () => {
         if(!updatingUser){
             setUpdatingUser(true);
-            let token=user.accessToken;
-            fetch(api_url+'/User',{
-                headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": 'application/json'
-                },
-                method: 'PUT',
-                body: JSON.stringify(datosUsuario)
-                }
-            )
-            .then( response => {
-                let data={}
-                if(response.ok){
-                    data=response.json();
-                    dispatch(addToast({texto: 'Datos actualizados correctamente'}));
-                    setUpdatingUser(false);
-                }else{
-                    setCookie('accessToken',null);
-                    removeCookie('accessToken');
-                    dispatch(logoutUser());
-                    window.location.href='/login';
-                }
-                return data;
-            })
-            .then(data => {
-                for (const [key, value] of Object.entries(data)) {
+            try{
+                const response = await axiosPrivate.put('/User',JSON.stringify(datosUsuario));
+                dispatch(addToast({texto: 'Datos actualizados correctamente'}));
+                setUpdatingUser(false);
+                for (const [key, value] of Object.entries(response.data)) {
                     if(value===null){
-                        data[key]='';
+                        response.data[key]='';
                     }
                 }
-                setDatosUsuario(data);
-            })
-            .catch(error => {
-                console.error(error);
-            });
+                setDatosUsuario(response.data);
+                dispatch(updateUser({
+                    ...user,
+                    UUID: response.data.UUID,
+                    sobrenombre: response.data.Sobrenombre,
+                    image: response.data.Image
+                }))
+            }
+            catch(err){
+                console.log(err);
+                dispatch(logoutUser());
+                navigate('/login', { state: {from: location }, replace: true })
+            }
         }
     }
     const breadcrumb=[{
@@ -112,10 +83,6 @@ function Usuario() {
 
   return (
     <>
-    <Header/>
-    <Breadcrumb breadcrumb={breadcrumb} ocultarDeflactor={false}/>
-    <OffcanvasMenu />
-
     <section className='container' id='workspace'>
         <h1>Perfil <small>de usuario</small></h1>
         <div className='row mb-4'>
@@ -158,10 +125,10 @@ function Usuario() {
                 </div>
             </div>
             <div className='col-xs-12 col-md-6'>
-                <div className='card'>
+                <div className='card mb-3'>
                     <h3>Mis cuadernos</h3>
                     <p>La herramienta de cuadernos de trabajo te permite realizar colaborativamente análisis y comparaciones del presupuesto histórico usando todos los datos de #NuestroPresupuesto.</p>
-                    <p className='text-end'><a className='btn btn-primary' href='/cuadernos'>Ir</a></p>
+                    <p className='text-end'><Link className='btn btn-primary' to='/cuadernos'>Ir</Link></p>
                 </div>
             </div>
         </div>
