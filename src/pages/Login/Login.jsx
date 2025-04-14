@@ -1,10 +1,11 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { addToast } from '../../parametersSlice';
+import { addToast, setPage } from '../../parametersSlice';
 import { Link, useNavigate, useLocation} from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 import './Login.css'
 import useAuth from '../../hooks/useAuth';
 import axios from '../../api/axios';
+import { useEffect } from 'react';
 
 function Login() {
     const user = useSelector(state => state.parameters.user);
@@ -13,11 +14,20 @@ function Login() {
     const navigate = useNavigate();
     const location = useLocation();
     const from = location.state?.from?.pathname || "/profile";
+    const page = useSelector(state => state.parameters.page);
 
     const dispatch = useDispatch();
-    const breadcrumb=[{
-        texto: "Iniciar sesión"
-    }];
+
+    useEffect(() => {
+        const datosPage={
+            ...page,
+            breadcrumb: [{
+                texto: "Iniciar sesión"
+            }],
+            ocultarDeflactor: true
+          }
+          dispatch(setPage(datosPage));
+    },[])
 
     const handleCredentialResponse = async (credentialResponse) => {
         try{

@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { Chart } from 'react-chartjs-2';
 import axios from '../../api/axios';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate'
-import { selectNewYear } from '../../parametersSlice'
+import { selectNewYear, setPage } from '../../parametersSlice'
 import './DetalleCuaderno.css'
 
 function DetalleCuaderno() {
@@ -16,6 +16,7 @@ function DetalleCuaderno() {
     const inpc = useSelector(state => state.parameters.inpc)
     const estados = useSelector(state => state.parameters.estados)
     const _colores = useSelector(state => state.parameters.colores);
+    const page = useSelector(state => state.parameters.page);
 
     const [datosCuaderno,setDatosCuaderno]=useState({
         Id: null,
@@ -95,12 +96,17 @@ function DetalleCuaderno() {
 
     // Actualizar el breadcrumb con los datos del cuaderno
     useEffect( () => {
-        setBreadcrumb([{
-            texto: "Cuadernos",
-            url: "/Cuadernos"
-        },{
-            texto: datosCuaderno.Nombre
-        }])
+        const datosPage={
+            ...page,
+            breadcrumb: [{
+                texto: "Cuadernos",
+                url: "/Cuadernos"
+            },{
+                texto: datosCuaderno.Nombre
+            }],
+            ocultarDeflactor: false
+          }
+          dispatch(setPage(datosPage));
         if(datosCuaderno.AnioINPC){
             dispatch(selectNewYear(datosCuaderno.AnioINPC))
         }

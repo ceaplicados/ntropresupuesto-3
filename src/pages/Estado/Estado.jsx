@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import axios from '../../api/axios'
 import { setPresupuestoUR, setUnidadesPresupuestales, setActualEstado } from '../../estadoSlice'
+import { setPage } from '../../parametersSlice'
 
 import TreemapURs from './TreemapURs';
 import Historico from './Historico';
@@ -13,6 +14,7 @@ import './Estado.css'
 function Estado({idEstado}) {
   const dispatch = useDispatch();
   const selectedYear = useSelector(state => state.parameters.selectedYear)
+  const page = useSelector(state => state.parameters.page)
   const inpc = useSelector(state => state.parameters.inpc)
   const estados = useSelector(state => state.parameters.estados)
   const dataPresupuesto = useSelector(state => state.estado.presupuestoUR)
@@ -20,7 +22,6 @@ function Estado({idEstado}) {
   const [estadoActual,setEstadoActual]=useState({});
   const [presupuestoActual,setPresupuestoActual]=useState({});
   const [dataPresupuestoURs,setDataPresupuestoURs]=useState({});
-  const [breadcrumb,setBreadcrumb]=useState([]);
   
   // Guardar un objeto de estado en el estadoActual de acuerdo al idEstado
   useEffect(() => {
@@ -28,9 +29,14 @@ function Estado({idEstado}) {
     if(filter.length>0){
       setEstadoActual(filter[0])
       dispatch(setActualEstado(filter[0]));
-      setBreadcrumb([{
-        texto: filter[0].Nombre
-      }]);
+      const datosPage={
+        ...page,
+        breadcrumb: [{
+          texto: filter[0].Nombre
+        }],
+        ocultarDeflactor: false
+      }
+      dispatch(setPage(datosPage));
     };
   },[estados,idEstado]);
 

@@ -1,14 +1,23 @@
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { useSearchParams, Link } from 'react-router-dom'
 import { selectNewYear, setSearchParams } from '../parametersSlice'
 import './Breadcrumb.css'
 
-function Breadcrumb({breadcrumb, ocultarDeflactor}) {
+function Breadcrumb() {
     const [urlVariables,setUrlVariables] = useSearchParams();
     const dispatch = useDispatch();
     const selectedYear = useSelector(state => state.parameters.selectedYear)
     const inpc = useSelector(state => state.parameters.inpc)
     const searchParams = useSelector(state => state.parameters.searchParams)
+    const page = useSelector(state => state.parameters.page)
+    const [breadcrumb,setBreadcrumb] = useState([]);
+    const [ocultarDeflactor,setOcultarDeflactor] = useState([]);
+
+    useEffect(() => {
+        setBreadcrumb(page.breadcrumb);
+        setOcultarDeflactor(page.ocultarDeflactor);
+    },[page])
 
     // Cambiar el valor del selectedYear y actualizarlo en variable de la URL
     const updateSelectedYear = (e) => {
@@ -45,7 +54,7 @@ function Breadcrumb({breadcrumb, ocultarDeflactor}) {
         </ol>
         </nav>
         <div className='row row-cols-lg-auto align-items-center'>
-            { ocultarDeflactor!== false ? 
+            { ocultarDeflactor!== true ? 
             (
             <>
             <div className='col-12'>A valores del </div>

@@ -1,8 +1,8 @@
-import { useState, useEffect, use } from 'react'
+import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
-import { addToast, updateUser, logoutUser} from '../parametersSlice'
+import { addToast, updateUser, logoutUser, setPage } from '../parametersSlice'
 
 import './Usuario.css';
 
@@ -14,6 +14,7 @@ function Usuario() {
     const user = useSelector(state => state.parameters.user);
     const estados = useSelector(state => state.parameters.estados);
     const [updatingUser, setUpdatingUser]=useState(false);
+    const page = useSelector(state => state.parameters.page);
 
     const [datosUsuario,setDatosUsuario]=useState({
         Nombre: '',
@@ -23,6 +24,17 @@ function Usuario() {
         Telefono: '',
         Estado: ''
     });
+
+    useEffect(() => {
+        const datosPage={
+            ...page,
+            breadcrumb: [{
+                texto: "Mi perfil"
+            }],
+            ocultarDeflactor: true
+          }
+          dispatch(setPage(datosPage));
+    },[])
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -77,9 +89,6 @@ function Usuario() {
             }
         }
     }
-    const breadcrumb=[{
-        texto: "Mi perfil"
-    }];
 
   return (
     <>

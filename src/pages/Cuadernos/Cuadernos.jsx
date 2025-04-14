@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import axios from '../../api/axios';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import { Link } from 'react-router-dom'
-import { logoutUser } from '../../parametersSlice'
+import { setPage } from '../../parametersSlice'
 
 import  './Cuadernos.css';
 
@@ -15,6 +15,18 @@ function Cuadernos() {
   const [cuadernosPublicosFiltrados, setCuadernosPublicosFiltrados] = useState([]);
   const [filtroCuadernos, setFiltroCuadernos] = useState('');
   const [misCuadernos, setMisCuadernos] = useState([]);
+  const page = useSelector(state => state.parameters.page);
+
+  useEffect(()=>{
+    const datosPage={
+      ...page,
+      breadcrumb: [{
+        texto: 'Cuadernos de trabajo'
+      }],
+      ocultarDeflactor: true
+    }
+    dispatch(setPage(datosPage));
+  },[]);
 
   useEffect(() => {
       // obtener la lista de cuadernos públicos

@@ -1,14 +1,28 @@
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import './Federal.css'
 import GastoFederalizado from './GastoFederalizado';
 import PresupuestoFederal from './PresupuestoFederal';
+import { setPage } from '../../parametersSlice'
+import { useEffect } from 'react';
 
 function Federal() {
-  const selectedYear = useSelector(state => state.parameters.selectedYear)
-  const inpc = useSelector(state => state.parameters.inpc)
-  const breadcrumb=[{
-    texto: "Gasto federalizado"
-  }];
+  const dispatch = useDispatch();
+  const selectedYear = useSelector(state => state.parameters.selectedYear);
+  const inpc = useSelector(state => state.parameters.inpc);
+  const page = useSelector(state => state.parameters.page);
+
+  useEffect(()=>{
+    const datosPage={
+      ...page,
+      breadcrumb: [{
+        texto: 'Gasto federalizado'
+      }],
+      ocultarDeflactor: false
+    }
+    dispatch(setPage(datosPage));
+  },[]);
+
+  
   return (
     <>
       <section className='container' id='workspace'>
