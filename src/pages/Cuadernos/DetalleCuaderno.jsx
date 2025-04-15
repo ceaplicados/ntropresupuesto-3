@@ -346,56 +346,54 @@ function DetalleCuaderno() {
 
   return (
     <>
-      <section className='container' id='workspace'>
-        <h1>{datosCuaderno.Nombre} <small>{datosCuaderno.Publico ? 'Cuaderno público' : 'Cuaderno privado'}</small></h1>
-        <p className='subtitle'>{datosCuaderno.Descripcion}</p>
-        <div className='text-end'>
-            <img className='owner-img' src={datosCuaderno.Owner.Image} alt={datosCuaderno.Owner.Sobrenombre} title={datosCuaderno.Owner.Sobrenombre}/>
-            <ul key='users-imgs' className='users-imgs'>
-                {
-                    datosCuaderno.Usuarios.map((usuario) => {
-                        return(<>
-                        <li key={'user_'+usuario.UUID}><img key={'user_img_'+usuario.UUID} src={usuario.Image} alt={usuario.Sobrenombre} title={usuario.Sobrenombre}/></li>
-                        </>);
-                    })
-                }
-            </ul>
-        </div>
-        <div className='mb-4' id='chart'>
-            <Chart 
-                ref={chartRef}
-                type='line' 
-                data={configChart}  
-                options={optionsChart}
-            />
-        </div>
-        <div className='datos'>
-            <h3>Datos</h3>
-            { datosCuaderno.Id ? (
-            <table id='tablaDatos' className='table table-striped'>
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th></th>
-                        <th colSpan={datosCuaderno.Anios.length}>Años</th>
-                    </tr>
-                    <tr>
-                        <th>Dato</th>
-                        <th><span className="material-symbols-outlined">bar_chart_4_bars</span></th>
-                        {datosCuaderno.Anios.map((anio) => {
-                            return (<>
-                            <th>{anio.Anio}</th>
-                            </>)
-                        })}
-                    </tr>
-                </thead>
-                <tbody>{rowsTablaDatos()}</tbody>
-            </table>
-            )
-            : null
+    <h1>{datosCuaderno.Nombre} <small>{datosCuaderno.Publico ? 'Cuaderno público' : 'Cuaderno privado'}</small></h1>
+    <p className='subtitle'>{datosCuaderno.Descripcion}</p>
+    <div className='text-end'>
+        <img className='owner-img' src={datosCuaderno.Owner.Image} alt={datosCuaderno.Owner.Sobrenombre} title={datosCuaderno.Owner.Sobrenombre}/>
+        <ul key='users-imgs' className='users-imgs'>
+            {
+                datosCuaderno.Usuarios.map((usuario) => {
+                    return(<>
+                    <li key={'user_'+usuario.UUID}><img key={'user_img_'+usuario.UUID} src={usuario.Image} alt={usuario.Sobrenombre} title={usuario.Sobrenombre}/></li>
+                    </>);
+                })
             }
-        </div>
-      </section>
+        </ul>
+    </div>
+    <div className='mb-4' id='chart'>
+        <Chart 
+            ref={chartRef}
+            type='line' 
+            data={configChart}  
+            options={optionsChart}
+        />
+    </div>
+    <div className='datos'>
+        <h3>Datos</h3>
+        { datosCuaderno.Id ? (
+        <table id='tablaDatos' className='table table-striped'>
+            <thead>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th colSpan={datosCuaderno.Anios.length}>Años</th>
+                </tr>
+                <tr>
+                    <th>Dato</th>
+                    <th><span className="material-symbols-outlined">bar_chart_4_bars</span></th>
+                    {datosCuaderno.Anios.map((anio) => {
+                        return (<>
+                        <th>{anio.Anio}</th>
+                        </>)
+                    })}
+                </tr>
+            </thead>
+            <tbody>{rowsTablaDatos()}</tbody>
+        </table>
+        )
+        : null
+        }
+    </div>
     </>
   )
 }

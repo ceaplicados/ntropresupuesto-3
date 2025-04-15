@@ -92,56 +92,54 @@ function Usuario() {
 
   return (
     <>
-    <section className='container' id='workspace'>
-        <h1>Perfil <small>de usuario</small></h1>
-        <div className='row mb-4'>
-            <div className='col-xs-12 col-md-6'>
-                <div className='card'>
-                    <h3>Mis datos</h3>
-                    <div className='mb-3'>
-                        <label className='form-label' htmlFor='nombre'>Nombre</label>
-                        <input type='text' className='form-control' id='nombre' value={datosUsuario.Nombre} onChange={(e) => setDatosUsuario({...datosUsuario,Nombre: e.target.value})}/>
-                    </div>
-                    <div className='mb-3'>
-                        <label className='form-label' htmlFor='apellidos'>Apellidos</label>
-                        <input type='text' className='form-control' id='apellidos' value={datosUsuario.Apellidos} onChange={(e) => setDatosUsuario({...datosUsuario,Apellidos: e.target.value})}/>
-                    </div>
-                    <div className='mb-3'>
-                        <label className='form-label' htmlFor='sobrenombre'>Sobrenombre</label>
-                        <input type='text' className='form-control' id='sobrenombre' value={datosUsuario.Sobrenombre} onChange={(e) => setDatosUsuario({...datosUsuario,Sobrenombre: e.target.value})}/>
-                    </div>
-                    <div className='mb-3'>
-                        <label className='form-label' htmlFor='email'>Correo electrónico</label>
-                        <input type='email' className='form-control' id='email' value={datosUsuario.Email} onChange={(e) => setDatosUsuario({...datosUsuario,Email: e.target.value})}/>
-                    </div>
-                    <div className='mb-3'>
-                        <label className='form-label' htmlFor='telefono'>Whatsapp</label>
-                        <input type='tel' className='form-control' id='telefono' value={datosUsuario.Telefono} onChange={(e) => setDatosUsuario({...datosUsuario,Telefono: e.target.value})}/>
-                    </div>
-                    <div className='mb-3'>
-                        <label className='form-label' htmlFor='estado'>Estado de procedencia / preferencia</label>
-                        <select className='form-select' id='estado' value={datosUsuario.Estado}  onChange={(e) => setDatosUsuario({...datosUsuario,Estado: e.target.value})}>
-                            <option value=''>Selecciona tu estado</option>
-                            { estados.map((estado, index) => {
-                                return <option key={index} value={estado.Id}>{estado.Nombre}</option>
-                            }
-                            )}
-                        </select>
-                    </div>
-                    <div className='mb-3 mt-4 text-end'>
-                        <button className={updatingUser ? 'btn btn-primary thinking' : 'btn btn-primary'} onClick={updateUsuario}>Guardar cambios</button>
-                    </div>
+    <h1>Perfil <small>de usuario</small></h1>
+    <div className='row mb-4'>
+        <div className='col-xs-12 col-md-6'>
+            <div className='card'>
+                <h3>Mis datos</h3>
+                <div className='mb-3'>
+                    <label className='form-label' htmlFor='nombre'>Nombre</label>
+                    <input type='text' className='form-control' id='nombre' value={datosUsuario.Nombre} onChange={(e) => setDatosUsuario({...datosUsuario,Nombre: e.target.value})}/>
                 </div>
-            </div>
-            <div className='col-xs-12 col-md-6'>
-                <div className='card mb-3'>
-                    <h3>Mis cuadernos</h3>
-                    <p>La herramienta de cuadernos de trabajo te permite realizar colaborativamente análisis y comparaciones del presupuesto histórico usando todos los datos de #NuestroPresupuesto.</p>
-                    <p className='text-end'><Link className='btn btn-primary' to='/cuadernos'>Ir</Link></p>
+                <div className='mb-3'>
+                    <label className='form-label' htmlFor='apellidos'>Apellidos</label>
+                    <input type='text' className='form-control' id='apellidos' value={datosUsuario.Apellidos} onChange={(e) => setDatosUsuario({...datosUsuario,Apellidos: e.target.value})}/>
+                </div>
+                <div className='mb-3'>
+                    <label className='form-label' htmlFor='sobrenombre'>Sobrenombre</label>
+                    <input type='text' className='form-control' id='sobrenombre' value={datosUsuario.Sobrenombre} onChange={(e) => setDatosUsuario({...datosUsuario,Sobrenombre: e.target.value})}/>
+                </div>
+                <div className='mb-3'>
+                    <label className='form-label' htmlFor='email'>Correo electrónico</label>
+                    <input type='email' className='form-control' id='email' value={datosUsuario.Email} onChange={(e) => setDatosUsuario({...datosUsuario,Email: e.target.value})}/>
+                </div>
+                <div className='mb-3'>
+                    <label className='form-label' htmlFor='telefono'>Whatsapp</label>
+                    <input type='tel' className='form-control' id='telefono' value={datosUsuario.Telefono} onChange={(e) => setDatosUsuario({...datosUsuario,Telefono: e.target.value})}/>
+                </div>
+                <div className='mb-3'>
+                    <label className='form-label' htmlFor='estado'>Estado de procedencia / preferencia</label>
+                    <select className='form-select' id='estado' value={datosUsuario.Estado}  onChange={(e) => setDatosUsuario({...datosUsuario,Estado: e.target.value})}>
+                        <option value=''>Selecciona tu estado</option>
+                        { estados.map((estado, index) => {
+                            return <option key={index} value={estado.Id}>{estado.Nombre}</option>
+                        }
+                        )}
+                    </select>
+                </div>
+                <div className='mb-3 mt-4 text-end'>
+                    <button className={updatingUser ? 'btn btn-primary thinking' : 'btn btn-primary'} onClick={updateUsuario}>Guardar cambios</button>
                 </div>
             </div>
         </div>
-    </section>
+        <div className='col-xs-12 col-md-6'>
+            <div className='card mb-3'>
+                <h3>Mis cuadernos</h3>
+                <p>La herramienta de cuadernos de trabajo te permite realizar colaborativamente análisis y comparaciones del presupuesto histórico usando todos los datos de #NuestroPresupuesto.</p>
+                <p className='text-end'><Link className='btn btn-primary' to='/cuadernos'>Ir</Link></p>
+            </div>
+        </div>
+    </div>
     </>
   )
 }

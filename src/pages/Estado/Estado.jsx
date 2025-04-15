@@ -119,17 +119,15 @@ function Estado() {
 
   return (
     <>
-      <section className='container' id='workspace'>
-        <h1>{estadoActual.Nombre} <small>Presupuesto estatal</small></h1>
-        <p className='subtitle'><span className='version' onClick={() => {setShowModalVersiones(true)}}>{ versionActual ? versionActual.Tipo+' '+versionActual.Anio : '' }</span> a valores del {selectedYear}</p>
-        <p className='totalPresupuesto'>El presupuesto de {estadoActual.Nombre} para el año {versionActual.Anio} es de $ {presupuestoTotal ? presupuestoTotal.toLocaleString("en-MX", {style:"decimal",maximumFractionDigits:2, minimumFractionDigits: 2}) : null } a valores del {selectedYear}</p>
-        <p className='presupuestoLetra'>{ presupuestoTotalLetra }</p>
-        <TreemapURs />
-        <Historico />
-        <CapitulosGasto />
-        <TablaURs />
-        <ProgramasPresupuestales />
-      </section>
+      <h1>{estadoActual.Nombre} <small>Presupuesto estatal</small></h1>
+      <p className='subtitle'><span className='version' onClick={() => {setShowModalVersiones(true)}}>{ versionActual ? versionActual.Tipo+' '+versionActual.Anio : '' }</span> a valores del {selectedYear}</p>
+      <p className='totalPresupuesto'>El presupuesto de {estadoActual.Nombre} para el año {versionActual.Anio} es de $ {presupuestoTotal ? presupuestoTotal.toLocaleString("en-MX", {style:"decimal",maximumFractionDigits:2, minimumFractionDigits: 2}) : null } a valores del {selectedYear}</p>
+      <p className='presupuestoLetra'>{ presupuestoTotalLetra }</p>
+      <TreemapURs />
+      <Historico />
+      <CapitulosGasto />
+      <TablaURs />
+      <ProgramasPresupuestales />
       <Modal show={showModalVersiones} onHide={() => {setShowModalVersiones(false)}} >
         <Modal.Header closeButton>
           <Modal.Title>Versiones del presupuesto</Modal.Title>

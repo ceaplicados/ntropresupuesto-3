@@ -53,32 +53,30 @@ function Login() {
     
     return (
         <>
-            <script src="https://accounts.google.com/gsi/client" async></script>
-            <section className='container' id='workspace'>
-                <div className='row'>
-                    <div className='col-xs-12 col-md-6 offset-md-3 col-lg-4 offset-lg-4'>
-                        { user.UUID ? 
-                        (<>
-                            <p>¡Hola {user.sobrenombre}!</p>
-                            <p><Link className='btn btn-primary' to='/Cuadernos'>Ir a mis cuadernos</Link></p>
-                            <p>Si quieres iniciar sesión con otra cuenta, primero cierra tu sesión actual dando clic sobre tu nombre en el menú superior.</p>
-                        </>) 
-                        : 
-                        (<>                                
-                            <h3>Iniciar sesión</h3>
-                            <p>Si ya cuentas con una cuenta registrada inicia sesión:</p>
-                            <GoogleLogin
-                                onSuccess={credentialResponse => {
-                                    handleCredentialResponse(credentialResponse);
-                                }}
-                                onError={() => {
-                                    dispatch(addToast({texto: 'Error al iniciar sesión en Google'}))
-                                }}
-                                />                    
-                        </>)}
-                    </div>                        
-                </div>
-            </section>
+        <script src="https://accounts.google.com/gsi/client" async></script>
+        <div className='row'>
+            <div className='col-xs-12 col-md-6 offset-md-3 col-lg-4 offset-lg-4'>
+                { user.UUID ? 
+                (<>
+                    <p>¡Hola {user.sobrenombre}!</p>
+                    <p><Link className='btn btn-primary' to='/Cuadernos'>Ir a mis cuadernos</Link></p>
+                    <p>Si quieres iniciar sesión con otra cuenta, primero cierra tu sesión actual dando clic sobre tu nombre en el menú superior.</p>
+                </>) 
+                : 
+                (<>                                
+                    <h3>Iniciar sesión</h3>
+                    <p>Si ya cuentas con una cuenta registrada inicia sesión:</p>
+                    <GoogleLogin
+                        onSuccess={credentialResponse => {
+                            handleCredentialResponse(credentialResponse);
+                        }}
+                        onError={() => {
+                            dispatch(addToast({texto: 'Error al iniciar sesión en Google'}))
+                        }}
+                        />                    
+                </>)}
+            </div>                        
+        </div>
         </>
     )
 }
