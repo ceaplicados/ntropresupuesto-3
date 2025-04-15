@@ -33,3 +33,7 @@ h3 small{
     transform: scale(1.02);
     background: #EEE;
 }
+#listaVersiones span.material-symbols-outlined {
+    font-size: 1em;
+    color: green;
+}

@@ -139,7 +139,7 @@ function Estado() {
           <ul className='list-group' id='listaVersiones'>
             { versiones 
               ? versiones.map((version) => {
-                  return(<><li key={version.Id} className='list-group-item' onClick={ () => {changeVersionActual(version.Id)}}>{version.Anio} <small>{version.Tipo}</small></li></>)
+                  return(<><li key={version.Id} className='list-group-item' onClick={ () => {changeVersionActual(version.Id)}}>{version.Anio} <small>{version.Tipo}</small> { version.Actual ? (<span class="material-symbols-outlined">verified</span>) : null}</li></>)
                 }) 
               : null }
           </ul>

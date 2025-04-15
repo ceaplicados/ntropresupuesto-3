@@ -13,6 +13,7 @@ import DetalleCuaderno from "./pages/Cuadernos/DetalleCuaderno";
 import Usuario from "./pages/Usuario";
 
 function App() {
+  const estadosHabilitados = ["JAL","CDMX"];
   return (
     <Routes>
         <Route path="/" element={<Layout />}>
@@ -20,8 +21,13 @@ function App() {
             {/* public routes */}
             <Route index element={<Federal />} />
             <Route element={<EstadosData/>}>
-              <Route path="JAL" element={<Estado />} />
-              <Route path="CDMX" element={<Estado />} />
+              { 
+                estadosHabilitados.map( (estado) => {
+                  return(<>
+                  <Route key={'Estado'} path={estado} element={<Estado />} />
+                  </>)
+                })
+              }
             </Route>
             <Route path="login" element={<Login />} />
             <Route path="cuadernos" element={<Cuadernos />} />
