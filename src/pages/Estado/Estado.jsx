@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useSearchParams } from 'react-router-dom'
+import useCantidadLetra from '../../hooks/useCantidadLetra';
 import { Modal } from 'react-bootstrap'
 import axios from '../../api/axios'
 import { setPresupuestoUR, setUnidadesPresupuestales, setVersionActual } from '../../estadoSlice'
@@ -16,6 +17,7 @@ import './Estado.css'
 function Estado() {
   const dispatch = useDispatch();
   const [urlVariables,setUrlVariables] = useSearchParams();
+  const cantidadLetra = useCantidadLetra();
   const selectedYear = useSelector(state => state.parameters.selectedYear)
   const page = useSelector(state => state.parameters.page)
   const inpc = useSelector(state => state.parameters.inpc)
@@ -23,6 +25,8 @@ function Estado() {
   const versionActual = useSelector(state => state.estado.versionActual)
   const estadoActual = useSelector(state => state.estado.actualEstado);
   const [dataPresupuestoURs,setDataPresupuestoURs]=useState({});
+  const [presupuestoTotal,setPresupuestoTotal]=useState(null);
+  const [presupuestoTotalLetra,setPresupuestoTotalLetra]=useState('');
   const [showModalVersiones, setShowModalVersiones] = useState(false);
   
   
@@ -86,10 +90,14 @@ function Estado() {
           monto=monto*inpc[selectedYear]/inpc[dataPresupuestoURs.versionPresupuesto.Anio]
           return {...partida, Monto: monto}
         });
-
       }else{
         data={...dataPresupuestoURs}
       }
+      let total=dataPresupuestoURs.presupuesto.reduce( (total,partida) => {
+        return total+partida.Monto
+      }, 0);
+      total=total*inpc[selectedYear]/inpc[dataPresupuestoURs.versionPresupuesto.Anio];
+      setPresupuestoTotal(total);
       dispatch(setPresupuestoUR(data));
     }
   },[dataPresupuestoURs,selectedYear,inpc])
@@ -105,12 +113,17 @@ function Estado() {
     setShowModalVersiones(false);
   }
 
+  useEffect(() => {
+    setPresupuestoTotalLetra(cantidadLetra(presupuestoTotal));
+  },[presupuestoTotal])
 
   return (
     <>
       <section className='container' id='workspace'>
         <h1>{estadoActual.Nombre} <small>Presupuesto estatal</small></h1>
         <p className='subtitle'><span className='version' onClick={() => {setShowModalVersiones(true)}}>{ versionActual ? versionActual.Tipo+' '+versionActual.Anio : '' }</span> a valores del {selectedYear}</p>
+        <p className='totalPresupuesto'>El presupuesto de {estadoActual.Nombre} para el año {versionActual.Anio} es de $ {presupuestoTotal ? presupuestoTotal.toLocaleString("en-MX", {style:"decimal",maximumFractionDigits:2, minimumFractionDigits: 2}) : null } a valores del {selectedYear}</p>
+        <p className='presupuestoLetra'>{ presupuestoTotalLetra }</p>
         <TreemapURs />
         <Historico />
         <CapitulosGasto />
