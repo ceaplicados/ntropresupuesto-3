@@ -1,7 +1,6 @@
 import { useEffect,useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
-import General from './General'
 import { hideToast } from '../parametersSlice'
 import useLogout from '../hooks/useLogout';
 import Toast from 'react-bootstrap/Toast';
@@ -37,7 +36,6 @@ function Header() {
 
   return (
     <>
-      <General/>
       <header>
         <nav className='navbar'>
           <div className="container-fluid">
