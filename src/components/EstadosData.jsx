@@ -26,7 +26,7 @@ const EstadosData = () => {
                 }
             }
         }
-    },[estados, actualEstado]);
+    },[estados, actualEstado,location]);
 
     // Realizar acciones al cambiar de estado actual
     useEffect(() => {

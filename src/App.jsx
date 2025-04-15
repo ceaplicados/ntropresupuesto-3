@@ -20,8 +20,8 @@ function App() {
             {/* public routes */}
             <Route index element={<Federal />} />
             <Route element={<EstadosData/>}>
-              <Route path="JAL" element={<Estado idEstado="14" />} />
-              <Route path="CDMX" element={<Estado idEstado="9" />} />
+              <Route path="JAL" element={<Estado />} />
+              <Route path="CDMX" element={<Estado />} />
             </Route>
             <Route path="login" element={<Login />} />
             <Route path="cuadernos" element={<Cuadernos />} />

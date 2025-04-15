@@ -13,7 +13,7 @@ import TablaURs from './TablaURs';
 import ProgramasPresupuestales from './ProgramasPresupuestales';
 import './Estado.css'
 
-function Estado({idEstado}) {
+function Estado() {
   const dispatch = useDispatch();
   const [urlVariables,setUrlVariables] = useSearchParams();
   const selectedYear = useSelector(state => state.parameters.selectedYear)
@@ -56,9 +56,6 @@ function Estado({idEstado}) {
             const response = await axios(url)
             const data = response?.data
             setDataPresupuestoURs(data);
-            if(versionActual?.Id!==data.versionPresupuesto.Id){
-              //dispatch(setVersionActual(data.versionPresupuesto));
-            }
           }
           getDataPresupuesto(url);
         }
