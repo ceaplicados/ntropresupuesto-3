@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { useSearchParams, Link } from 'react-router-dom'
-import { selectNewYear, setSearchParams } from '../parametersSlice'
+import { selectNewYear } from '../parametersSlice'
 import './Breadcrumb.css'
 
 function Breadcrumb() {
@@ -9,7 +9,6 @@ function Breadcrumb() {
     const dispatch = useDispatch();
     const selectedYear = useSelector(state => state.parameters.selectedYear)
     const inpc = useSelector(state => state.parameters.inpc)
-    const searchParams = useSelector(state => state.parameters.searchParams)
     const page = useSelector(state => state.parameters.page)
     const [breadcrumb,setBreadcrumb] = useState([]);
     const [ocultarDeflactor,setOcultarDeflactor] = useState([]);
@@ -21,8 +20,12 @@ function Breadcrumb() {
 
     // Cambiar el valor del selectedYear y actualizarlo en variable de la URL
     const updateSelectedYear = (e) => {
-        setUrlVariables({i: e.value});
-        dispatch(setSearchParams({i: e.value}));
+        const params = {};
+        urlVariables.forEach((value, key) => {
+            params[key] = value;
+        })
+        params["i"]=e.value
+        setUrlVariables(params);
         dispatch(selectNewYear(e.value));
     };
 
@@ -34,7 +37,7 @@ function Breadcrumb() {
             <li key={'Home'} className="breadcrumb-item">
             <Link to={{
                 pathname:"/", 
-                search:(searchParams.i ? '?i='+searchParams.i : '')
+                search:(urlVariables.get("i") ? '?i='+urlVariables.get("i") : '')
             }}><img src='/img/logo.svg'/></Link>
             </li>
             {

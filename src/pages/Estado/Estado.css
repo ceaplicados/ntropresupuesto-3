@@ -6,3 +6,19 @@ h3 small{
     font-weight: 200;
     margin-left: .3rem;
 }
+
+.subtitle .version{
+    cursor: pointer;
+    color: #777;
+}
+.subtitle .version:hover{
+    text-decoration: underline;
+}
+#listaVersiones li{
+    transition: .15s ease-in-out;
+    cursor: pointer;
+}
+#listaVersiones li:hover{
+    transform: scale(1.02);
+    background: #EEE;
+}

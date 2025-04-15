@@ -3,6 +3,8 @@ import { Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout"
 import RequireAuth from "./components/RequireAuth";
 import PersistLogin from "./components/PersistLogin";
+import EstadosData from './components/EstadosData'
+
 import Federal from "./pages/Federal/Federal";
 import Estado from "./pages/Estado/Estado";
 import Login from "./pages/Login/Login";
@@ -17,8 +19,10 @@ function App() {
           <Route element={<PersistLogin/>}>
             {/* public routes */}
             <Route index element={<Federal />} />
-            <Route path="JAL" element={<Estado idEstado="14" />} />
-            <Route path="CDMX" element={<Estado idEstado="9" />} />
+            <Route element={<EstadosData/>}>
+              <Route path="JAL" element={<Estado idEstado="14" />} />
+              <Route path="CDMX" element={<Estado idEstado="9" />} />
+            </Route>
             <Route path="login" element={<Login />} />
             <Route path="cuadernos" element={<Cuadernos />} />
             <Route path="cuaderno/*" element={<DetalleCuaderno />} />

@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
+import { useDispatch,useSelector } from 'react-redux'
 import axios from '../api/axios';
-import { selectNewYear, setInpc, setSearchParams, setEstados } from '../parametersSlice'
+import { selectNewYear, setInpc, setEstados } from '../parametersSlice'
 
 function General({breadcrumb, ocultarDeflactor, redirectLogin}) {
     const dispatch = useDispatch();
@@ -53,11 +53,9 @@ function General({breadcrumb, ocultarDeflactor, redirectLogin}) {
     // Obtener la variable del selectedYear de la URL
     useEffect(() => {
       if(urlVariables.get('i')){
-          dispatch(setSearchParams({i: urlVariables.get('i')})) 
-          dispatch(selectNewYear(urlVariables.get('i')))
+        dispatch(selectNewYear(urlVariables.get('i')));
       }
     },[]);
-
 }
 
 export default General

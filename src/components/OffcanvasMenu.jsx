@@ -1,17 +1,17 @@
 import { useSelector } from 'react-redux'
 import { NavLink, Link } from "react-router";
+import { useSearchParams } from 'react-router-dom'
 import './OffcanvasMenu.css'
 
 function OffcanvasMenu() {
-    const searchParams = useSelector(state => state.parameters.searchParams)
-
+    const [urlVariables,setUrlVariables] = useSearchParams();
     return (
         <>
         <div id="lateral-menu" className='offcanvas offcanvas-start' data-bs-scroll="true" tabIndex="-1">
             <div className="offcanvas-header">
             <Link className='offcanvas-title text-start' to={{
                 pathname: "/",
-                search: searchParams.i ? '?i='+searchParams.i : ''
+                search: urlVariables.get("i") ? '?i='+urlVariables.get("i") : ''
             }} end>
                 <img className='offcanvas-logo' src="/img/logo_blanco.svg" alt="#NuestroPresupuesto"  data-bs-dismiss="offcanvas"/>
             </Link>
@@ -29,7 +29,7 @@ function OffcanvasMenu() {
                 <li data-bs-dismiss="offcanvas">
                     <NavLink to={{
                         pathname: "/",
-                        search: (searchParams.i ? '?i='+searchParams.i : '')
+                        search: (urlVariables.get("i") ? '?i='+urlVariables.get("i") : '')
                     }} end>
                     <span className="material-symbols-outlined">dashboard</span>
                     Gasto federalizado
@@ -38,7 +38,7 @@ function OffcanvasMenu() {
                 <li data-bs-dismiss="offcanvas">
                     <NavLink to={{
                         pathname:"/JAL", 
-                        search: (searchParams.i ? '?i='+searchParams.i : '')
+                        search: (urlVariables.get("i") ? '?i='+urlVariables.get("i") : '')
                     }}  end>
                     <span className="material-symbols-outlined">dashboard</span>
                     Jalisco
@@ -47,7 +47,7 @@ function OffcanvasMenu() {
                 <li data-bs-dismiss="offcanvas">
                     <NavLink to={{
                         pathname: "/CDMX",
-                        search: (searchParams.i ? '?i='+searchParams.i : '')
+                        search: (urlVariables.get("i") ? '?i='+urlVariables.get("i") : '')
                     }} end>
                     <span className="material-symbols-outlined">dashboard</span>
                     Ciudad de México

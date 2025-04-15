@@ -21,7 +21,7 @@ const PersistLogin = () => {
                 await refresh();
             }
             catch(err){
-                console.log(err);
+                //console.log(err);
             }
             finally {
                 setIsLoading(false);
@@ -45,7 +45,7 @@ const PersistLogin = () => {
                     image: response.data.Image
                 }))
             } catch (err) {
-                console.log(err);
+                //console.log(err);
                 dispatch(logoutUser());
             }
         };

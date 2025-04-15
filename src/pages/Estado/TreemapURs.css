@@ -1,6 +1,6 @@
 .treemap{
     width: 100%;
-    min-height: calc(100vh - 2em);
+    min-height: calc(100vh - 12em);
 }
 .treemap svg{
     margin-bottom: 4rem;

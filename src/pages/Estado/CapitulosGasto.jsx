@@ -4,11 +4,13 @@ import { Chart } from 'react-chartjs-2';
 import axios from  '../../api/axios'
 import './CapitulosGasto.css';
 
-const CapitulosGasto = ({estadoActual, presupuestoActual}) => {
+const CapitulosGasto = () => {
     const [capitulosGasto,setCapitulosGasto] = useState([]);
     const _colores = useSelector(state => state.parameters.colores);
     const selectedYear = useSelector(state => state.parameters.selectedYear)
-    const inpc = useSelector(state => state.parameters.inpc)
+    const inpc = useSelector(state => state.parameters.inpc);
+    const versionActual = useSelector(state => state.estado.versionActual);
+    const estadoActual = useSelector(state => state.estado.actualEstado);
     const [rowsTabla,setRowsTabla] = useState([]);
     const [totalPresupuesto,setTotalPresupuesto] = useState(null);
     const [orderBy,setOrderBy] = useState({Campo: 'Clave', Orden: 'ASC'});
@@ -50,8 +52,8 @@ const CapitulosGasto = ({estadoActual, presupuestoActual}) => {
     }
 
     useEffect(() => {
-        if(presupuestoActual.Id && estadoActual.Codigo){
-            let url='/'+estadoActual.Codigo+'/CapituloGasto?v='+presupuestoActual.Id;
+        if(versionActual.Id && estadoActual.Codigo){
+            let url='/'+estadoActual.Codigo+'/CapituloGasto?v='+versionActual.Id;
             const getPresupuestoCapituloGasto = async (url) => {
                 const response = await axios(url);
                 const data = response?.data;
@@ -65,7 +67,7 @@ const CapitulosGasto = ({estadoActual, presupuestoActual}) => {
             }
             getPresupuestoCapituloGasto(url);
         }
-    },[estadoActual,presupuestoActual]);
+    },[estadoActual,versionActual]);
     
     const changeOrder = (e) => {
         let newOrder='ASC';
@@ -93,7 +95,7 @@ const CapitulosGasto = ({estadoActual, presupuestoActual}) => {
         let valoresTabla=capitulosGasto.map((capitulo) => {
             return {
                 ...capitulo,
-                Monto: capitulo.Monto*inpc[selectedYear]/inpc[presupuestoActual.Anio],
+                Monto: capitulo.Monto*inpc[selectedYear]/inpc[versionActual.Anio],
             }
         });
         let total=valoresTabla.reduce( (total,capitulo) => {
@@ -166,7 +168,7 @@ const CapitulosGasto = ({estadoActual, presupuestoActual}) => {
                                 { orderBy.Campo==='Clave' ? (<span className="material-symbols-outlined">arrow_circle_{ orderBy.Orden==='ASC' ? 'down' : 'up' }</span>) : null }
                             </th>
                             <th onClick={changeOrder} data-order="Monto">
-                                Presupuesto { presupuestoActual ? presupuestoActual.Anio : ''  }
+                                Presupuesto { versionActual?.Anio   }
                                 { orderBy.Campo==='Monto' ? (<span className="material-symbols-outlined">arrow_circle_{ orderBy.Orden==='ASC' ? 'down' : 'up' }</span>) : null }
                             </th>
                             <th onClick={changeOrder} data-order="Porcentaje">

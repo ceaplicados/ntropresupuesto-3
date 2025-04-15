@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react'
 import axios from '../../api/axios'
 import { useSelector } from 'react-redux'
 
-const ProgramasPresupuestales = ({estadoActual,presupuestoActual}) => {
+const ProgramasPresupuestales = () => {
     const dataPresupuesto = useSelector(state => state.estado.presupuestoUR);
     const selectedYear = useSelector(state => state.parameters.selectedYear)
     const inpc = useSelector(state => state.parameters.inpc)
+    const versionActual = useSelector(state => state.estado.versionActual);
+    const estadoActual = useSelector(state => state.estado.actualEstado);
     const [busqueda,setBusqueda] = useState('');
     const [programas,setProgramas] = useState([]);
     const [data,setData] = useState([]);
@@ -35,8 +37,8 @@ const ProgramasPresupuestales = ({estadoActual,presupuestoActual}) => {
     }
     // Obtener los datos de la API
     useEffect(() => {
-        if(estadoActual.Id && presupuestoActual.Id){
-            let url='/'+estadoActual.Codigo+'/Programas?v='+presupuestoActual.Id;
+        if(estadoActual.Id && versionActual?.Id){
+            let url='/'+estadoActual.Codigo+'/Programas?v='+versionActual.Id;
             if(busqueda.trim().length>=4){
                 url+='&b='+busqueda;
             }
@@ -47,14 +49,14 @@ const ProgramasPresupuestales = ({estadoActual,presupuestoActual}) => {
             }
             getProgramas(url);
         }
-    }, [busqueda,estadoActual,presupuestoActual]);
+    }, [busqueda,estadoActual,versionActual]);
 
     // Deflactar los datos y ordenarlos
     useEffect(() => {
         let datos=programas.map((programa) => {
             return {
                 ...programa,
-                Monto: programa.Monto*inpc[selectedYear]/inpc[presupuestoActual.Anio],
+                Monto: programa.Monto*inpc[selectedYear]/inpc[versionActual.Anio],
             }
         });
         let campoReorder=orderBy.Campo;

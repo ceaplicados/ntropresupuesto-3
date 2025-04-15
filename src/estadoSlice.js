@@ -5,7 +5,9 @@ export const estadoSlice = createSlice({
   initialState: {
     actualEstado: {},
     unidadesPresupuestales: [],
-    presupuestoUR: {}
+    presupuestoUR: {},
+    versiones: [],
+    versionActual: {}
   },
   reducers: {
     setActualEstado: (state, action) => {
@@ -16,11 +18,17 @@ export const estadoSlice = createSlice({
     },
     setPresupuestoUR: (state, action) => {
         state.presupuestoUR = action.payload
+    },
+    setVersiones: (state, action) => {
+      state.versiones = action.payload
+    },
+    setVersionActual: (state, action) => {
+      state.versionActual = action.payload
     }
   }
 })
 
 // Action creators are generated for each case reducer function
-export const { setPresupuestoUR, setActualEstado, setUnidadesPresupuestales} = estadoSlice.actions
+export const { setPresupuestoUR, setActualEstado, setUnidadesPresupuestales, setVersiones, setVersionActual} = estadoSlice.actions
 
 export default estadoSlice.reducer

@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import { useSearchParams } from 'react-router-dom'
+import { Modal } from 'react-bootstrap'
 import axios from '../../api/axios'
-import { setPresupuestoUR, setUnidadesPresupuestales, setActualEstado } from '../../estadoSlice'
+import { setPresupuestoUR, setUnidadesPresupuestales, setVersionActual } from '../../estadoSlice'
 import { setPage } from '../../parametersSlice'
 
 import TreemapURs from './TreemapURs';
@@ -13,41 +15,37 @@ import './Estado.css'
 
 function Estado({idEstado}) {
   const dispatch = useDispatch();
+  const [urlVariables,setUrlVariables] = useSearchParams();
   const selectedYear = useSelector(state => state.parameters.selectedYear)
   const page = useSelector(state => state.parameters.page)
   const inpc = useSelector(state => state.parameters.inpc)
-  const estados = useSelector(state => state.parameters.estados)
-  const dataPresupuesto = useSelector(state => state.estado.presupuestoUR)
-  const unidadesPresupuestales = useSelector(state => state.estado.unidadesPresupuestales)
-  const [estadoActual,setEstadoActual]=useState({});
-  const [presupuestoActual,setPresupuestoActual]=useState({});
+  const versiones = useSelector(state => state.estado.versiones)
+  const versionActual = useSelector(state => state.estado.versionActual)
+  const estadoActual = useSelector(state => state.estado.actualEstado);
   const [dataPresupuestoURs,setDataPresupuestoURs]=useState({});
+  const [showModalVersiones, setShowModalVersiones] = useState(false);
   
-  // Guardar un objeto de estado en el estadoActual de acuerdo al idEstado
+  
+  // Actualizar el breadcrumb
   useEffect(() => {
-    let filter=estados.filter((itemEstado) => { return itemEstado.Id == parseInt(idEstado) });
-    if(filter.length>0){
-      setEstadoActual(filter[0])
-      dispatch(setActualEstado(filter[0]));
-      const datosPage={
-        ...page,
-        breadcrumb: [{
-          texto: filter[0].Nombre
-        }],
-        ocultarDeflactor: false
-      }
-      dispatch(setPage(datosPage));
-    };
-  },[estados,idEstado]);
+    const datosPage={
+      ...page,
+      breadcrumb: [{
+        texto: estadoActual.Nombre
+      }],
+      ocultarDeflactor: false
+    }
+    dispatch(setPage(datosPage));
+  },[estadoActual]);
 
   // Obtener el presupuesto por URs del API
   useEffect(() => {
-    if(estadoActual.Codigo){
+    if(estadoActual.Codigo && versionActual.Id){
         let url='/'+estadoActual.Codigo+'/URs/Presupuesto';
         let fetchData=false;
-        if(dataPresupuestoURs.versionPresupuesto && presupuestoActual.Id){
-          if(dataPresupuestoURs.versionPresupuesto.Id!==presupuestoActual.Id){
-            url+='?v='+presupuestoActual.Id;
+        if(dataPresupuestoURs?.versionPresupuesto && versionActual.Id){
+          if(dataPresupuestoURs?.versionPresupuesto?.Id!==versionActual.Id){
+            versionActual.Id ? url+='?v='+versionActual.Id : null;
             fetchData=true;
           }
         }else{
@@ -58,14 +56,16 @@ function Estado({idEstado}) {
             const response = await axios(url)
             const data = response?.data
             setDataPresupuestoURs(data);
-            setPresupuestoActual(data.versionPresupuesto);
+            if(versionActual?.Id!==data.versionPresupuesto.Id){
+              //dispatch(setVersionActual(data.versionPresupuesto));
+            }
           }
           getDataPresupuesto(url);
         }
     }   
-  }, [estadoActual,presupuestoActual]);
+  }, [estadoActual,versionActual]);
 
-  // Obtener el presupuesto por URs del API
+  // Obtener las UPs de la API
   useEffect(() => {
     if(estadoActual.Codigo){
         let url='/'+estadoActual.Codigo+'/UPs';
@@ -96,18 +96,45 @@ function Estado({idEstado}) {
       dispatch(setPresupuestoUR(data));
     }
   },[dataPresupuestoURs,selectedYear,inpc])
-  
+    
+  const changeVersionActual = (idVersion) => {
+    dispatch(setVersionActual({...versionActual,Id: idVersion}))
+    const params = {};
+    urlVariables.forEach((value, key) => {
+        params[key] = value;
+    })
+    params["v"]=idVersion;
+    setUrlVariables(params);
+    setShowModalVersiones(false);
+  }
+
+
   return (
     <>
       <section className='container' id='workspace'>
         <h1>{estadoActual.Nombre} <small>Presupuesto estatal</small></h1>
-        <p className='subtitle'>{ dataPresupuesto.versionPresupuesto ? dataPresupuesto.versionPresupuesto.Tipo+' '+dataPresupuesto.versionPresupuesto.Anio : '' } a valores del {selectedYear}</p>
+        <p className='subtitle'><span className='version' onClick={() => {setShowModalVersiones(true)}}>{ versionActual ? versionActual.Tipo+' '+versionActual.Anio : '' }</span> a valores del {selectedYear}</p>
         <TreemapURs />
-        <Historico estadoActual={estadoActual}/>
-        <CapitulosGasto estadoActual={estadoActual} presupuestoActual={presupuestoActual}/>
+        <Historico />
+        <CapitulosGasto />
         <TablaURs />
-        <ProgramasPresupuestales estadoActual={estadoActual} presupuestoActual={presupuestoActual}/>
+        <ProgramasPresupuestales />
       </section>
+      <Modal show={showModalVersiones} onHide={() => {setShowModalVersiones(false)}} >
+        <Modal.Header closeButton>
+          <Modal.Title>Versiones del presupuesto</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Selecciona una nueva versión de presupuesto:</p>
+          <ul className='list-group' id='listaVersiones'>
+            { versiones 
+              ? versiones.map((version) => {
+                  return(<><li key={version.Id} className='list-group-item' onClick={ () => {changeVersionActual(version.Id)}}>{version.Anio} <small>{version.Tipo}</small></li></>)
+                }) 
+              : null }
+          </ul>
+        </Modal.Body>
+      </Modal>
     </>
   )
 }

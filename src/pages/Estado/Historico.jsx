@@ -4,9 +4,10 @@ import { Chart } from 'react-chartjs-2';
 import axios from '../../api/axios';
 import './Historico.css';
 
-const Historico = ({estadoActual}) => {
+const Historico = () => {
     const selectedYear = useSelector(state => state.parameters.selectedYear)
     const inpc = useSelector(state => state.parameters.inpc)
+    const estadoActual = useSelector(state => state.estado.actualEstado);
     const [historico,setHistorico] = useState([]);
     const [rowsTabla,setRowsTabla] = useState([]);
     const [showGraphPresupuesto, setShowGraphPresupuesto] = useState('historico');
