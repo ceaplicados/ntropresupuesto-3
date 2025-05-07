@@ -1,21 +1,25 @@
-th{
+#tablaURs th{
     cursor: pointer;
 }
-th span.material-symbols-outlined{
+#tablaURs th span.material-symbols-outlined{
     color: gray;
     vertical-align: bottom;
     margin-left: .25em;
 }
-tfoot{
+#tablaURs td span.material-symbols-outlined{
+    vertical-align: bottom;
+    margin-left: .25em;
+}
+#tablaURs tfoot{
     font-weight: bold;
     border-top: solid;
 
 }
 
-tfoot .totalFiltro td{
+#tablaURs tfoot .totalFiltro td{
     background: #f2f2f2;
 }
 
-td.text-end.font-monospace{
+#tablaURs td.text-end.font-monospace{
     font-size: .8rem;
 }

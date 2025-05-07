@@ -13,3 +13,12 @@
     background: white;
     z-index: 1;
   }
+
+section#breadcrumb .breadcrumb-item a {
+    color: #666;
+    text-decoration: none;
+}
+section#breadcrumb .breadcrumb-item a:hover {
+    color: #BFCA4D;
+    text-decoration: underline;
+}

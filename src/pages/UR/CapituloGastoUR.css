@@ -1,0 +1,13 @@
+table span.leyenda {
+    width: 2rem;
+    height: 1.25rem;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: .5rem;
+}
+table tfoot {
+    font-weight: bold;
+}
+#tablaCapitulosGasto .font-monospace {
+    font-size: .8rem;
+}

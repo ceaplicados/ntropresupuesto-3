@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
+import { useSearchParams, Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+
 import './TablaURs.css'
 
 const TablaURs = () => {
@@ -67,7 +69,7 @@ const TablaURs = () => {
             tableBody=valoresTabla.map((partida) => {
                 return (<tr key={partida.Id}>
                     <td className='font-monospace'>{partida.Clave}</td>
-                    <td>{partida.Nombre}</td>
+                    <td>{partida.Nombre} <Link to={'./ur/'+partida.Clave}><span className="material-symbols-outlined">arrow_circle_right</span></Link></td>
                     <td className='text-end font-monospace'>{partida.Monto.toLocaleString("en-MX", {style:"decimal",maximumFractionDigits:2, minimumFractionDigits: 2})}</td>
                     <td className='text-end font-monospace'>{(partida.Monto/totalPresupuesto).toLocaleString("en-MX", {style:"percent", minimumFractionDigits: 1})}</td>
                     {filtroTabla ? (<td className='text-end font-monospace'>{(partida.Monto/sumaFiltro).toLocaleString("en-MX", {style:"percent", minimumFractionDigits: 1})}</td>) : null}
@@ -92,7 +94,7 @@ const TablaURs = () => {
                 </div>
             </div>
         </div>
-        <table className='table table-striped table-bordered table-responsive mb-4'>
+        <table className='table table-striped table-bordered table-responsive mb-4' id='tablaURs'>
           <thead>
             <tr>
                 <th onClick={changeOrder} data-order="Clave">

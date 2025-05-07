@@ -1,0 +1,576 @@
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { useSelector } from 'react-redux'
+import { useSearchParams } from 'react-router-dom'
+import { Chart } from 'react-chartjs-2';
+import axios from '../../api/axios';
+import './CapituloGastoUR.css';
+import { scales } from 'chart.js';
+import { stack } from 'd3';
+
+const CapituloGastoUR = ({urActual}) => {
+    const [urlVariables,setUrlVariables] = useSearchParams();
+    const _colores = useSelector(state => state.parameters.colores);
+    const selectedYear = useSelector(state => state.parameters.selectedYear);
+    const inpc = useSelector(state => state.parameters.inpc);
+    const [capitulosGastoUR,setCapitulosGastoUR] = useState([]);
+    const [deflactado,setDeflactado] = useState([]);
+    const versiones = useSelector(state => state.estado.versiones)
+    const versionActual = useSelector(state => state.estado.versionActual)
+    const estadoActual = useSelector(state => state.estado.actualEstado);
+    const [showGraphPresupuesto, setShowGraphPresupuesto] = useState('historico');
+    const [renglonesTablaHistorico, setRenglonesTablaHistorico] = useState([]);
+    const [renglonesTablaDiferencias, setRenglonesTablaDiferencias] = useState([]);
+    const [renglonesTablaActual, setRenglonesTablaActual] = useState([]);
+    const [totalesPresupuestos, setTotalesPresupuestos] = useState([]);
+    const chartRef = useRef(null);
+    const chartRefDiferencias = useRef(null);
+    const chartRefActual = useRef(null);
+    const [configChart, setConfigChart] = useState({
+        labels: [],
+        datasets: [{
+            data: [],
+        }],
+    });
+    const [optionsChart,setOptionsChart] = useState({});
+    const [configChartDiferencias, setConfigChartDiferencias] = useState({
+        labels: [],
+        datasets: [{
+            label: 'Diferencia anual',
+            data: [],
+            borderColor: 'rgb(140, 180, 193)',
+            backgroundColor: 'rgba(140, 180, 193, 0.5)',
+            fill: true
+          },],
+    });
+    const optionsChartDiferencias = {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: true,
+            },
+            title: {
+                display: true,
+                text: 'Diferencia anual',
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        let label = ' ';
+                        if (context.parsed.y !== null) {
+                            label += (context.parsed.y).toFixed(2) + '%';
+                        }
+                        return label;
+                    }
+                }
+            }
+        },
+        scales: {
+            y: {
+                ticks: {
+                    callback: function(value, index, ticks) {
+                        return value + '%';
+                    }
+                }
+            }
+        }
+    };
+    const [configChartActual, setConfigChartActual] = useState({
+        labels: [],
+        datasets: [{
+            data: [],
+        }],
+    });
+    const optionsChartActual = {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false,
+            },
+            title: {
+                display: false
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        let label = ' '+context.dataset.label || ' ';
+                        if (context.parsed !== null) {
+                            label += ': '+ (context.parsed).toLocaleString("en-MX", {style:"decimal",maximumFractionDigits:2, minimumFractionDigits: 2});
+                        }
+                        return label;
+                    }
+                }
+            }
+        },
+    };
+    const getColor = (index) => {
+        if (index < _colores.length) {
+            return _colores[index];
+        } else {
+            return _colores[index % _colores.length];
+        }
+    }
+    // Obtener el presupuesto de los capítulos de Gasto para la UR
+    useEffect(() => {
+        if(versiones.length>0 && estadoActual.Codigo){
+            const path=location.pathname.split('/');
+            const claveUR=path[3]
+            if(urActual?.Clave !== claveUR){
+                const idsVersiones=versiones.filter((version) => version.Actual).map((version) => version.Id);
+                    urlVariables.get('v') ?
+                        !idsVersiones.includes(urlVariables.get('v')) ? idsVersiones.push(urlVariables.get('v')) : null
+                        : null; 
+                // obtener para cada capítulo de gasto el presupuesto histórico
+                const getCapitulosGastoUR = async () => {
+                    const capitulosGasto=["1000","2000","3000","4000","5000","6000","7000","8000","9000"];
+                    const response = await Promise.all(
+                        capitulosGasto.map((capitulo) => {
+                            return axios(estadoActual.Codigo+'/URs/Presupuesto/'+claveUR+'/'+capitulo+'?v='+idsVersiones.join(','))
+                            .then( value => {
+                                return value.data;
+                            })
+                        })
+                    )
+                    let capitulosGastoPresupuesto = [];
+                    response.forEach((capitulo) => {
+                        if(capitulo?.presupuesto?.length>0){
+                            capitulosGastoPresupuesto[capitulo.filtro.Clave]={
+                                Capitulo: capitulo.filtro,
+                                Presupuestos: capitulo.presupuesto
+                            };
+                        }
+                    });
+                    setCapitulosGastoUR(capitulosGastoPresupuesto);
+                }
+                getCapitulosGastoUR();
+            }
+        }
+    },[estadoActual,location,versiones]);
+
+    // Gráficas de los capítulos de gasto
+    useEffect(() => {
+        if(capitulosGastoUR.length>0 && selectedYear && inpc[selectedYear]){
+            const valoresDeflactados = capitulosGastoUR.map((capitulo,index) => {
+                const presupuestos = capitulo.Presupuestos.map((presupuesto) => {
+                    return {
+                        ...presupuesto,
+                        Monto: presupuesto.Monto * inpc[selectedYear] / inpc[presupuesto.Anio]
+                    };
+                });
+                return {
+                    ...capitulo,
+                    Presupuestos: presupuestos,
+                    Color: getColor(index/1000-1)
+                };
+            })
+            let totales = [];
+            versiones.map((version) => {
+                let total=0;
+                valoresDeflactados.map((capitulo) => {
+                    capitulo.Presupuestos.map((presupuesto) => {
+                        if(presupuesto.Id==version.Id){
+                            total+=presupuesto.Monto;
+                        }
+                    });
+                });
+                totales.push({
+                    Version: version.Id,
+                    Monto: total
+                });
+            })
+            setTotalesPresupuestos(totales);
+            setDeflactado(valoresDeflactados);
+        }
+    }, [capitulosGastoUR,selectedYear,inpc]);
+
+    useEffect(() => {
+        if(showGraphPresupuesto === 'actual'){
+            let presupuestoActual = [];
+            deflactado.map((capitulo,index) => {
+                let monto=0;
+                capitulo.Presupuestos.map((presupuesto) => {
+                    if(presupuesto.Id==versionActual.Id){
+                        monto=presupuesto.Monto;
+                    }
+                });
+                presupuestoActual.push({
+                    Capitulo: capitulo.Capitulo,
+                    Monto: monto,
+                    Color: capitulo.Color
+                });
+            });
+            const labelsActual=presupuestoActual.map((capitulo) => {
+                return capitulo.Capitulo.Clave+' - '+capitulo.Capitulo.Nombre;
+            });
+            const dataChartActual=presupuestoActual.map((capitulo) => {
+                return capitulo.Monto;
+            });
+            const backgroundColorActual=presupuestoActual.map((capitulo) => {
+                return capitulo.Color;
+            });
+            setConfigChartActual({
+                labels: labelsActual,
+                datasets: [{
+                    label: 'Capítulos de gasto',
+                    data: dataChartActual,
+                    backgroundColor: backgroundColorActual,
+                }],
+            });
+            if(chartRefActual.current){
+                chartRefActual.current.update();
+            }
+            setRenglonesTablaActual(presupuestoActual);
+        }
+        if(showGraphPresupuesto === 'historico' || showGraphPresupuesto === 'historico-stacked'){
+            const optionsChartHistorico = {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                    },
+                    title: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = ' ';
+                                if (context.parsed.y !== null) {
+                                    label += ': '+ (context.parsed.y).toLocaleString("en-MX", {style:"decimal",maximumFractionDigits:2, minimumFractionDigits: 2});
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        stacked: false
+                    }
+                }
+            };
+            const configChartHistorico = {
+                labels: versiones.filter((version) => version.Actual).map((version) => {
+                    return version.Anio;
+                }),
+                datasets: deflactado.map((capitulo) => {
+                    return {
+                        label: capitulo.Capitulo.Clave+' - '+capitulo.Capitulo.Nombre,
+                        data: versiones.filter((version) => version.Actual).map((version) => {
+                            let monto=0;
+                            capitulo.Presupuestos.map((presupuesto) => {
+                                if(presupuesto.Id==version.Id){
+                                    monto=presupuesto.Monto;
+                                }
+                            })
+                            return monto;
+                        }),
+                        backgroundColor: capitulo.Color,
+                        color: capitulo.Color,
+                        borderColor: capitulo.Color,
+                        tension: 0.3,
+                        fill: false
+                    }
+                }).sort().filter(n => n),
+            };
+            if(showGraphPresupuesto === 'historico'){
+                setConfigChart(configChartHistorico)
+                setOptionsChart(optionsChartHistorico);
+            }else{
+                setConfigChart({
+                    ...configChartHistorico,
+                    datasets: configChartHistorico.datasets.map((dataset) => {
+                        return {
+                            ...dataset,
+                            fill: true
+                        }
+                    }
+                    )
+                });
+                setOptionsChart({
+                    ...optionsChartHistorico,
+                    scales: {
+                        y:{
+                            stacked: true,
+                        }
+                    }
+                })
+            }
+            if(chartRef.current){
+                chartRef.current.update();
+            }
+            setRenglonesTablaHistorico(deflactado);
+        }
+        if(showGraphPresupuesto === 'diferencia'){
+            const versionesDiferencias = versiones.filter((version) => version.Actual);
+            const labelDiferencias=versionesDiferencias.map((version) => {
+                return version.Anio;
+            }).splice(1);
+            const renglonesDiferencias = deflactado.map((capitulo) => {
+                const dataDiferencias=[];
+                for(let i=1; i<versionesDiferencias.length; i++){
+                    let monto=0;
+                    let montoAnterior=0;
+                    capitulo.Presupuestos.map((presupuesto) => {
+                        if(presupuesto.Id==versionesDiferencias[i].Id){
+                            monto=presupuesto.Monto;
+                        }
+                        if(presupuesto.Id==versionesDiferencias[i-1].Id){
+                            montoAnterior=presupuesto.Monto;
+                        }
+                    })
+                    const diferencia = (monto-montoAnterior)/montoAnterior;
+                    dataDiferencias.push(diferencia);
+                }
+                return {
+                    Capitulo: capitulo.Capitulo,
+                    Color: capitulo.Color,
+                    Diferencias: dataDiferencias,
+                }
+            }).sort().filter(n => n);
+            const dataChartDiferencias={
+                labels: labelDiferencias,
+                datasets: renglonesDiferencias.map((capitulo) => {
+                    return {
+                        label: capitulo.Capitulo.Clave+' - '+capitulo.Capitulo.Nombre,
+                        data: capitulo.Diferencias.map((diferencia) => {
+                            if(diferencia){
+                                return diferencia*100;
+                            }else{
+                                return null;
+                            }
+                        }
+                        ),
+                        backgroundColor: capitulo.Color,
+                        color: capitulo.Color,
+                        borderColor: capitulo.Color,
+                        fill: true
+                    }
+                })
+            };
+            setConfigChartDiferencias(dataChartDiferencias);
+            if(chartRefDiferencias.current){
+                chartRefDiferencias.current.update();
+            }
+            setRenglonesTablaDiferencias(renglonesDiferencias);
+        }
+    }, [deflactado,showGraphPresupuesto]);
+    
+    return(
+        <>
+        <div className='row mb-4'>
+            <div className='col-12 mb-2'>
+                <h3>Capítulos de gasto <small>¿En qué se gasta?</small></h3>
+            </div>
+            <div className='col-12 mb-4'>
+                <div className='text-end opcionesGraph mb-2'>
+                <button 
+                        className={ showGraphPresupuesto=='actual' ? 'btn btn-outline-secondary active' : 'btn btn-outline-secondary ' }
+                        title='Actual'
+                        onClick={()=>setShowGraphPresupuesto('actual')}
+                        >
+                        <span className="material-symbols-outlined">pie_chart</span>
+                    </button>
+                    <button 
+                        className={ showGraphPresupuesto=='historico' ? 'btn btn-outline-secondary active' : 'btn btn-outline-secondary ' }
+                        title='Histórico'
+                        onClick={()=>setShowGraphPresupuesto('historico')}
+                        >
+                        <span className="material-symbols-outlined">show_chart</span>
+                    </button>
+                    <button 
+                        className={ showGraphPresupuesto=='historico-stacked' ? 'btn btn-outline-secondary active' : 'btn btn-outline-secondary ' }
+                        title='Histórico'
+                        onClick={()=>setShowGraphPresupuesto('historico-stacked')}
+                        >
+                        <span className="material-symbols-outlined">area_chart</span>
+                    </button>
+                    <button 
+                        className={ showGraphPresupuesto=='diferencia' ? 'btn btn-outline-secondary active' : 'btn btn-outline-secondary ' }  
+                        title='Diferencia anual'
+                        onClick={()=>setShowGraphPresupuesto('diferencia')}
+                        >
+                        <span className="material-symbols-outlined">waterfall_chart</span>
+                    </button>
+                </div>
+            </div>
+            {showGraphPresupuesto === 'actual' ? (
+                <>
+                    <div className='col-12 col-md-6 mb-4'>
+                    <Chart
+                        ref={chartRefActual}
+                        type='pie' 
+                        data={configChartActual}  
+                        options={optionsChartActual}
+                        id='chartActual'
+                        width='100%'
+                        height={'80vw'}
+                    />
+                    </div>
+                    <div className='col-12 col-md-6 mb-4'>
+                        <p>{versionActual.Tipo} del {versionActual.Anio}</p>
+                        <table className='table table-striped table-bordered table-responsive' id='tablaCapitulosGasto'>
+                            <thead>
+                                <tr>
+                                    <th>Capítulo</th>
+                                    <th>Monto</th>
+                                    <th>Porcentaje</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                { 
+                                renglonesTablaActual.map((renglon) => {
+                                    const total=totalesPresupuestos.reduce((total,presupuesto) => { if(presupuesto.Version == versionActual.Id){ return  total+presupuesto.Monto }else{ return total }},0);
+                                    return (
+                                        <tr key={renglon.Capitulo.Id}>
+                                            <td>
+                                                <span className='leyenda' style={{backgroundColor: renglon.Color}}></span>
+                                                {renglon.Capitulo.Clave} - {renglon.Capitulo.Nombre}
+                                            </td>
+                                            <td className='font-monospace text-end'>{renglon.Monto ? renglon.Monto.toLocaleString("en-MX", {style:"decimal",maximumFractionDigits:2, minimumFractionDigits: 2}) : '-'}</td>
+                                            <td className='font-monospace text-end'>{renglon.Monto ? (renglon.Monto/total*100).toFixed(2) + '%' : '-'}</td>
+                                        </tr>
+                                    )
+                                }) }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td className='text-end'>Total:</td>
+                                    <td className='font-monospace text-end'>{ totalesPresupuestos.reduce((total,presupuesto) => { if(presupuesto.Version == versionActual.Id){ return  total+presupuesto.Monto }else{ return total }},0).toLocaleString("en-MX", {style:"decimal",maximumFractionDigits:2, minimumFractionDigits: 2}) }</td>
+                                    <td className='font-monospace text-end'>100%</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </>
+            ) : showGraphPresupuesto === 'historico' || showGraphPresupuesto === 'historico-stacked' ? (
+                <>
+                    <div className='col-12 mb-3'>
+                    <Chart
+                        ref={chartRef}
+                        type='line' 
+                        data={configChart}  
+                        options={optionsChart}
+                        id='chartHistorico'
+                        width='100%'
+                        height={'40em'}
+                    />
+                    </div>
+                </>
+            ) : (
+                <>
+                    <div className='col-12 mb-3'>
+                    <Chart
+                        ref={chartRefDiferencias}
+                        type='bar' 
+                        data={configChartDiferencias}  
+                        options={optionsChartDiferencias}
+                        id='chartDiferencias'
+                        width='100%'
+                        height={'40em'}
+                    />
+                    </div>
+                </>
+            )}   
+            {showGraphPresupuesto === 'historico' ||  showGraphPresupuesto === 'historico-stacked' ? (<>
+            <div className='col-12 mb-3'>
+                <table className='table table-striped table-bordered table-responsive' id='tablaCapitulosGasto'>
+                    <thead>
+                        <tr>
+                            <th>Capítulo</th>
+                            { versiones.filter((version) => version.Actual).map((version) => {
+                                    return (
+                                        <th key={version.Id} className='text-center'>{version.Anio}</th>
+                                    );
+                                }
+                            )}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {renglonesTablaHistorico.map((renglon) => {
+                            return (
+                                <tr key={renglon.Capitulo.Id}>
+                                    <td>
+                                        <span className='leyenda' style={{backgroundColor: renglon.Color}}></span>
+                                        {renglon.Capitulo.Clave} - {renglon.Capitulo.Nombre}
+                                    </td>
+                                    { versiones.filter((version) => version.Actual).map((version) => {
+                                        let presupuestoVersion = null;
+                                        renglon.Presupuestos.filter((presupuesto) => {
+                                            if(presupuesto.Id==version.Id){
+                                                return presupuesto;
+                                            }
+                                        }
+                                        ).map((presupuesto) => {
+                                            presupuestoVersion = presupuesto;
+                                            
+                                        })
+                                        return (
+                                            <td key={version.Id} className='font-monospace text-end'>{presupuestoVersion ? presupuestoVersion.Monto.toLocaleString("en-MX", {style:"decimal",maximumFractionDigits:2, minimumFractionDigits: 2}) : '-'}</td>
+                                        )
+                                    }) }
+                                </tr>
+                            )  
+                        })}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td className='text-end'>Total:</td>
+                            { versiones.filter((version) => version.Actual).map((version) => {
+                                return totalesPresupuestos.filter((presupuesto) => {
+                                    if(presupuesto.Version==version.Id){
+                                        return presupuesto;
+                                    }
+                                }
+                                ).map((presupuesto) => {
+                                    return (
+                                        <td key={version.Id} className='font-monospace text-end'>{presupuesto.Monto.toLocaleString("en-MX", {style:"decimal",maximumFractionDigits:2, minimumFractionDigits: 2})}</td>
+                                    )
+                                })
+                            }) }
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            </>) : null }         
+            {showGraphPresupuesto === 'diferencia' ? (<>
+            <div className='col-12 mb-3'>
+                <table className='table table-striped table-bordered table-responsive' id='tablaCapitulosGasto'>
+                    <thead>
+                        <tr>
+                            <th>Capítulo</th>
+                            { versiones.filter((version) => version.Actual).map((version,index) => {
+                                    if(index>0){
+                                        return (
+                                            <th key={version.Id} className='text-center'>{version.Anio}</th>
+                                        );
+                                    }
+                                }
+                            )}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {renglonesTablaDiferencias.map((renglon) => {
+                            return (
+                                <tr key={renglon.Capitulo.Id}>
+                                    <td>
+                                        <span className='leyenda' style={{backgroundColor: renglon.Color}}></span>
+                                        {renglon.Capitulo.Clave} - {renglon.Capitulo.Nombre}
+                                    </td>
+                                    { renglon.Diferencias.map((diferencia,index) => {
+                                        return (
+                                            <td key={index} className='font-monospace text-end'>{diferencia ? diferencia.toLocaleString("en-MX", {style:"percent", minimumFractionDigits: 2}) : '-' }</td>
+                                        )
+                                    }) }
+                                </tr>
+                            )  
+                        })}
+                    </tbody>
+                </table>
+            </div>
+            </>) : null }         
+        </div>
+        </>
+    );
+}
+
+export default CapituloGastoUR;

@@ -7,6 +7,7 @@ import EstadosData from './components/EstadosData'
 
 import Federal from "./pages/Federal/Federal";
 import Estado from "./pages/Estado/Estado";
+import UR from "./pages/UR/UR";
 import Login from "./pages/Login/Login";
 import Cuadernos from "./pages/Cuadernos/Cuadernos";
 import DetalleCuaderno from "./pages/Cuadernos/DetalleCuaderno";
@@ -25,6 +26,7 @@ function App() {
                 estadosHabilitados.map( (estado) => {
                   return(<>
                   <Route key={'Estado'} path={estado} element={<Estado />} />
+                  <Route key={'UR'} path={estado+'/ur/*'} element={<UR />} />
                   </>)
                 })
               }
