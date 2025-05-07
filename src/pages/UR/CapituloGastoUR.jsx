@@ -183,176 +183,177 @@ const CapituloGastoUR = ({urActual}) => {
     }, [capitulosGastoUR,selectedYear,inpc]);
 
     useEffect(() => {
-        if(showGraphPresupuesto === 'actual'){
-            let presupuestoActual = [];
-            deflactado.map((capitulo,index) => {
-                let monto=0;
-                capitulo.Presupuestos.map((presupuesto) => {
-                    if(presupuesto.Id==versionActual.Id){
-                        monto=presupuesto.Monto;
-                    }
-                });
-                presupuestoActual.push({
-                    Capitulo: capitulo.Capitulo,
-                    Monto: monto,
-                    Color: capitulo.Color
-                });
+        // Deflactar los presupuestos y obtener el actual
+        let presupuestoActual = [];
+        deflactado.map((capitulo,index) => {
+            let monto=0;
+            capitulo.Presupuestos.map((presupuesto) => {
+                if(presupuesto.Id==versionActual.Id){
+                    monto=presupuesto.Monto;
+                }
             });
-            const labelsActual=presupuestoActual.map((capitulo) => {
-                return capitulo.Capitulo.Clave+' - '+capitulo.Capitulo.Nombre;
+            presupuestoActual.push({
+                Capitulo: capitulo.Capitulo,
+                Monto: monto,
+                Color: capitulo.Color
             });
-            const dataChartActual=presupuestoActual.map((capitulo) => {
-                return capitulo.Monto;
-            });
-            const backgroundColorActual=presupuestoActual.map((capitulo) => {
-                return capitulo.Color;
-            });
-            setConfigChartActual({
-                labels: labelsActual,
-                datasets: [{
-                    label: 'Capítulos de gasto',
-                    data: dataChartActual,
-                    backgroundColor: backgroundColorActual,
-                }],
-            });
-            if(chartRefActual.current){
-                chartRefActual.current.update();
-            }
-            setRenglonesTablaActual(presupuestoActual);
+        });
+
+        // Configurar la gráfica actual
+        const labelsActual=presupuestoActual.map((capitulo) => {
+            return capitulo.Capitulo.Clave+' - '+capitulo.Capitulo.Nombre;
+        });
+        const dataChartActual=presupuestoActual.map((capitulo) => {
+            return capitulo.Monto;
+        });
+        const backgroundColorActual=presupuestoActual.map((capitulo) => {
+            return capitulo.Color;
+        });
+        setConfigChartActual({
+            labels: labelsActual,
+            datasets: [{
+                label: 'Capítulos de gasto',
+                data: dataChartActual,
+                backgroundColor: backgroundColorActual,
+            }],
+        });
+        if(chartRefActual.current && showGraphPresupuesto === 'actual'){
+            chartRefActual.current.update();
         }
-        if(showGraphPresupuesto === 'historico' || showGraphPresupuesto === 'historico-stacked'){
-            const optionsChartHistorico = {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: true,
-                    },
-                    title: {
-                        display: false
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                let label = ' ';
-                                if (context.parsed.y !== null) {
-                                    label += ': '+ (context.parsed.y).toLocaleString("en-MX", {style:"decimal",maximumFractionDigits:2, minimumFractionDigits: 2});
-                                }
-                                return label;
-                            }
-                        }
-                    }
+        setRenglonesTablaActual(presupuestoActual);
+        
+        // Configurar las gráficas históricas
+        const optionsChartHistorico = {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true,
                 },
-                scales: {
-                    y: {
-                        stacked: false
-                    }
-                }
-            };
-            const configChartHistorico = {
-                labels: versiones.filter((version) => version.Actual).map((version) => {
-                    return version.Anio;
-                }),
-                datasets: deflactado.map((capitulo) => {
-                    return {
-                        label: capitulo.Capitulo.Clave+' - '+capitulo.Capitulo.Nombre,
-                        data: versiones.filter((version) => version.Actual).map((version) => {
-                            let monto=0;
-                            capitulo.Presupuestos.map((presupuesto) => {
-                                if(presupuesto.Id==version.Id){
-                                    monto=presupuesto.Monto;
-                                }
-                            })
-                            return monto;
-                        }),
-                        backgroundColor: capitulo.Color,
-                        color: capitulo.Color,
-                        borderColor: capitulo.Color,
-                        tension: 0.3,
-                        fill: false
-                    }
-                }).sort().filter(n => n),
-            };
-            if(showGraphPresupuesto === 'historico'){
-                setConfigChart(configChartHistorico)
-                setOptionsChart(optionsChartHistorico);
-            }else{
-                setConfigChart({
-                    ...configChartHistorico,
-                    datasets: configChartHistorico.datasets.map((dataset) => {
-                        return {
-                            ...dataset,
-                            fill: true
-                        }
-                    }
-                    )
-                });
-                setOptionsChart({
-                    ...optionsChartHistorico,
-                    scales: {
-                        y:{
-                            stacked: true,
-                        }
-                    }
-                })
-            }
-            if(chartRef.current){
-                chartRef.current.update();
-            }
-            setRenglonesTablaHistorico(deflactado);
-        }
-        if(showGraphPresupuesto === 'diferencia'){
-            const versionesDiferencias = versiones.filter((version) => version.Actual);
-            const labelDiferencias=versionesDiferencias.map((version) => {
-                return version.Anio;
-            }).splice(1);
-            const renglonesDiferencias = deflactado.map((capitulo) => {
-                const dataDiferencias=[];
-                for(let i=1; i<versionesDiferencias.length; i++){
-                    let monto=0;
-                    let montoAnterior=0;
-                    capitulo.Presupuestos.map((presupuesto) => {
-                        if(presupuesto.Id==versionesDiferencias[i].Id){
-                            monto=presupuesto.Monto;
-                        }
-                        if(presupuesto.Id==versionesDiferencias[i-1].Id){
-                            montoAnterior=presupuesto.Monto;
-                        }
-                    })
-                    const diferencia = (monto-montoAnterior)/montoAnterior;
-                    dataDiferencias.push(diferencia);
-                }
-                return {
-                    Capitulo: capitulo.Capitulo,
-                    Color: capitulo.Color,
-                    Diferencias: dataDiferencias,
-                }
-            }).sort().filter(n => n);
-            const dataChartDiferencias={
-                labels: labelDiferencias,
-                datasets: renglonesDiferencias.map((capitulo) => {
-                    return {
-                        label: capitulo.Capitulo.Clave+' - '+capitulo.Capitulo.Nombre,
-                        data: capitulo.Diferencias.map((diferencia) => {
-                            if(diferencia){
-                                return diferencia*100;
-                            }else{
-                                return null;
+                title: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = ' ';
+                            if (context.parsed.y !== null) {
+                                label += ': '+ (context.parsed.y).toLocaleString("en-MX", {style:"decimal",maximumFractionDigits:2, minimumFractionDigits: 2});
                             }
+                            return label;
                         }
-                        ),
-                        backgroundColor: capitulo.Color,
-                        color: capitulo.Color,
-                        borderColor: capitulo.Color,
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    stacked: false
+                }
+            }
+        };
+        const configChartHistorico = {
+            labels: versiones.filter((version) => version.Actual).map((version) => {
+                return version.Anio;
+            }),
+            datasets: deflactado.map((capitulo) => {
+                return {
+                    label: capitulo.Capitulo.Clave+' - '+capitulo.Capitulo.Nombre,
+                    data: versiones.filter((version) => version.Actual).map((version) => {
+                        let monto=0;
+                        capitulo.Presupuestos.map((presupuesto) => {
+                            if(presupuesto.Id==version.Id){
+                                monto=presupuesto.Monto;
+                            }
+                        })
+                        return monto;
+                    }),
+                    backgroundColor: capitulo.Color,
+                    color: capitulo.Color,
+                    borderColor: capitulo.Color,
+                    tension: 0.3,
+                    fill: false
+                }
+            }).sort().filter(n => n),
+        };
+        if(showGraphPresupuesto === 'historico'){
+            setConfigChart(configChartHistorico)
+            setOptionsChart(optionsChartHistorico);
+        }else{
+            setConfigChart({
+                ...configChartHistorico,
+                datasets: configChartHistorico.datasets.map((dataset) => {
+                    return {
+                        ...dataset,
                         fill: true
                     }
-                })
-            };
-            setConfigChartDiferencias(dataChartDiferencias);
-            if(chartRefDiferencias.current){
-                chartRefDiferencias.current.update();
-            }
-            setRenglonesTablaDiferencias(renglonesDiferencias);
+                }
+                )
+            });
+            setOptionsChart({
+                ...optionsChartHistorico,
+                scales: {
+                    y:{
+                        stacked: true,
+                    }
+                }
+            })
         }
+        if(chartRef.current && (showGraphPresupuesto === 'historico' || showGraphPresupuesto === 'historico-stacked')){
+            chartRef.current.update();
+        }
+        setRenglonesTablaHistorico(deflactado);
+
+        // Configurar la gráfica de diferencias
+        const versionesDiferencias = versiones.filter((version) => version.Actual);
+        const labelDiferencias=versionesDiferencias.map((version) => {
+            return version.Anio;
+        }).splice(1);
+        const renglonesDiferencias = deflactado.map((capitulo) => {
+            const dataDiferencias=[];
+            for(let i=1; i<versionesDiferencias.length; i++){
+                let monto=0;
+                let montoAnterior=0;
+                capitulo.Presupuestos.map((presupuesto) => {
+                    if(presupuesto.Id==versionesDiferencias[i].Id){
+                        monto=presupuesto.Monto;
+                    }
+                    if(presupuesto.Id==versionesDiferencias[i-1].Id){
+                        montoAnterior=presupuesto.Monto;
+                    }
+                })
+                const diferencia = (monto-montoAnterior)/montoAnterior;
+                dataDiferencias.push(diferencia);
+            }
+            return {
+                Capitulo: capitulo.Capitulo,
+                Color: capitulo.Color,
+                Diferencias: dataDiferencias,
+            }
+        }).sort().filter(n => n);
+        const dataChartDiferencias={
+            labels: labelDiferencias,
+            datasets: renglonesDiferencias.map((capitulo) => {
+                return {
+                    label: capitulo.Capitulo.Clave+' - '+capitulo.Capitulo.Nombre,
+                    data: capitulo.Diferencias.map((diferencia) => {
+                        if(diferencia){
+                            return diferencia*100;
+                        }else{
+                            return null;
+                        }
+                    }
+                    ),
+                    backgroundColor: capitulo.Color,
+                    color: capitulo.Color,
+                    borderColor: capitulo.Color,
+                    fill: true
+                }
+            })
+        };
+        setConfigChartDiferencias(dataChartDiferencias);
+        if(chartRefDiferencias.current && showGraphPresupuesto === 'diferencia'){
+            chartRefDiferencias.current.update();
+        }
+        setRenglonesTablaDiferencias(renglonesDiferencias);
     }, [deflactado,showGraphPresupuesto]);
     
     return(
