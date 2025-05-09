@@ -9,6 +9,7 @@ import { setPage } from '../../parametersSlice'
 
 import HistoricoUR from './HistoricoUR';
 import CapituloGastoUR from './CapituloGastoUR';
+import ProgramasUR from './ProgramasUR';
 
 import './UR.css'
 
@@ -89,6 +90,7 @@ const UR = () => {
     <p className='presupuestoLetra'>{ presupuestoTotalLetra }</p>
     <HistoricoUR presupuestoHistorico={presupuestoHistorico} />
     <CapituloGastoUR urActual={urActual}/>
+    <ProgramasUR urActual={urActual}/>
     </>)
 }
 

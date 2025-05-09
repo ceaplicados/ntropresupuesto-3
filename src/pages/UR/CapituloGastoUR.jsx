@@ -1,11 +1,9 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { useSearchParams } from 'react-router-dom'
 import { Chart } from 'react-chartjs-2';
 import axios from '../../api/axios';
 import './CapituloGastoUR.css';
-import { scales } from 'chart.js';
-import { stack } from 'd3';
 
 const CapituloGastoUR = ({urActual}) => {
     const [urlVariables,setUrlVariables] = useSearchParams();
