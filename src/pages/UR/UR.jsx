@@ -45,6 +45,7 @@ const UR = () => {
                     response?.data?.unidadResponsable ? setUrActual(response.data.unidadResponsable) : null;
                 }
                 getHistoricoUR(claveUR);
+                window.scrollTo(0,0);
             }
         }
     },[estadoActual,location,versiones]);

@@ -53,9 +53,9 @@ const CapituloGastoUR = ({urActual}) => {
             tooltip: {
                 callbacks: {
                     label: function(context) {
-                        let label = ' ';
+                        let label = ' '+context.dataset.label || ' ';
                         if (context.parsed.y !== null) {
-                            label += (context.parsed.y).toFixed(2) + '%';
+                            label += ' '+(context.parsed.y).toFixed(2) + '%';
                         }
                         return label;
                     }
@@ -229,7 +229,7 @@ const CapituloGastoUR = ({urActual}) => {
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            let label = ' ';
+                            let label = ' '+context.dataset.label || ' ';
                             if (context.parsed.y !== null) {
                                 label += ': '+ (context.parsed.y).toLocaleString("en-MX", {style:"decimal",maximumFractionDigits:2, minimumFractionDigits: 2});
                             }

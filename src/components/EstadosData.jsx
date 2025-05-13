@@ -48,10 +48,10 @@ const EstadosData = () => {
                     if(idVersionActual){
                         const existeVersion=versiones.filter( (version) => { return version.Id == idVersionActual } );
                         existeVersion.length===0
-                            ? dispatch(setVersionActual(versiones[0]))
+                            ? dispatch(setVersionActual(versiones[versiones.length-1]))
                             : dispatch(setVersionActual(existeVersion[0]));
                     }else{
-                        dispatch(setVersionActual(versiones[0]));
+                        dispatch(setVersionActual(versiones[versiones.length-1]));
                     }
                 }
                 updateVersiones();
