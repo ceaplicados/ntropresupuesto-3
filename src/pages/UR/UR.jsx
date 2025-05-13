@@ -1,15 +1,14 @@
 import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams, useLocation } from 'react-router-dom'
 import useCantidadLetra from '../../hooks/useCantidadLetra';
-import { Modal } from 'react-bootstrap'
 import axios from '../../api/axios'
-import { setPresupuestoUR, setUnidadesPresupuestales, setVersionActual } from '../../estadoSlice'
 import { setPage } from '../../parametersSlice'
 
 import HistoricoUR from './HistoricoUR';
 import CapituloGastoUR from './CapituloGastoUR';
 import ProgramasUR from './ProgramasUR';
+import UnidadPresupuestalUR from './UnidadPresupuestalUR';
 
 import './UR.css'
 
@@ -17,6 +16,7 @@ const UR = () => {
     const dispatch = useDispatch();
     const cantidadLetra = useCantidadLetra();
     const [urlVariables,setUrlVariables] = useSearchParams();
+    const location = useLocation();
     const selectedYear = useSelector(state => state.parameters.selectedYear)
     const inpc = useSelector(state => state.parameters.inpc)
     const page = useSelector(state => state.parameters.page)
@@ -33,7 +33,7 @@ const UR = () => {
     useEffect(() => {
         if(versiones.length>0 && estadoActual.Codigo){
             const path=location.pathname.split('/');
-            const claveUR=path[3]
+            const claveUR=path[3];
             if(urActual?.Clave !== claveUR){
                 const getHistoricoUR = async (claveUR) => {
                     const idsVersiones=versiones.filter((version) => version.Actual).map((version) => version.Id);
@@ -91,6 +91,7 @@ const UR = () => {
     <HistoricoUR presupuestoHistorico={presupuestoHistorico} />
     <CapituloGastoUR urActual={urActual}/>
     <ProgramasUR urActual={urActual}/>
+    <UnidadPresupuestalUR urActual={urActual} presupuestoTotal={presupuestoTotal}/>
     </>)
 }
 

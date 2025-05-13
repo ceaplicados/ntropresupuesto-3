@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import axios from '../../api/axios';
-import './CapituloGastoUR.css';
 
 const ProgramasUR = ({urActual}) => {
     const selectedYear = useSelector(state => state.parameters.selectedYear);
@@ -13,8 +12,6 @@ const ProgramasUR = ({urActual}) => {
 
     // Obtener los programas para la versión actual
     useEffect(() => {
-        console.log('urActual',urActual);
-        console.log('versionActual',versionActual);
         if(urActual.Id && versionActual.Id && estadoActual.Codigo){
             const fetchData = async () => {
                 try {
@@ -26,7 +23,7 @@ const ProgramasUR = ({urActual}) => {
             };
             fetchData();
         }
-    }, [estadoActual,location,versionActual,urActual]);
+    }, [estadoActual,versionActual,urActual]);
 
     // Deflactar los programas
     useEffect(() => {
@@ -62,7 +59,7 @@ const ProgramasUR = ({urActual}) => {
                             const total = deflactado.reduce((total, programa) =>  total + programa.Monto, 0);
                             return (
                             <tr key={programa.Id}>
-                                <td>{programa.Clave}</td>
+                                <td className='text-nowrap'>{programa.Clave}</td>
                                 <td>{programa.Nombre}</td>
                                 <td className='font-monospace text-end'>{programa.Monto.toLocaleString("en-MX", {style:"decimal",maximumFractionDigits:2, minimumFractionDigits: 2})}</td>
                                 <td className='font-monospace text-end'>{(programa.Monto/total).toLocaleString("en-MX", {style:"percent", minimumFractionDigits: 2})}</td>

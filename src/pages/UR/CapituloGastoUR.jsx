@@ -110,39 +110,35 @@ const CapituloGastoUR = ({urActual}) => {
     // Obtener el presupuesto de los capítulos de Gasto para la UR
     useEffect(() => {
         if(versiones.length>0 && estadoActual.Codigo){
-            const path=location.pathname.split('/');
-            const claveUR=path[3]
-            if(urActual?.Clave !== claveUR){
-                const idsVersiones=versiones.filter((version) => version.Actual).map((version) => version.Id);
-                    urlVariables.get('v') ?
-                        !idsVersiones.includes(urlVariables.get('v')) ? idsVersiones.push(urlVariables.get('v')) : null
-                        : null; 
-                // obtener para cada capítulo de gasto el presupuesto histórico
-                const getCapitulosGastoUR = async () => {
-                    const capitulosGasto=["1000","2000","3000","4000","5000","6000","7000","8000","9000"];
-                    const response = await Promise.all(
-                        capitulosGasto.map((capitulo) => {
-                            return axios(estadoActual.Codigo+'/URs/Presupuesto/'+claveUR+'/'+capitulo+'?v='+idsVersiones.join(','))
-                            .then( value => {
-                                return value.data;
-                            })
+            const idsVersiones=versiones.filter((version) => version.Actual).map((version) => version.Id);
+                urlVariables.get('v') ?
+                    !idsVersiones.includes(urlVariables.get('v')) ? idsVersiones.push(urlVariables.get('v')) : null
+                    : null; 
+            // obtener para cada capítulo de gasto el presupuesto histórico
+            const getCapitulosGastoUR = async () => {
+                const capitulosGasto=["1000","2000","3000","4000","5000","6000","7000","8000","9000"];
+                const response = await Promise.all(
+                    capitulosGasto.map((capitulo) => {
+                        return axios(estadoActual.Codigo+'/URs/Presupuesto/'+urActual.Clave+'/'+capitulo+'?v='+idsVersiones.join(','))
+                        .then( value => {
+                            return value.data;
                         })
-                    )
-                    let capitulosGastoPresupuesto = [];
-                    response.forEach((capitulo) => {
-                        if(capitulo?.presupuesto?.length>0){
-                            capitulosGastoPresupuesto[capitulo.filtro.Clave]={
-                                Capitulo: capitulo.filtro,
-                                Presupuestos: capitulo.presupuesto
-                            };
-                        }
-                    });
-                    setCapitulosGastoUR(capitulosGastoPresupuesto);
-                }
-                getCapitulosGastoUR();
+                    })
+                )
+                let capitulosGastoPresupuesto = [];
+                response.forEach((capitulo) => {
+                    if(capitulo?.presupuesto?.length>0){
+                        capitulosGastoPresupuesto[capitulo.filtro.Clave]={
+                            Capitulo: capitulo.filtro,
+                            Presupuestos: capitulo.presupuesto
+                        };
+                    }
+                });
+                setCapitulosGastoUR(capitulosGastoPresupuesto);
             }
+            getCapitulosGastoUR();
         }
-    },[estadoActual,location,versiones]);
+    },[estadoActual,urActual,versiones]);
 
     // Gráficas de los capítulos de gasto
     useEffect(() => {
