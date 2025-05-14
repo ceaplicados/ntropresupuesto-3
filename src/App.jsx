@@ -8,6 +8,7 @@ import EstadosData from './components/EstadosData'
 import Federal from "./pages/Federal/Federal";
 import Estado from "./pages/Estado/Estado";
 import UR from "./pages/UR/UR";
+import UP from "./pages/UP/UP";
 import Login from "./pages/Login/Login";
 import Cuadernos from "./pages/Cuadernos/Cuadernos";
 import DetalleCuaderno from "./pages/Cuadernos/DetalleCuaderno";
@@ -27,6 +28,7 @@ function App() {
                   return(<>
                   <Route key={'Estado'} path={estado} element={<Estado />} />
                   <Route key={'UR'} path={estado+'/ur/*'} element={<UR />} />
+                  <Route key={'UP'} path={estado+'/up/*'} element={<UP />} />
                   </>)
                 })
               }

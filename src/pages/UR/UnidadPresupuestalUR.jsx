@@ -147,7 +147,7 @@ const UnidadPresupuestalUR = ({urActual,presupuestoTotal}) => {
                 <h3>Unidad Presupuestal <small>Ente público a quien está sectorizado <i>{urActual.Nombre}</i></small></h3>
             </div>
             <div className='col-12 col-md-6 mb-4'>
-                <h5 className='text-center mb-3'>{unidadPresupuestal?.unidadPresupuestal?.Clave} - {unidadPresupuestal?.unidadPresupuestal?.Nombre}</h5>
+                <h5 className='text-center mb-3'>{unidadPresupuestal?.unidadPresupuestal?.Clave} - {unidadPresupuestal?.unidadPresupuestal?.Nombre} <Link to={'./../../up/'+unidadPresupuestal?.unidadPresupuestal?.Clave}><span className="material-symbols-outlined">arrow_circle_right</span></Link></h5>
                 <Chart
                     ref={chartRef}
                     type='pie' 
