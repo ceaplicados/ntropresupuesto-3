@@ -6,6 +6,7 @@ import axios from '../../api/axios'
 import { setPage } from '../../parametersSlice'
 
 import ConceptosGeneralesCG from './ConceptosGeneralesCG';
+import UnidadesResponsablesCG from './UnidadesResponsablesCG';
 import './CapituloGasto.css';
 
 const CapituloGasto = () => {
@@ -83,6 +84,7 @@ const CapituloGasto = () => {
     <p className='totalPresupuesto'>El presupuesto de {cgActual?.Nombre}, {estadoActual?.Nombre} para el año {versionActual.Anio} es de $ {presupuestoTotal ? presupuestoTotal.toLocaleString("en-MX", {style:"decimal",maximumFractionDigits:2, minimumFractionDigits: 2}) : null } a valores del {selectedYear}</p>
     <p className='presupuestoLetra'>{ presupuestoTotalLetra }</p>
     <ConceptosGeneralesCG cgActual={cgActual} />
+    <UnidadesResponsablesCG cgActual={cgActual} />
     </>)
 }
 
