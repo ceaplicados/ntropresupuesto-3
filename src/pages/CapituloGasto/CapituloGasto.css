@@ -37,3 +37,7 @@ h3 small{
     font-size: 1em;
     color: green;
 }
+a span.material-symbols-outlined {
+    font-size: 1.25rem;
+    vertical-align: bottom;
+}

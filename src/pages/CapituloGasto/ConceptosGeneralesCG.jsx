@@ -297,7 +297,7 @@ const ConceptosGeneralesCG = ({cgActual}) => {
             }
             return {
                 conceptoGeneral: concepto,
-                Color: conceptosGeneralesDeflactado.Color,
+                Color: concepto.Color,
                 Diferencias: dataDiferencias,
             }
         }).sort().filter(n => n);

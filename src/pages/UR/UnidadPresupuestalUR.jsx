@@ -175,7 +175,7 @@ const UnidadPresupuestalUR = ({urActual,presupuestoTotal}) => {
                                 <td className='text-nowrap'><span className='leyenda' style={{backgroundColor: ur.Color}}></span> {ur.Clave}</td>
                                 <td>{ur.Nombre} <Link to={'./../'+ur.Clave}><span className="material-symbols-outlined">arrow_circle_right</span></Link></td>
                                 <td className='font-monospace text-end'>{ur.Monto.toLocaleString("en-MX", {style:"decimal",maximumFractionDigits:2, minimumFractionDigits: 2})}</td>
-                                <td className='font-monospace text-end'>{(ur.Monto/unidadPresupuestal?.presupuestos[0]?.Monto).toLocaleString("en-MX", {style:"percent", minimumFractionDigits: 2})}</td>
+                                <td className='font-monospace text-end'>{unidadPresupuestal?.presupuestos ? (ur.Monto/unidadPresupuestal?.presupuestos[0]?.Monto).toLocaleString("en-MX", {style:"percent", minimumFractionDigits: 2}) : null}</td>
                             </tr>
                             )}
                         )}

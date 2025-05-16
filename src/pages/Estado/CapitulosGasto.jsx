@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { Chart } from 'react-chartjs-2';
+import { Link } from 'react-router-dom'
 import axios from  '../../api/axios'
 import './CapitulosGasto.css';
 
@@ -114,7 +115,7 @@ const CapitulosGasto = () => {
         }
         tableBody=valoresTabla.map((capitulo) => {
             return (<tr key={capitulo.Clave}>
-                <td><span className='leyenda' style={{backgroundColor: capitulo.color}}></span>{capitulo.Clave} - {capitulo.Nombre}</td>
+                <td><span className='leyenda' style={{backgroundColor: capitulo.color}}></span>{capitulo.Clave} - {capitulo.Nombre} <Link to={'./CapituloGasto/'+capitulo.Clave}><span className="material-symbols-outlined">arrow_circle_right</span></Link></td>
                 <td className='text-end font-monospace'>{capitulo.Monto.toLocaleString("en-MX", {style:"decimal",maximumFractionDigits:2, minimumFractionDigits: 2})}</td>
                 <td className='text-end font-monospace'>{(capitulo.Monto/total).toLocaleString("en-MX", {style:"percent", minimumFractionDigits: 1})}</td>
             </tr>)

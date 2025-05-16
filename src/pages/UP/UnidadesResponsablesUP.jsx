@@ -327,7 +327,7 @@ const UnidadesResponsablesUP = ({upActual}) => {
                     Diferencias: dataDiferencias,
                 }
             }).sort().filter(n => n);
-            
+
             const dataChartDiferencias={
                 labels: labelDiferencias,
                 datasets: renglonesDiferencias.map((unidadResponsable) => {
