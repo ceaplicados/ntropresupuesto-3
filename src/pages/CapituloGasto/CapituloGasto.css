@@ -1,0 +1,39 @@
+td.font-monospace{
+    font-size: .9rem;
+}
+h3 small{
+    font-size: 1.1rem;
+    font-weight: 200;
+    margin-left: .3rem;
+}
+
+.subtitle .version{
+    cursor: pointer;
+    color: #777;
+}
+.subtitle .version:hover{
+    text-decoration: underline;
+}
+.totalPresupuesto{
+    text-align: center;
+    margin-bottom: .1rem;
+}
+.presupuestoLetra{
+    text-align: center;
+    font-size: .8rem;
+}
+.presupuestoLetra:first-letter{
+    text-transform: uppercase;
+}
+#listaVersiones li{
+    transition: .15s ease-in-out;
+    cursor: pointer;
+}
+#listaVersiones li:hover{
+    transform: scale(1.02);
+    background: #EEE;
+}
+#listaVersiones span.material-symbols-outlined {
+    font-size: 1em;
+    color: green;
+}

@@ -18,7 +18,6 @@ const UnidadesResponsablesUP = ({upActual}) => {
     const [presupuestosURs,setPresupuestosURs] = useState([]);
     const [presupuestosURsDeflactados,setPresupuestosURsDeflactados] = useState([]);
     const [deflactado,setDeflactado] = useState([]);
-    const [renglonesTablaHistorico, setRenglonesTablaHistorico] = useState([]);
     const [renglonesTablaDiferencias, setRenglonesTablaDiferencias] = useState([]);
     const [totalesPresupuestos, setTotalesPresupuestos] = useState([]);
     const chartRefActual = useRef(null);
@@ -328,7 +327,7 @@ const UnidadesResponsablesUP = ({upActual}) => {
                     Diferencias: dataDiferencias,
                 }
             }).sort().filter(n => n);
-            console.log('renglonesDiferencias',renglonesDiferencias);
+            
             const dataChartDiferencias={
                 labels: labelDiferencias,
                 datasets: renglonesDiferencias.map((unidadResponsable) => {
