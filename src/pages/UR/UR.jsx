@@ -87,7 +87,7 @@ const UR = () => {
     return(<>
     <h1>{urActual?.Clave} <small>{urActual?.Nombre}</small></h1>
     <p className='subtitle'><span className='version' onClick={() => {setShowModalVersiones(true)}}>{ versionActual ? versionActual.Tipo+' '+versionActual.Anio : '' }</span> a valores del {selectedYear}</p>
-    <p className='totalPresupuesto'>El presupuesto de {urActual?.Nombre}, {estadoActual?.Nombre} para el año {versionActual.Anio} es de $ {presupuestoTotal ? presupuestoTotal.toLocaleString("en-MX", {style:"decimal",maximumFractionDigits:2, minimumFractionDigits: 2}) : null } a valores del {selectedYear}</p>
+    <p className='totalPresupuesto'>El presupuesto de {urActual?.Nombre}, {estadoActual?.Nombre} para el año {versionActual?.Anio} es de $ {presupuestoTotal ? presupuestoTotal.toLocaleString("en-MX", {style:"decimal",maximumFractionDigits:2, minimumFractionDigits: 2}) : null } a valores del {selectedYear}</p>
     <p className='presupuestoLetra'>{ presupuestoTotalLetra }</p>
     <HistoricoUR presupuestoHistorico={presupuestoHistorico} />
     <CapituloGastoUR urActual={urActual}/>
