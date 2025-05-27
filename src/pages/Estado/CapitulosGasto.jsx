@@ -54,7 +54,7 @@ const CapitulosGasto = () => {
 
     useEffect(() => {
         if(versionActual.Id && estadoActual.Codigo){
-            let url='/'+estadoActual.Codigo+'/CapituloGasto?v='+versionActual.Id;
+            let url='/'+estadoActual.Codigo+'/CapituloGasto?v='+versionActual?.Id;
             const getPresupuestoCapituloGasto = async (url) => {
                 const response = await axios(url);
                 const data = response?.data;

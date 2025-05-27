@@ -80,7 +80,7 @@ const CapituloGasto = () => {
 
     return(<>
     <h1>{cgActual?.Clave} <small>{cgActual?.Nombre}, {estadoActual.Nombre}</small></h1>
-    <p className='subtitle'><span className='version' onClick={() => {setShowModalVersiones(true)}}>{ versionActual ? versionActual.Tipo+' '+versionActual.Anio : '' }</span> a valores del {selectedYear}</p>
+    <p className='subtitle'><span className='version' onClick={() => {setShowModalVersiones(true)}}>{ versionActual ? versionActual?.Tipo+' '+versionActual?.Anio : '' }</span> a valores del {selectedYear}</p>
     <p className='totalPresupuesto'>El presupuesto de {cgActual?.Nombre}, {estadoActual?.Nombre} para el año {versionActual?.Anio} es de $ {presupuestoTotal ? presupuestoTotal.toLocaleString("en-MX", {style:"decimal",maximumFractionDigits:2, minimumFractionDigits: 2}) : null } a valores del {selectedYear}</p>
     <p className='presupuestoLetra'>{ presupuestoTotalLetra }</p>
     <ConceptosGeneralesCG cgActual={cgActual} />
