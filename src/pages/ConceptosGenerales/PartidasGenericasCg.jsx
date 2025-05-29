@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import { Chart } from 'react-chartjs-2';
 import axios from '../../api/axios'
 
-const ConceptosGeneralesCG = ({cgActual}) => {
+const PartidasGenericasCg = ({cgActual}) => {
     const [conceptosGenerales,setConceptosGenerales]=useState([]);
     const [conceptosGeneralesDeflactado,setConceptosGeneralesDeflactado]=useState([]);
     const [urlVariables,setUrlVariables] = useSearchParams();
@@ -115,7 +115,7 @@ const ConceptosGeneralesCG = ({cgActual}) => {
                 urlVariables.get('v') ?
                     !idsVersiones.includes(urlVariables.get('v')) ? idsVersiones.push(urlVariables.get('v')) : null
                     : null; 
-                const response = await axios(estadoActual.Codigo+'/ConceptosGenerales/'+claveCG+'?v='+idsVersiones.join(','));
+                const response = await axios(estadoActual.Codigo+'/PartidasGenericas/'+claveCG+'?v='+idsVersiones.join(','));
                 response?.data?.length>0 ? setConceptosGenerales(response.data) : null;
             }
             getHistoricoCG(cgActual.Clave);
@@ -160,14 +160,14 @@ const ConceptosGeneralesCG = ({cgActual}) => {
     useEffect(() => {
         // Configurar la gráfica actual
         const labelsActual=conceptosGeneralesDeflactado.map((concepto) => {
-            return concepto.conceptoGeneral.Clave+' - '+concepto.conceptoGeneral.Nombre;
+            return concepto.partidaGenerica.Clave+' - '+concepto.partidaGenerica.Nombre;
         });
         let tablaActual=[];
         const dataChartActual=conceptosGeneralesDeflactado.map((concepto) => {
             let Monto = concepto.presupuestos.filter((presupuesto) => {
                 if(presupuesto.Id==versionActual.Id){
                     tablaActual.push({
-                        concepto: concepto.conceptoGeneral,
+                        concepto: concepto.partidaGenerica,
                         Monto: presupuesto.Monto,
                         Color: concepto.Color,
                     })
@@ -229,7 +229,7 @@ const ConceptosGeneralesCG = ({cgActual}) => {
             }),
             datasets: conceptosGeneralesDeflactado.map((concepto) => {
                 return {
-                    label: concepto.conceptoGeneral.Clave+' - '+concepto.conceptoGeneral.Nombre,
+                    label: concepto.partidaGenerica.Clave+' - '+concepto.partidaGenerica.Nombre,
                     data: versiones.filter((version) => version.Actual).map((version) => {
                         let monto=0;
                         concepto.presupuestos.map((presupuesto) => {
@@ -296,7 +296,7 @@ const ConceptosGeneralesCG = ({cgActual}) => {
                 dataDiferencias.push(diferencia);
             }
             return {
-                conceptoGeneral: concepto.conceptoGeneral,
+                partidaGenerica: concepto.partidaGenerica,
                 Color: concepto.Color,
                 Diferencias: dataDiferencias,
             }
@@ -306,7 +306,7 @@ const ConceptosGeneralesCG = ({cgActual}) => {
             labels: labelDiferencias,
             datasets: renglonesDiferencias.map((renglon) => {
                 return {
-                    label: renglon.conceptoGeneral.Clave+' - '+renglon.conceptoGeneral.Nombre,
+                    label: renglon.partidaGenerica.Clave+' - '+renglon.partidaGenerica.Nombre,
                     data: renglon.Diferencias.map((diferencia) => {
                         if(diferencia){
                             return diferencia*100;
@@ -396,7 +396,7 @@ const ConceptosGeneralesCG = ({cgActual}) => {
                             return (
                             <tr key={renglon.concepto.Id}>
                                 <td className='text-nowrap'><span className='leyenda' style={{backgroundColor: renglon.Color}}></span> {renglon.concepto.Clave}</td>
-                                <td>{renglon.concepto.Nombre} <Link to={'./../../ConceptosGenerales/'+renglon.concepto.Clave}><span className="material-symbols-outlined">arrow_circle_right</span></Link></td>
+                                <td>{renglon.concepto.Nombre} <Link to={'./../../PartidasGenericas/'+renglon.concepto.Clave}><span className="material-symbols-outlined">arrow_circle_right</span></Link></td>
                                 <td className='font-monospace text-end'>{renglon.Monto.toLocaleString("en-MX", {style:"decimal",maximumFractionDigits:2, minimumFractionDigits: 2})}</td>
                                 <td className='font-monospace text-end'>{ (renglon.Monto/renglonesTablaActual.reduce((total, concepto) =>  total + concepto.Monto, 0)).toLocaleString("en-MX", {style:"percent", minimumFractionDigits: 2}) }</td>
                             </tr>
@@ -461,7 +461,7 @@ const ConceptosGeneralesCG = ({cgActual}) => {
                                 <tr key={renglon.Id}>
                                     <td>
                                         <span className='leyenda' style={{backgroundColor: renglon.Color}}></span>
-                                        {renglon.conceptoGeneral.Clave} - {renglon.conceptoGeneral.Nombre} <Link to={'./../../ConceptosGenerales/'+renglon.conceptoGeneral.Clave}><span className="material-symbols-outlined">arrow_circle_right</span></Link>
+                                        {renglon.partidaGenerica.Clave} - {renglon.partidaGenerica.Nombre} <Link to={'./../../PartidasGenericas/'+renglon.partidaGenerica.Clave}><span className="material-symbols-outlined">arrow_circle_right</span></Link>
                                     </td>
                                     { versiones.filter((version) => version.Actual).map((version) => {
                                         let presupuestoVersion = null;
@@ -521,10 +521,10 @@ const ConceptosGeneralesCG = ({cgActual}) => {
                     <tbody>
                         {renglonesTablaDiferencias.map((renglon) => {
                             return (
-                                <tr key={renglon.conceptoGeneral.Id}>
+                                <tr key={renglon.partidaGenerica.Id}>
                                     <td>
                                         <span className='leyenda' style={{backgroundColor: renglon.Color}}></span>
-                                        {renglon.conceptoGeneral.Clave} - {renglon.conceptoGeneral.Nombre} <Link to={'./../../ConceptosGenerales/'+renglon.conceptoGeneral.Clave}><span className="material-symbols-outlined">arrow_circle_right</span></Link>
+                                        {renglon.partidaGenerica.Clave} - {renglon.partidaGenerica.Nombre} <Link to={'./../../PartidasGenericas/'+renglon.partidaGenerica.Clave}><span className="material-symbols-outlined">arrow_circle_right</span></Link>
                                     </td>
                                     { renglon.Diferencias.map((diferencia,index) => {
                                         return (
@@ -542,4 +542,4 @@ const ConceptosGeneralesCG = ({cgActual}) => {
     </>)
 }
 
-export default ConceptosGeneralesCG
+export default PartidasGenericasCg

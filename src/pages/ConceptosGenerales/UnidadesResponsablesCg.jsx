@@ -5,9 +5,9 @@ import { Link } from 'react-router-dom'
 import { Chart } from 'react-chartjs-2';
 import axios from '../../api/axios'
 
-const ConceptosGeneralesCG = ({cgActual}) => {
-    const [conceptosGenerales,setConceptosGenerales]=useState([]);
-    const [conceptosGeneralesDeflactado,setConceptosGeneralesDeflactado]=useState([]);
+const UnidadesResponsablesCg = ({cgActual}) => {
+    const [unidadesResponsables,setUnidadesResponsables]=useState([]);
+    const [unidadesResponsablesDeflactado,setUnidadesResponsablesDeflactado]=useState([]);
     const [urlVariables,setUrlVariables] = useSearchParams();
     const selectedYear = useSelector(state => state.parameters.selectedYear)
     const inpc = useSelector(state => state.parameters.inpc)
@@ -107,26 +107,41 @@ const ConceptosGeneralesCG = ({cgActual}) => {
         }
     }
     
-    // Obtener el presupuesto histórico por conceptos generales
+    // Obtener unidades responsables y su presupuesto histórico
     useEffect(() => {
         if(cgActual.Clave){
-            const getHistoricoCG = async (claveCG) => {
+            const getHistoricoUR = async (claveCG) => {
                 const idsVersiones=versiones.filter((version) => version.Actual).map((version) => version.Id);
                 urlVariables.get('v') ?
                     !idsVersiones.includes(urlVariables.get('v')) ? idsVersiones.push(urlVariables.get('v')) : null
                     : null; 
-                const response = await axios(estadoActual.Codigo+'/ConceptosGenerales/'+claveCG+'?v='+idsVersiones.join(','));
-                response?.data?.length>0 ? setConceptosGenerales(response.data) : null;
+                const response=await axios(estadoActual.Codigo+'/URs');
+                const urs=response.data;
+                
+                const getHistorico = async (ur) => {
+                    const response = await axios(estadoActual.Codigo+'/URs/Presupuesto/'+ur.Clave+'/'+claveCG+'?v='+idsVersiones.join(','));
+                    return {
+                        ... ur,
+                        Presupuestos: response.data.presupuesto
+                    }
+                }
+                const ursHistorico = urs.map((ur) => {
+                    return getHistorico(ur);
+                })
+                Promise.all(ursHistorico).then((ursHistorico) => {
+                    ursHistorico=ursHistorico.filter((ur) => ur.Presupuestos.length>0);
+                    setUnidadesResponsables(ursHistorico);
+                })
             }
-            getHistoricoCG(cgActual.Clave);
+            getHistoricoUR(cgActual.Clave);
         }
     },[cgActual]);
 
-    // Deflactar el presupuesto de los conceptos generales
+    // Deflactar el presupuesto de las unidades responsables
     useEffect(() => {
-        if(conceptosGenerales.length>0 && selectedYear){
-            const defactado=conceptosGenerales.map((concepto,index) => {
-                const presupuestos=concepto.presupuestos.map((presupuesto) => {
+        if(unidadesResponsables.length>0 && selectedYear){
+            const defactado=unidadesResponsables.map((ur,index) => {
+                const presupuestos=ur.Presupuestos.map((presupuesto) => {
                     const monto=presupuesto.Monto*inpc[selectedYear]/inpc[presupuesto.Anio];
                     return {
                         ...presupuesto,
@@ -134,18 +149,18 @@ const ConceptosGeneralesCG = ({cgActual}) => {
                     }
                 })
                 return {
-                    ...concepto,
-                    presupuestos: presupuestos,
-                    Color: getColor(index),
+                    ...ur,
+                    Presupuestos: presupuestos,
+                    Color: getColor(index)
                 }
             })
-            setConceptosGeneralesDeflactado(defactado);
+            setUnidadesResponsablesDeflactado(defactado);
 
             // Calcular totales por año
             versiones.filter((version) => version.Actual).map((version) => {
                 let total=0;
-                defactado.map((concepto) => {
-                    concepto.presupuestos.filter((presupuesto) => {
+                defactado.map((ur) => {
+                    ur.Presupuestos.filter((presupuesto) => {
                         if(presupuesto.Id==version.Id){
                             total+=presupuesto.Monto;
                         }
@@ -154,22 +169,22 @@ const ConceptosGeneralesCG = ({cgActual}) => {
                 setTotalesPresupuestos((prevState) => [...prevState, {Version: version, Monto: total}])
             })
         }
-    },[conceptosGenerales,selectedYear,inpc]);
+    },[unidadesResponsables,selectedYear,inpc]);
 
     // Actualizar las gráficas
     useEffect(() => {
         // Configurar la gráfica actual
-        const labelsActual=conceptosGeneralesDeflactado.map((concepto) => {
-            return concepto.conceptoGeneral.Clave+' - '+concepto.conceptoGeneral.Nombre;
+        const labelsActual=unidadesResponsablesDeflactado.map((ur) => {
+            return ur.Clave+' - '+ur.Nombre;
         });
         let tablaActual=[];
-        const dataChartActual=conceptosGeneralesDeflactado.map((concepto) => {
-            let Monto = concepto.presupuestos.filter((presupuesto) => {
+        const dataChartActual=unidadesResponsablesDeflactado.map((ur) => {
+            let Monto = ur.Presupuestos.filter((presupuesto) => {
                 if(presupuesto.Id==versionActual.Id){
                     tablaActual.push({
-                        concepto: concepto.conceptoGeneral,
+                        UnidadResponsable: ur,
                         Monto: presupuesto.Monto,
-                        Color: concepto.Color,
+                        Color: ur.Color,
                     })
                     return presupuesto;
                 }
@@ -179,14 +194,14 @@ const ConceptosGeneralesCG = ({cgActual}) => {
             })
             return Monto[0] ? Monto[0].Monto : 0;
         });
-        const backgroundColorActual=conceptosGeneralesDeflactado.map((conceptosGeneralesDeflactado) => {
-            return conceptosGeneralesDeflactado.Color;
+        const backgroundColorActual=unidadesResponsablesDeflactado.map((unidadesResponsablesDeflactado) => {
+            return unidadesResponsablesDeflactado.Color;
         });
         setRenglonesTablaActual(tablaActual);
         setConfigChartActual({
             labels: labelsActual,
             datasets: [{
-                label: 'Conceptos Generales',
+                label: 'Unidades Responsables',
                 data: dataChartActual,
                 backgroundColor: backgroundColorActual,
             }],
@@ -227,21 +242,21 @@ const ConceptosGeneralesCG = ({cgActual}) => {
             labels: versiones.filter((version) => version.Actual).map((version) => {
                 return version.Anio;
             }),
-            datasets: conceptosGeneralesDeflactado.map((concepto) => {
+            datasets: unidadesResponsablesDeflactado.map((ur) => {
                 return {
-                    label: concepto.conceptoGeneral.Clave+' - '+concepto.conceptoGeneral.Nombre,
+                    label: ur.Clave+' - '+ur.Nombre,
                     data: versiones.filter((version) => version.Actual).map((version) => {
                         let monto=0;
-                        concepto.presupuestos.map((presupuesto) => {
+                        ur.Presupuestos.map((presupuesto) => {
                             if(presupuesto.Id==version.Id){
                                 monto=presupuesto.Monto;
                             }
                         })
                         return monto;
                     }),
-                    backgroundColor: concepto.Color,
-                    color: concepto.Color,
-                    borderColor: concepto.Color,
+                    backgroundColor: ur.Color,
+                    color: ur.Color,
+                    borderColor: ur.Color,
                     tension: 0.3,
                     fill: false
                 }
@@ -279,12 +294,12 @@ const ConceptosGeneralesCG = ({cgActual}) => {
         const labelDiferencias=versionesDiferencias.map((version) => {
             return version.Anio;
         }).splice(1);
-        const renglonesDiferencias = conceptosGeneralesDeflactado.map((concepto) => {
+        const renglonesDiferencias = unidadesResponsablesDeflactado.map((ur) => {
             const dataDiferencias=[];
             for(let i=1; i<versionesDiferencias.length; i++){
                 let monto=0;
                 let montoAnterior=0;
-                concepto.presupuestos.map((presupuesto) => {
+                ur.Presupuestos.map((presupuesto) => {
                     if(presupuesto.Id==versionesDiferencias[i].Id){
                         monto=presupuesto.Monto;
                     }
@@ -296,8 +311,8 @@ const ConceptosGeneralesCG = ({cgActual}) => {
                 dataDiferencias.push(diferencia);
             }
             return {
-                conceptoGeneral: concepto.conceptoGeneral,
-                Color: concepto.Color,
+                UnidadResponsable: ur,
+                Color: ur.Color,
                 Diferencias: dataDiferencias,
             }
         }).sort().filter(n => n);
@@ -306,7 +321,7 @@ const ConceptosGeneralesCG = ({cgActual}) => {
             labels: labelDiferencias,
             datasets: renglonesDiferencias.map((renglon) => {
                 return {
-                    label: renglon.conceptoGeneral.Clave+' - '+renglon.conceptoGeneral.Nombre,
+                    label: renglon.UnidadResponsable.Clave+' - '+renglon.UnidadResponsable.Nombre,
                     data: renglon.Diferencias.map((diferencia) => {
                         if(diferencia){
                             return diferencia*100;
@@ -328,13 +343,13 @@ const ConceptosGeneralesCG = ({cgActual}) => {
         }
         setRenglonesTablaDiferencias(renglonesDiferencias);
 
-    },[conceptosGeneralesDeflactado, showGraphPresupuesto]);
+    },[unidadesResponsablesDeflactado, showGraphPresupuesto]);
 
 
     return(<>
     <div className='row mt-4'>
         <div className='col-12'>
-            <h3>Conceptos Generales<small> de gasto</small></h3>
+            <h3>Unidades Responsables<small> ¿Quién se lo gasta?</small></h3>
         </div>
         <div className='col-12 mb-4'>
                 <div className='text-end opcionesGraph mb-2'>
@@ -394,9 +409,9 @@ const ConceptosGeneralesCG = ({cgActual}) => {
                     <tbody>
                         { renglonesTablaActual.map((renglon) => {
                             return (
-                            <tr key={renglon.concepto.Id}>
-                                <td className='text-nowrap'><span className='leyenda' style={{backgroundColor: renglon.Color}}></span> {renglon.concepto.Clave}</td>
-                                <td>{renglon.concepto.Nombre} <Link to={'./../../ConceptosGenerales/'+renglon.concepto.Clave}><span className="material-symbols-outlined">arrow_circle_right</span></Link></td>
+                            <tr key={renglon.UnidadResponsable.Id}>
+                                <td className='text-nowrap'><span className='leyenda' style={{backgroundColor: renglon.Color}}></span> {renglon.UnidadResponsable.Clave}</td>
+                                <td>{renglon.UnidadResponsable.Nombre} <Link to={'./../../ur/'+renglon.UnidadResponsable.Clave}><span className="material-symbols-outlined">arrow_circle_right</span></Link></td>
                                 <td className='font-monospace text-end'>{renglon.Monto.toLocaleString("en-MX", {style:"decimal",maximumFractionDigits:2, minimumFractionDigits: 2})}</td>
                                 <td className='font-monospace text-end'>{ (renglon.Monto/renglonesTablaActual.reduce((total, concepto) =>  total + concepto.Monto, 0)).toLocaleString("en-MX", {style:"percent", minimumFractionDigits: 2}) }</td>
                             </tr>
@@ -422,7 +437,7 @@ const ConceptosGeneralesCG = ({cgActual}) => {
                         options={optionsChart}
                         id='chartHistorico'
                         width='100%'
-                        height={'40em'}
+                        height={'60em'}
                     />
                     </div>
                 </>
@@ -436,7 +451,7 @@ const ConceptosGeneralesCG = ({cgActual}) => {
                         options={optionsChartDiferencias}
                         id='chartDiferencias'
                         width='100%'
-                        height={'40em'}
+                        height={'60em'}
                     />
                     </div>
                 </>
@@ -456,16 +471,16 @@ const ConceptosGeneralesCG = ({cgActual}) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {conceptosGeneralesDeflactado.map((renglon) => {
+                        {unidadesResponsablesDeflactado.map((renglon) => {
                             return (
                                 <tr key={renglon.Id}>
                                     <td>
                                         <span className='leyenda' style={{backgroundColor: renglon.Color}}></span>
-                                        {renglon.conceptoGeneral.Clave} - {renglon.conceptoGeneral.Nombre} <Link to={'./../../ConceptosGenerales/'+renglon.conceptoGeneral.Clave}><span className="material-symbols-outlined">arrow_circle_right</span></Link>
+                                        {renglon.Clave} - {renglon.Nombre} <Link to={'./../../ur/'+renglon.Clave}><span className="material-symbols-outlined">arrow_circle_right</span></Link>
                                     </td>
                                     { versiones.filter((version) => version.Actual).map((version) => {
                                         let presupuestoVersion = null;
-                                        renglon.presupuestos.filter((presupuesto) => {
+                                        renglon.Presupuestos.filter((presupuesto) => {
                                             if(presupuesto.Id==version.Id){
                                                 return presupuesto;
                                             }
@@ -521,10 +536,10 @@ const ConceptosGeneralesCG = ({cgActual}) => {
                     <tbody>
                         {renglonesTablaDiferencias.map((renglon) => {
                             return (
-                                <tr key={renglon.conceptoGeneral.Id}>
+                                <tr key={renglon.UnidadResponsable.Id}>
                                     <td>
                                         <span className='leyenda' style={{backgroundColor: renglon.Color}}></span>
-                                        {renglon.conceptoGeneral.Clave} - {renglon.conceptoGeneral.Nombre} <Link to={'./../../ConceptosGenerales/'+renglon.conceptoGeneral.Clave}><span className="material-symbols-outlined">arrow_circle_right</span></Link>
+                                        {renglon.UnidadResponsable.Clave} - {renglon.UnidadResponsable.Nombre} <Link to={'./../../ur/'+renglon.UnidadResponsable.Clave}><span className="material-symbols-outlined">arrow_circle_right</span></Link>
                                     </td>
                                     { renglon.Diferencias.map((diferencia,index) => {
                                         return (
@@ -542,4 +557,4 @@ const ConceptosGeneralesCG = ({cgActual}) => {
     </>)
 }
 
-export default ConceptosGeneralesCG
+export default UnidadesResponsablesCg
