@@ -142,7 +142,7 @@ const PartidasGenericasCg = ({cgActual}) => {
             setConceptosGeneralesDeflactado(defactado);
 
             // Calcular totales por año
-            versiones.filter((version) => version.Actual).map((version) => {
+            const totales=versiones.filter((version) => version.Actual).map((version) => {
                 let total=0;
                 defactado.map((concepto) => {
                     concepto.presupuestos.filter((presupuesto) => {
@@ -151,8 +151,9 @@ const PartidasGenericasCg = ({cgActual}) => {
                         }
                     })
                 })
-                setTotalesPresupuestos((prevState) => [...prevState, {Version: version, Monto: total}])
+                return {Version: version, Monto: total}
             })
+             setTotalesPresupuestos(totales)
         }
     },[conceptosGenerales,selectedYear,inpc]);
 

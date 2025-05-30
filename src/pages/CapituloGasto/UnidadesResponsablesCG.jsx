@@ -157,7 +157,7 @@ const UnidadesResponsablesCG = ({cgActual}) => {
             setUnidadesResponsablesDeflactado(defactado);
 
             // Calcular totales por año
-            versiones.filter((version) => version.Actual).map((version) => {
+            const totales=versiones.filter((version) => version.Actual).map((version) => {
                 let total=0;
                 defactado.map((ur) => {
                     ur.Presupuestos.filter((presupuesto) => {
@@ -166,8 +166,9 @@ const UnidadesResponsablesCG = ({cgActual}) => {
                         }
                     })
                 })
-                setTotalesPresupuestos((prevState) => [...prevState, {Version: version, Monto: total}])
+                return {Version: version, Monto: total}
             })
+            setTotalesPresupuestos(totales);
         }
     },[unidadesResponsables,selectedYear,inpc]);
 
