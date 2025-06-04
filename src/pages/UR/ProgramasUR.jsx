@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import axios from '../../api/axios';
+import { Link } from 'react-router-dom'
 
 const ProgramasUR = ({urActual}) => {
     const selectedYear = useSelector(state => state.parameters.selectedYear);
@@ -59,7 +60,7 @@ const ProgramasUR = ({urActual}) => {
                             const total = deflactado.reduce((total, programa) =>  total + programa.Monto, 0);
                             return (
                             <tr key={programa.Id}>
-                                <td className='text-nowrap'>{programa.Clave}</td>
+                                <td className='text-nowrap'>{programa.Clave} <Link to={'./../../programa/'+programa.Clave}><span className="material-symbols-outlined">arrow_circle_right</span></Link></td>
                                 <td>{programa.Nombre}</td>
                                 <td className='font-monospace text-end'>{programa.Monto.toLocaleString("en-MX", {style:"decimal",maximumFractionDigits:2, minimumFractionDigits: 2})}</td>
                                 <td className='font-monospace text-end'>{(programa.Monto/total).toLocaleString("en-MX", {style:"percent", minimumFractionDigits: 2})}</td>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import axios from '../../api/axios'
 import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 const ProgramasPresupuestales = () => {
     const dataPresupuesto = useSelector(state => state.estado.presupuestoUR);
@@ -80,7 +81,7 @@ const ProgramasPresupuestales = () => {
                 return (<>
                 <tr key={programa.Id}>
                     <td className='text-nowrap font-monospace'>{programa.Clave}</td>
-                    <td>{programa.Nombre}</td>
+                    <td>{programa.Nombre} <Link to={'./programa/'+programa.Clave}><span className="material-symbols-outlined">arrow_circle_right</span></Link></td>
                     <td className='text-end font-monospace'>{programa.Monto.toLocaleString("en-MX", {style:"decimal",maximumFractionDigits:2, minimumFractionDigits: 2})}</td>
                     <td className='text-end font-monospace'>{(programa.Monto/totalPresupuesto).toLocaleString("en-MX", {style:"percent", minimumFractionDigits: 1})}</td>
                 </tr>
