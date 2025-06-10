@@ -38,6 +38,7 @@ const EstadosData = () => {
                 const updateVersiones = async () => {
                     const response = await axios(actualEstado.Codigo);
                     const versiones=response.data;
+                    const versionesActuales=versiones.filter((version) => { return version.Actual === true });
                     dispatch(setVersiones(versiones));
                     
                     // verificar que la versión actual seleccionada o establecida en la URL corresponda al estado seleccionado
@@ -48,10 +49,10 @@ const EstadosData = () => {
                     if(idVersionActual){
                         const existeVersion=versiones.filter( (version) => { return version.Id == idVersionActual } );
                         existeVersion.length===0
-                            ? dispatch(setVersionActual(versiones[versiones.length-1]))
+                            ? dispatch(setVersionActual(versionesActuales[versionesActuales.length-1]))
                             : dispatch(setVersionActual(existeVersion[0]));
                     }else{
-                        dispatch(setVersionActual(versiones[versiones.length-1]));
+                        dispatch(setVersionActual(versionesActuales[versionesActuales.length-1]));
                     }
                 }
                 updateVersiones();
