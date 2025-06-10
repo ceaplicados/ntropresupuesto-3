@@ -21,6 +21,7 @@ function Login() {
     useEffect(() => {
         const datosPage={
             ...page,
+            title: 'Iniciar sesión',
             breadcrumb: [{
                 texto: "Iniciar sesión"
             }],

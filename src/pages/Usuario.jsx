@@ -28,6 +28,7 @@ function Usuario() {
     useEffect(() => {
         const datosPage={
             ...page,
+            title: 'Mi perfil',
             breadcrumb: [{
                 texto: "Mi perfil"
             }],

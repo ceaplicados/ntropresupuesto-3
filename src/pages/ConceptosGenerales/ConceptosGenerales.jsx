@@ -56,6 +56,7 @@ const ConceptosGenerales = () => {
         const claveCG = cgActual.Clave ? Math.floor(cgActual.Clave/1000)*1000 : '';
         const datosPage={
             ...page,
+            title: estadoActual.Nombre+': '+cgActual?.Clave+' - '+cgActual?.Nombre,
             breadcrumb: [{
                 texto: estadoActual.Nombre,
                 url: '/'+estadoActual.Codigo+urlVars

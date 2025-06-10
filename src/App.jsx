@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import ReactGA from "react-ga4";
 
 import Layout from "./components/Layout"
 import RequireAuth from "./components/RequireAuth";
@@ -19,6 +20,7 @@ import DetalleCuaderno from "./pages/Cuadernos/DetalleCuaderno";
 import Usuario from "./pages/Usuario";
 
 function App() {
+  ReactGA.initialize("G-Z18PG9MX4L");
   const estadosHabilitados = ["JAL","CDMX"];
   return (
     <Routes>

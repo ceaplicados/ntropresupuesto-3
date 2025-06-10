@@ -52,7 +52,8 @@ export const parametersSlice = createSlice({
       }
     },
     setPage: (state, action) => {
-      state.page = action.payload
+      state.page = action.payload;
+      document.title= state.page.title ? state.page.title : '#Nuestro Presupuesto';
     },
   }
 })

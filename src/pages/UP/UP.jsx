@@ -55,6 +55,7 @@ const UP = () => {
         urlVars.length>0 ? urlVars='?'+urlVars : null;
         const datosPage={
             ...page,
+            title: estadoActual.Nombre+': '+upActual?.Clave+' - '+upActual?.Nombre,
             breadcrumb: [{
                 texto: estadoActual.Nombre,
                 url: '/'+estadoActual.Codigo+urlVars

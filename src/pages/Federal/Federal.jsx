@@ -14,6 +14,7 @@ function Federal() {
   useEffect(()=>{
     const datosPage={
       ...page,
+      title: '#NuestroPresupuesto',
       breadcrumb: [{
         texto: 'Gasto federalizado'
       }],

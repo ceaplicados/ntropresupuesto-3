@@ -63,6 +63,7 @@ const ProgramasPresupuestales = () => {
         urlVars.length>0 ? urlVars='?'+urlVars : null;
         const datosPage={
             ...page,
+            title: estadoActual.Nombre+': '+cgActual?.Clave+' - '+cgActual?.Nombre,
             breadcrumb: [{
                 texto: estadoActual.Nombre,
                 url: '/'+estadoActual.Codigo+urlVars

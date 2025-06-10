@@ -57,6 +57,7 @@ const PartidasGenericas = () => {
         const claveCg = cgActual.Clave ? Math.floor(cgActual.Clave/100)*100 : '';
         const datosPage={
             ...page,
+            title: estadoActual.Nombre+': '+cgActual?.Clave+' - '+cgActual?.Nombre,
             breadcrumb: [{
                 texto: estadoActual.Nombre,
                 url: '/'+estadoActual.Codigo+urlVars

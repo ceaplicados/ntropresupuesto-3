@@ -98,6 +98,7 @@ function DetalleCuaderno() {
     useEffect( () => {
         const datosPage={
             ...page,
+            title: 'Cuaderno de trabajo: '+datosCuaderno.Nombre,
             breadcrumb: [{
                 texto: "Cuadernos",
                 url: "/Cuadernos"

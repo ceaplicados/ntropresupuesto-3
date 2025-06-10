@@ -34,6 +34,7 @@ function Estado() {
   useEffect(() => {
     const datosPage={
       ...page,
+      title: estadoActual.Nombre,
       breadcrumb: [{
         texto: estadoActual.Nombre
       }],

@@ -20,6 +20,7 @@ function Cuadernos() {
   useEffect(()=>{
     const datosPage={
       ...page,
+      title: 'Cuadernos de trabajo',
       breadcrumb: [{
         texto: 'Cuadernos de trabajo'
       }],
