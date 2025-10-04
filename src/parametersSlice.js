@@ -44,7 +44,7 @@ export const parametersSlice = createSlice({
     updateUser: (state, action) => {
       state.user = {...action.payload}
     },
-    logoutUser: (state, action) => {
+    logoutUser: (state) => {
       state.user = {
         UUID: null,
         sobrenombre: null,

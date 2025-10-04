@@ -25,8 +25,12 @@ const Layout = () => {
                 const obtenerINPC = async () => {
                   const response = await axios('/INPC');
                   const data=response.data;
-                  dispatch(setInpc(data));
-                  localStorage.setItem('INPC', JSON.stringify(data));
+                  let datosINPC = {}
+                  data.map((item) => {
+                    datosINPC[item.fecha] = item.valor;
+                  })
+                  dispatch(setInpc(datosINPC));
+                  localStorage.setItem('INPC', JSON.stringify(datosINPC));
                   localStorage.setItem('versionINPC', versionINPC);
                 }
                 obtenerINPC();

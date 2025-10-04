@@ -1,0 +1,42 @@
+name: Deploy to AWS S3
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
+      - name: Node.js setup
+        uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+      
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Create .env file
+        run: |
+          cat <<EOF > config/config.js
+          const config_param = {
+            api_url: '${{ secrets.API_URL }}'
+          };
+          export default config_param;
+          EOF
+
+      - name: Build project
+        run: npm run build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+
+      - name: Sync files to S3
+        run: |
+          aws s3 sync build s3://ntropresupuesto-frontend --delete
