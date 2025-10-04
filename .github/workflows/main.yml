@@ -18,7 +18,7 @@ jobs:
       - name: Install dependencies
         run: npm install
       
-      - name: Create .env file
+      - name: Create config/config.js file
         run: |
           cat <<EOF > config/config.js
           const config_param = {
@@ -39,4 +39,4 @@ jobs:
 
       - name: Sync files to S3
         run: |
-          aws s3 sync build s3://ntropresupuesto-frontend --delete
+          aws s3 sync build/ s3://ntropresupuesto-frontend --delete
