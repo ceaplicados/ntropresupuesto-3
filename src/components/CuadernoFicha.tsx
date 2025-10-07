@@ -13,18 +13,19 @@ const CuadernoFicha = ({ cuaderno }: { cuaderno: CuadernoType }) => {
             </Card.Body>
             <Card.Footer className='d-flex justify-content-between'>
                     <div className='users'>
-                        <img src={cuaderno.Owner.Image} className="owner-img" alt={cuaderno.Owner.Sobrenombre}  title={cuaderno.Owner.Sobrenombre}/>
+                        { cuaderno.Owner.Image ? (<img src={cuaderno.Owner.Image} className="owner-img" alt={cuaderno.Owner.Sobrenombre}  title={cuaderno.Owner.Sobrenombre}/>) : null}
                         <ul className='users-imgs'>
                         { 
-                        cuaderno.Usuarios.map((usuario) => {
-                            return (<li key={usuario.UUID}>
-                            <img src={usuario.Image} className="owner-img" alt={usuario.Sobrenombre} title={usuario.Sobrenombre} />
-                            </li>)
-                        }) 
+                        cuaderno.Usuarios ? 
+                            cuaderno.Usuarios.map((usuario) => {
+                                return (<li key={usuario.UUID}>
+                                { usuario.Image ? (<img src={usuario.Image} className="owner-img" alt={usuario.Sobrenombre} title={usuario.Sobrenombre} />) : null }
+                                </li>)
+                            }) : null
                         }
                         </ul>
                     </div>
-                    <Link to={'/cuaderno/'+cuaderno.Id}>
+                    <Link to={'/cuaderno/'+cuaderno.UUID}>
                         <Button variant='primary'>Ir</Button>
                     </Link>
                 </Card.Footer>

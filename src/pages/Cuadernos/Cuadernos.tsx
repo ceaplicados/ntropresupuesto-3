@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import Icon  from '../../components/Icon';
 
 import CuadernoFicha from '../../components/CuadernoFicha';
+import ModalNewCuaderno from '../../components/ModalNewCuaderno';
 import type { CuadernoType } from '../../types';
 
 import  './Cuadernos.css';
@@ -21,6 +22,7 @@ const Cuadernos = () => {
   const [filtroCuadernos, setFiltroCuadernos] = useState('');
   const [misCuadernos, setMisCuadernos] = useState<CuadernoType[]>([]);
   const [activeTab, setActiveTab] = useState<string|null>('publicos');
+  const [showModalNewCuaderno, setShowModalNewCuaderno] = useState<boolean>(false);
   const page = useSelector((state: any) => state.parameters.page);
 
   // configurar SEO y breadcrumb
@@ -89,12 +91,16 @@ const Cuadernos = () => {
     </Row>
     <Row className="d-flex flex-wrap">
       {cuadernosPublicosFiltrados.map((cuaderno) => (
-        <Col xs={12} md={6} lg={4} className="mb-4" key={cuaderno.Id}>
+        <Col xs={12} md={6} lg={4} className="mb-4" key={cuaderno.UUID}>
           <CuadernoFicha cuaderno={cuaderno} />
         </Col>
       ))}
     </Row>
     </Container>)
+  }
+
+  const handleCloseModalNewCuaderno = () => {
+    setShowModalNewCuaderno(false);
   }
   
   return (
@@ -107,7 +113,7 @@ const Cuadernos = () => {
         <Col xs={12} md={4}>
           { user.UUID ? (
             <p className='text-end'>
-            <Button variant='primary'>Crear cuaderno de trabajo</Button>
+            <Button variant='primary'  onClick={() => setShowModalNewCuaderno(true)} >Crear cuaderno de trabajo</Button>
           </p>
           ) : null }
         </Col>
@@ -129,18 +135,19 @@ const Cuadernos = () => {
             <Row className="d-flex flex-wrap">
               { misCuadernos.length>0 ? 
               misCuadernos.map((cuaderno) => (
-                <Col xs={12} md={6} lg={4} className="mb-4" key={cuaderno.Id}>
+                <Col xs={12} md={6} lg={4} className="mb-4" key={cuaderno.UUID}>
                   <CuadernoFicha cuaderno={cuaderno} />
                 </Col>
               ))
               : (
               <Col>
-                <p className='mt-4'>No tienes cuadernos registrados, <Link to={'#'}  onClick={() => setActiveTab('publicos')}>ver cuadernos públicos</Link> o <Link to={'#'} >crea un nuevo cuaderno</Link>.</p>
+                <p className='mt-4'>No tienes cuadernos registrados, <Link to={'#'}  onClick={() => setActiveTab('publicos')}>ver cuadernos públicos</Link> o <Link to={'#'} onClick={() => setShowModalNewCuaderno(true)} >crea un nuevo cuaderno</Link>.</p>
               </Col>)}
             </Row>
           </Container>
         </Tab>
       </Tabs>
+      <ModalNewCuaderno show={showModalNewCuaderno} handleClose={handleCloseModalNewCuaderno} />
       </>) : (
         <>
         {cuadernosPublicosGrid()}
