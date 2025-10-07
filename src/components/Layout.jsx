@@ -27,7 +27,7 @@ const Layout = () => {
                   const data=response.data;
                   let datosINPC = {}
                   data.map((item) => {
-                    datosINPC[item.fecha] = item.valor;
+                    datosINPC[item.year] = item.value;
                   })
                   dispatch(setInpc(datosINPC));
                   localStorage.setItem('INPC', JSON.stringify(datosINPC));
