@@ -64,6 +64,14 @@ function OffcanvasMenu() {
                 </li>
                 </ul>
             </nav>
+            <nav>
+                <h3>Ligas</h3>
+                <ul className="offcanvas-menu">
+                    <li>
+                        <Link to="https://www.postman.com/centro-de-estudios-aplicados/centro-de-estudios-aplicados/collection/rk0qzko/nuestropresupuesto-api-1-0?action=share&creator=499645" target='_blank'><span className="material-symbols-outlined">api</span> Documentación de la API</Link>
+                    </li>
+                </ul>
+            </nav>
             </div>
         </div>
         </>
