@@ -115,7 +115,7 @@ const TablaURs = () => {
                 </th>
                 { filtroTabla ? (<th onClick={changeOrder} data-order="PorcentajeFiltro">
                     % Filtro
-                    { orderBy.Campo==='PorcentajeFiltro' ? (<span className="material-symbols-outlined">{ orderBy.Orden==='ASC' ? 'down' : 'up' }</span>) : null }
+                    { orderBy.Campo==='PorcentajeFiltro' ? (<span className="material-symbols-outlined">{ orderBy.Orden==='ASC' ? 'arrow_circle_down' : 'arrow_circle_up' }</span>) : null }
                 </th>) : null }
             </tr>
           </thead>
