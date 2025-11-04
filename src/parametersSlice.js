@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 export const parametersSlice = createSlice({
   name: 'parameters',
   initialState: {
-    selectedYear: new Date().getFullYear(),
+    selectedYear: 2026,
     inpc: {},
     estados: [],
     searchParams: {},

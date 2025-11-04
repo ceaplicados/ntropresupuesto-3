@@ -166,15 +166,15 @@ const CapitulosGasto = () => {
                         <tr>    
                             <th onClick={changeOrder} data-order="Clave">
                                 Capítulo de Gasto
-                                { orderBy.Campo==='Clave' ? (<span className="material-symbols-outlined">arrow_circle_{ orderBy.Orden==='ASC' ? 'down' : 'up' }</span>) : null }
+                                { orderBy.Campo==='Clave' ? (<span className="material-symbols-outlined">{ orderBy.Orden==='ASC' ? 'arrow_circle_down' : 'arrow_circle_up' }</span>) : null }
                             </th>
                             <th onClick={changeOrder} data-order="Monto">
                                 Presupuesto { versionActual?.Anio   }
-                                { orderBy.Campo==='Monto' ? (<span className="material-symbols-outlined">arrow_circle_{ orderBy.Orden==='ASC' ? 'down' : 'up' }</span>) : null }
+                                { orderBy.Campo==='Monto' ? (<span className="material-symbols-outlined">{ orderBy.Orden==='ASC' ? 'arrow_circle_down' : 'arrow_circle_up' }</span>) : null }
                             </th>
                             <th onClick={changeOrder} data-order="Porcentaje">
                                 Porcentaje
-                                { orderBy.Campo==='Porcentaje' ? (<span className="material-symbols-outlined">arrow_circle_{ orderBy.Orden==='ASC' ? 'down' : 'up' }</span>) : null }
+                                { orderBy.Campo==='Porcentaje' ? (<span className="material-symbols-outlined">{ orderBy.Orden==='ASC' ? 'arrow_circle_down' : 'arrow_circle_up' }</span>) : null }
                             </th>
                         </tr>
                     </thead>

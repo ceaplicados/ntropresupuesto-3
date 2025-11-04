@@ -99,23 +99,23 @@ const TablaURs = () => {
             <tr>
                 <th onClick={changeOrder} data-order="Clave">
                     Clave 
-                    { orderBy.Campo==='Clave' ? (<span className="material-symbols-outlined">arrow_circle_{ orderBy.Orden==='ASC' ? 'down' : 'up' }</span>) : null }
+                    { orderBy.Campo==='Clave' ? (<span className="material-symbols-outlined">{ orderBy.Orden==='ASC' ? 'arrow_circle_down' : 'arrow_circle_up' }</span>) : null }
                 </th>
                 <th onClick={changeOrder} data-order="Nombre">
                     Unidad Responsable
-                    { orderBy.Campo==='Nombre' ? (<span className="material-symbols-outlined">arrow_circle_{ orderBy.Orden==='ASC' ? 'down' : 'up' }</span>) : null }
+                    { orderBy.Campo==='Nombre' ? (<span className="material-symbols-outlined">{ orderBy.Orden==='ASC' ? 'arrow_circle_down' : 'arrow_circle_up' }</span>) : null }
                 </th>
                 <th onClick={changeOrder} data-order="Monto">
                     Presupuesto { dataPresupuesto.versionPresupuesto ? dataPresupuesto.versionPresupuesto.Anio : '' }
-                    { orderBy.Campo==='Monto' ? (<span className="material-symbols-outlined">arrow_circle_{ orderBy.Orden==='ASC' ? 'down' : 'up' }</span>) : null }
+                    { orderBy.Campo==='Monto' ? (<span className="material-symbols-outlined">{ orderBy.Orden==='ASC' ? 'arrow_circle_down' : 'arrow_circle_up' }</span>) : null }
                 </th>
                 <th onClick={changeOrder} data-order="PorcentajeTotal">
                     % Total
-                    { orderBy.Campo==='PorcentajeTotal' ? (<span className="material-symbols-outlined">arrow_circle_{ orderBy.Orden==='ASC' ? 'down' : 'up' }</span>) : null }
+                    { orderBy.Campo==='PorcentajeTotal' ? (<span className="material-symbols-outlined">{ orderBy.Orden==='ASC' ? 'arrow_circle_down' : 'arrow_circle_up' }</span>) : null }
                 </th>
                 { filtroTabla ? (<th onClick={changeOrder} data-order="PorcentajeFiltro">
                     % Filtro
-                    { orderBy.Campo==='PorcentajeFiltro' ? (<span className="material-symbols-outlined">arrow_circle_{ orderBy.Orden==='ASC' ? 'down' : 'up' }</span>) : null }
+                    { orderBy.Campo==='PorcentajeFiltro' ? (<span className="material-symbols-outlined">{ orderBy.Orden==='ASC' ? 'down' : 'up' }</span>) : null }
                 </th>) : null }
             </tr>
           </thead>
