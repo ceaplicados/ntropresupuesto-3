@@ -2,9 +2,11 @@ import { useSelector } from 'react-redux'
 import { NavLink, Link } from "react-router";
 import { useSearchParams } from 'react-router-dom'
 import './OffcanvasMenu.css'
+import { useEffect } from 'react';
 
 function OffcanvasMenu() {
     const [urlVariables,setUrlVariables] = useSearchParams();
+    
     return (
         <>
         <div id="lateral-menu" className='offcanvas offcanvas-start' data-bs-scroll="true" tabIndex="-1">
@@ -12,7 +14,7 @@ function OffcanvasMenu() {
             <Link className='offcanvas-title text-start' to={{
                 pathname: "/",
                 search: urlVariables.get("i") ? '?i='+urlVariables.get("i") : ''
-            }} end>
+            }}>
                 <img className='offcanvas-logo' src="/img/logo_blanco.svg" alt="#NuestroPresupuesto"  data-bs-dismiss="offcanvas"/>
             </Link>
             <div className='align-self-start'>
