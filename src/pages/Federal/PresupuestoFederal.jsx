@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Chart } from 'react-chartjs-2';
 import axios from '../../api/axios'
+import { deflactar, tieneINPC } from '../../utils/inpc';
 import './PresupuestoFederal.css'
 
 
@@ -111,9 +112,9 @@ function PresupuestoFederal({selectedYear,inpc}) {
         ));
 
         let dataChart=[];
-        if(inpc[selectedYear]){
+        if(tieneINPC(inpc, selectedYear)){
             for(let i=0;i<labelsGraph.length;i++){
-                dataChart.push(valuesGraph[i]*inpc[selectedYear]/inpc[labelsGraph[i]]);
+                dataChart.push(deflactar(valuesGraph[i], labelsGraph[i], selectedYear, inpc));
             }
         }
 

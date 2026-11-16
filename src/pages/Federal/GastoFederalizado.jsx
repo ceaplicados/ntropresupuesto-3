@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import ChartJS from 'chart.js/auto';
 import { Chart } from 'react-chartjs-2';
 import axios from '../../api/axios'
+import { deflactar, tieneINPC } from '../../utils/inpc';
 import './GastoFederalizado.css'
 
 
@@ -166,12 +167,12 @@ function GastoFederalizado({selectedYear,inpc}) {
         let dataChartConvenios=[];
         let dataChartSubsidios=[];
 
-        if(inpc[selectedYear]){
+        if(tieneINPC(inpc, selectedYear)){
             for(let i=0;i<labelsGraph.length;i++){
-                dataChartParticipaciones.push(valuesGraph[i].Participaciones*inpc[selectedYear]/inpc[labelsGraph[i]]);
-                dataChartAportaciones.push(valuesGraph[i].Aportaciones*inpc[selectedYear]/inpc[labelsGraph[i]]);
-                dataChartConvenios.push(valuesGraph[i].Convenios*inpc[selectedYear]/inpc[labelsGraph[i]]);
-                dataChartSubsidios.push(valuesGraph[i].Subsidios*inpc[selectedYear]/inpc[labelsGraph[i]]);
+                dataChartParticipaciones.push(deflactar(valuesGraph[i].Participaciones, labelsGraph[i], selectedYear, inpc));
+                dataChartAportaciones.push(deflactar(valuesGraph[i].Aportaciones, labelsGraph[i], selectedYear, inpc));
+                dataChartConvenios.push(deflactar(valuesGraph[i].Convenios, labelsGraph[i], selectedYear, inpc));
+                dataChartSubsidios.push(deflactar(valuesGraph[i].Subsidios, labelsGraph[i], selectedYear, inpc));
             }
         }
         const chartHistorico = chartRefPresupuesto.current;

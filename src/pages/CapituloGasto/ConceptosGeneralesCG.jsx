@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 import { useSearchParams } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { Chart } from 'react-chartjs-2';
+import { deflactar, tieneINPC } from '../../utils/inpc';
 import axios from '../../api/axios'
 
 const ConceptosGeneralesCG = ({cgActual}) => {
@@ -124,10 +125,10 @@ const ConceptosGeneralesCG = ({cgActual}) => {
 
     // Deflactar el presupuesto de los conceptos generales
     useEffect(() => {
-        if(conceptosGenerales.length>0 && selectedYear){
+        if(conceptosGenerales.length>0 && selectedYear && tieneINPC(inpc, selectedYear, ...conceptosGenerales.flatMap((concepto) => concepto.presupuestos.map((presupuesto) => presupuesto.Anio)))){
             const defactado=conceptosGenerales.map((concepto,index) => {
                 const presupuestos=concepto.presupuestos.map((presupuesto) => {
-                    const monto=presupuesto.Monto*inpc[selectedYear]/inpc[presupuesto.Anio];
+                    const monto=deflactar(presupuesto.Monto, presupuesto.Anio, selectedYear, inpc);
                     return {
                         ...presupuesto,
                         Monto: monto

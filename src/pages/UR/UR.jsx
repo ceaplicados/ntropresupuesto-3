@@ -11,6 +11,7 @@ import ProgramasUR from './ProgramasUR';
 import UnidadPresupuestalUR from './UnidadPresupuestalUR';
 
 import './UR.css'
+import { deflactar, tieneINPC } from '../../utils/inpc'
 
 const UR = () => {
     const dispatch = useDispatch();
@@ -70,20 +71,20 @@ const UR = () => {
             ocultarDeflactor: false
         }
         dispatch(setPage(datosPage));
-        setPresupuestoTotal(urActual?.Monto*inpc[selectedYear]/inpc[versionActual.Anio])
+        setPresupuestoTotal(deflactar(urActual?.Monto, versionActual.Anio, selectedYear, inpc))
     },[estadoActual, urActual,selectedYear]);
     
     // Actualizar el histórico de presupuesto
     useEffect(() => {
         if(versionActual.Id){ 
             let total=presupuestoHistorico.filter((presupuesto) => presupuesto.Id===versionActual.Id);
-            if(total.length>0){
-                total=total[0].Monto*inpc[selectedYear]/inpc[versionActual.Anio];
+            if(total.length>0 && tieneINPC(inpc, selectedYear, versionActual.Anio)){
+                total=deflactar(total[0].Monto, versionActual.Anio, selectedYear, inpc);
                 setPresupuestoTotal(total);
                 setPresupuestoTotalLetra(cantidadLetra(total));
             }
         }
-    },[presupuestoHistorico,versionActual,selectedYear]);
+    },[presupuestoHistorico,versionActual,selectedYear,inpc]);
 
     return(<>
     <h1>{urActual?.Clave} <small>{urActual?.Nombre}</small></h1>

@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom'
 import useCantidadLetra from '../../hooks/useCantidadLetra';
 import { Modal } from 'react-bootstrap'
 import axios from '../../api/axios'
+import { deflactar, tieneINPC } from '../../utils/inpc';
 import { setPresupuestoUR, setUnidadesPresupuestales, setVersionActual } from '../../estadoSlice'
 import { setPage } from '../../parametersSlice'
 
@@ -82,13 +83,13 @@ function Estado() {
 
   // deflactar el presupuesto de las URs
   useEffect(() => {
-    if(dataPresupuestoURs.versionPresupuesto && selectedYear && inpc){
+    if(dataPresupuestoURs.versionPresupuesto && selectedYear && tieneINPC(inpc, selectedYear, dataPresupuestoURs.versionPresupuesto.Anio)){
       let data={};
       if(selectedYear!==dataPresupuestoURs.versionPresupuesto.Anio){
         data.versionPresupuesto={...dataPresupuestoURs.versionPresupuesto};
         data.presupuesto=dataPresupuestoURs.presupuesto.map( (partida) => {
           let monto=partida.Monto;
-          monto=monto*inpc[selectedYear]/inpc[dataPresupuestoURs.versionPresupuesto.Anio]
+          monto=deflactar(monto, dataPresupuestoURs.versionPresupuesto.Anio, selectedYear, inpc)
           return {...partida, Monto: monto}
         });
       }else{
@@ -97,7 +98,7 @@ function Estado() {
       let total=dataPresupuestoURs.presupuesto.reduce( (total,partida) => {
         return total+partida.Monto
       }, 0);
-      total=total*inpc[selectedYear]/inpc[dataPresupuestoURs.versionPresupuesto.Anio];
+      total=deflactar(total, dataPresupuestoURs.versionPresupuesto.Anio, selectedYear, inpc);
       setPresupuestoTotal(total);
       dispatch(setPresupuestoUR(data));
     }

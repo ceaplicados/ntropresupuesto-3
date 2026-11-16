@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import axios from '../../api/axios';
+import { deflactar, tieneINPC } from '../../utils/inpc';
 import { Link } from 'react-router-dom'
 
 const ProgramasUR = ({urActual}) => {
@@ -28,9 +29,10 @@ const ProgramasUR = ({urActual}) => {
 
     // Deflactar los programas
     useEffect(() => {
+        if(!tieneINPC(inpc, selectedYear, versionActual.Anio)) return;
         const valores= programasUR.map((programa) => {
             const monto = programa.Monto;
-            const deflactado = (monto / inpc[versionActual.Anio]) * inpc[selectedYear];
+            const deflactado = deflactar(monto, versionActual.Anio, selectedYear, inpc);
             return {
                 ...programa,
                 Monto: deflactado
@@ -38,7 +40,7 @@ const ProgramasUR = ({urActual}) => {
         }
         );
         setDeflactado(valores);
-    }, [programasUR,inpc, selectedYear]);
+    }, [programasUR,inpc, selectedYear, versionActual]);
 
     return (<>
         <div className='row mb-4'>

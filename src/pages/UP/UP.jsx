@@ -7,6 +7,7 @@ import { setPage } from '../../parametersSlice'
 
 import UnidadesResponsablesUP from './UnidadesResponsablesUP';
 import './UP.css'
+import { deflactar, tieneINPC } from '../../utils/inpc'
 
 const UP = () => {
     const dispatch = useDispatch();
@@ -66,20 +67,20 @@ const UP = () => {
             ocultarDeflactor: false
         }
         dispatch(setPage(datosPage));
-        setPresupuestoTotal(upActual?.Monto*inpc[selectedYear]/inpc[versionActual.Anio])
+        setPresupuestoTotal(deflactar(upActual?.Monto, versionActual.Anio, selectedYear, inpc))
     },[estadoActual, upActual,selectedYear]);
     
     // Actualizar el histórico de presupuesto
     useEffect(() => {
         if(versionActual.Id){ 
             let total=presupuestoHistorico.filter((presupuesto) => presupuesto.Id===versionActual.Id);
-            if(total.length>0){
-                total=total[0].Monto*inpc[selectedYear]/inpc[versionActual.Anio];
+            if(total.length>0 && tieneINPC(inpc, selectedYear, versionActual.Anio)){
+                total=deflactar(total[0].Monto, versionActual.Anio, selectedYear, inpc);
                 setPresupuestoTotal(total);
                 setPresupuestoTotalLetra(cantidadLetra(total));
             }
         }
-    },[presupuestoHistorico,versionActual,selectedYear]);
+    },[presupuestoHistorico,versionActual,selectedYear,inpc]);
 
     return(<>
     <h1>{upActual?.Clave} <small>{upActual?.Nombre}</small></h1>

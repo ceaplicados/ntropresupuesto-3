@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Chart } from 'react-chartjs-2';
 import axios from '../../api/axios';
+import { deflactar, tieneINPC } from '../../utils/inpc';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate'
 import { selectNewYear, setPage } from '../../parametersSlice'
 import './DetalleCuaderno.css'
@@ -115,7 +116,7 @@ function DetalleCuaderno() {
 
     // Deflactar los datos del cuaderno
     useEffect(() => {
-        if(datosCuaderno.Id && selectedYear){
+        if(datosCuaderno.Id && selectedYear && tieneINPC(inpc, selectedYear, ...datosCuaderno.Anios.map((anio) => anio.Anio))){
             let data=datosCuaderno.Renglones.map((renglon) => {
                 let result={};
                 result.Id=renglon.Id;
@@ -151,7 +152,7 @@ function DetalleCuaderno() {
                             });
                             dato=dato[0].monto;
                             if(dato){
-                                dato=dato*inpc[selectedYear]/inpc[anio.Anio];
+                                dato=deflactar(dato, anio.Anio, selectedYear, inpc);
                             }
                             return dato
                         }
@@ -175,8 +176,8 @@ function DetalleCuaderno() {
                             dato=dato[0];
                             let result={
                                 anio: anio.Anio,
-                                monto: dato.monto*inpc[selectedYear]/inpc[anio.Anio],
-                                montoAnterior: datoAnterior.monto*inpc[selectedYear]/inpc[anio.Anio-1]
+                                monto: deflactar(dato.monto, anio.Anio, selectedYear, inpc),
+                                montoAnterior: deflactar(datoAnterior.monto, anio.Anio-1, selectedYear, inpc)
                             }
                             return result;
                         }
@@ -199,7 +200,7 @@ function DetalleCuaderno() {
             });
             setDatosTabla(data);
         }
-    },[selectedYear,datosCuaderno]);
+    },[selectedYear,datosCuaderno,inpc]);
 
     const getColor = (index) => {
         if (index < _colores.length) {

@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 import { Chart } from 'react-chartjs-2';
 import { Link } from 'react-router-dom'
 import axios from  '../../api/axios'
+import { deflactar, tieneINPC } from '../../utils/inpc';
 import './CapitulosGasto.css';
 
 const CapitulosGasto = () => {
@@ -93,10 +94,11 @@ const CapitulosGasto = () => {
     }
 
     useEffect( () => {
+        if(!tieneINPC(inpc, selectedYear, versionActual.Anio)) return;
         let valoresTabla=capitulosGasto.map((capitulo) => {
             return {
                 ...capitulo,
-                Monto: capitulo.Monto*inpc[selectedYear]/inpc[versionActual.Anio],
+                Monto: deflactar(capitulo.Monto, versionActual.Anio, selectedYear, inpc),
             }
         });
         let total=valoresTabla.reduce( (total,capitulo) => {
@@ -142,7 +144,7 @@ const CapitulosGasto = () => {
         if(chartRef.current){
             chartRef.current.update();
         }
-    },[capitulosGasto,orderBy,selectedYear]);
+    },[capitulosGasto,orderBy,selectedYear,inpc,versionActual]);
 
     return (
         <>
