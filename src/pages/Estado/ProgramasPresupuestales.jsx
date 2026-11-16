@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import axios from '../../api/axios'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+import { deflactar, tieneINPC } from '../../utils/inpc';
 
 const ProgramasPresupuestales = () => {
     const dataPresupuesto = useSelector(state => state.estado.presupuestoUR);
@@ -54,10 +55,11 @@ const ProgramasPresupuestales = () => {
 
     // Deflactar los datos y ordenarlos
     useEffect(() => {
+        if(!tieneINPC(inpc, selectedYear, versionActual.Anio)) return;
         let datos=programas.map((programa) => {
             return {
                 ...programa,
-                Monto: programa.Monto*inpc[selectedYear]/inpc[versionActual.Anio],
+                Monto: deflactar(programa.Monto, versionActual.Anio, selectedYear, inpc),
             }
         });
         let campoReorder=orderBy.Campo;
@@ -70,7 +72,7 @@ const ProgramasPresupuestales = () => {
             datos.sort(dynamicSort('-'+campoReorder))
         }
         setData(datos);
-    },[programas,selectedYear,inpc,orderBy]);
+    },[programas,selectedYear,inpc,orderBy,versionActual]);
     // Crear tabla con los datos deflactados y ordenados
     useEffect(() => {
         if(dataPresupuesto.presupuesto){

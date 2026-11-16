@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { useSearchParams } from 'react-router-dom'
 import { Chart } from 'react-chartjs-2';
+import { deflactar, tieneINPC } from '../../utils/inpc';
 import axios from '../../api/axios';
 import './CapituloGastoUR.css';
 
@@ -142,12 +143,12 @@ const CapituloGastoUR = ({urActual}) => {
 
     // Gráficas de los capítulos de gasto
     useEffect(() => {
-        if(capitulosGastoUR.length>0 && selectedYear && inpc[selectedYear]){
+        if(capitulosGastoUR.length>0 && selectedYear && tieneINPC(inpc, selectedYear, ...capitulosGastoUR.flatMap((capitulo) => capitulo.Presupuestos.map((presupuesto) => presupuesto.Anio)))){
             const valoresDeflactados = capitulosGastoUR.map((capitulo,index) => {
                 const presupuestos = capitulo.Presupuestos.map((presupuesto) => {
                     return {
                         ...presupuesto,
-                        Monto: presupuesto.Monto * inpc[selectedYear] / inpc[presupuesto.Anio]
+                        Monto: deflactar(presupuesto.Monto, presupuesto.Anio, selectedYear, inpc)
                     };
                 });
                 return {

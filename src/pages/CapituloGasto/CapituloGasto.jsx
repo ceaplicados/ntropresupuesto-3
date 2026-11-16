@@ -8,6 +8,7 @@ import { setPage } from '../../parametersSlice'
 import ConceptosGeneralesCG from './ConceptosGeneralesCG';
 import UnidadesResponsablesCG from './UnidadesResponsablesCG';
 import './CapituloGasto.css';
+import { deflactar, tieneINPC } from '../../utils/inpc';
 
 const CapituloGasto = () => {
     const dispatch = useDispatch();
@@ -72,12 +73,12 @@ const CapituloGasto = () => {
     useEffect(() => {
         let montoActual=0;
         let presupuestoActual=presupuestoHistorico.filter((presupuesto) => presupuesto.Id===versionActual.Id);
-        if(presupuestoActual.length>0){
-            montoActual=presupuestoActual[0].Monto*inpc[selectedYear]/inpc[versionActual.Anio];
+        if(presupuestoActual.length>0 && tieneINPC(inpc, selectedYear, versionActual.Anio)){
+            montoActual=deflactar(presupuestoActual[0].Monto, versionActual.Anio, selectedYear, inpc);
             setPresupuestoTotal(montoActual);
             setPresupuestoTotalLetra(cantidadLetra(montoActual));
         }
-    },[presupuestoHistorico,versionActual,selectedYear]);
+    },[presupuestoHistorico,versionActual,selectedYear,inpc]);
 
     return(<>
     <h1>{cgActual?.Clave} <small>{cgActual?.Nombre}, {estadoActual.Nombre}</small></h1>

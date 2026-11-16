@@ -19,11 +19,11 @@ const EstadosData = () => {
         if(estados.length>0){
             const path=location.pathname.split('/');
             const codigoEstado=path[1];
-            if(!actualEstado.Id || actualEstado.Codigo!==codigoEstado){
-                const filter=estados.filter((itemEstado) => { return itemEstado.Codigo == codigoEstado });
-                if(filter.length>0){
-                    dispatch(setActualEstado(filter[0]));
-                }
+            const filter=estados.filter((itemEstado) => { return itemEstado.Codigo == codigoEstado });
+            // también se actualiza si el listado de estados llegó de la API con datos
+            // distintos a los de la copia local (stale-while-revalidate en Layout)
+            if(filter.length>0 && JSON.stringify(filter[0])!==JSON.stringify(actualEstado)){
+                dispatch(setActualEstado(filter[0]));
             }
         }
     },[estados, actualEstado,location]);

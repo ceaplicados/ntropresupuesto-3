@@ -7,55 +7,71 @@ import { useDispatch } from 'react-redux'
 import axios from '../api/axios';
 import { selectNewYear, setInpc, setEstados } from '../parametersSlice'
 
+// lectura/escritura de localStorage tolerante a datos corruptos o a navegadores sin acceso
+const leerCache = (clave) => {
+    try {
+        const valor = localStorage.getItem(clave);
+        return valor ? JSON.parse(valor) : null;
+    } catch {
+        return null;
+    }
+}
+
+const guardarCache = (clave, valor) => {
+    try {
+        localStorage.setItem(clave, JSON.stringify(valor));
+    } catch {
+        // sin espacio o sin acceso a localStorage: no es crítico
+    }
+}
 
 const Layout = () => {
     const dispatch = useDispatch();
     const [urlVariables,setUrlVariables] = useSearchParams();
 
-    // obtener datasets
+    // INPC: stale-while-revalidate. Se usa la copia local de inmediato y
+    // siempre se pide la versión actual a la API, porque los valores del INPC
+    // (sobre todo las previsiones) pueden cambiar durante el año.
         useEffect(() => {
-          const obtenerDatasets = async () => {
-            const response = await axios ('/Datos')
-            const data=response.data;
-            let datsetINPC = data.filter((dataset) => {
-              return dataset.dataset == "/INPC"
-            })
-            let versionINPC = datsetINPC.version || 0;                
-            if(versionINPC!==parseInt(localStorage.getItem("versionINPC"))){
-                const obtenerINPC = async () => {
-                  const response = await axios('/INPC');
-                  const data=response.data;
-                  let datosINPC = {}
-                  data.map((item) => {
-                    datosINPC[item.year] = item.value;
-                  })
-                  dispatch(setInpc(datosINPC));
-                  localStorage.setItem('INPC', JSON.stringify(datosINPC));
-                  localStorage.setItem('versionINPC', versionINPC);
-                }
-                obtenerINPC();
-            }else{
-                // utilizar el INPC del localStorage
-                dispatch(setInpc(JSON.parse(localStorage.getItem('INPC'))));
-            }
+          const inpcLocal = leerCache('INPC');
+          if(inpcLocal && typeof inpcLocal === 'object' && !Array.isArray(inpcLocal)){
+            dispatch(setInpc(inpcLocal));
           }
-          obtenerDatasets();
+          // llave de la invalidación anterior, ya no se usa
+          try { localStorage.removeItem('versionINPC'); } catch { /* sin localStorage */ }
+
+          axios('/INPC')
+            .then((response) => {
+              if(!Array.isArray(response.data)) throw new Error('Respuesta inesperada de /INPC');
+              let datosINPC = {}
+              response.data.forEach((item) => {
+                datosINPC[item.year] = item.value;
+              })
+              dispatch(setInpc(datosINPC));
+              guardarCache('INPC', datosINPC);
+            })
+            .catch((error) => {
+              // se conserva la copia local, si existe
+              console.warn('No se pudo actualizar el INPC', error);
+            });
         }, []);
-    
-        // Obtener el listado de estados de la API si es que no está en localStorage
+
+        // Estados: mismo esquema que el INPC
         useEffect(() => {
-            var estadosLocal=localStorage.getItem('estados');
-            if(estadosLocal){
-                dispatch(setEstados(JSON.parse(estadosLocal)));
-            }else{
-              const getEstados = async () => {
-                const response = await axios('/Estados')
-                const data=response.data;
-                localStorage.setItem('estados',JSON.stringify(data));
-                    dispatch(setEstados(data));
-              }
-              getEstados();
-            }
+          const estadosLocal = leerCache('estados');
+          if(Array.isArray(estadosLocal)){
+            dispatch(setEstados(estadosLocal));
+          }
+
+          axios('/Estados')
+            .then((response) => {
+              if(!Array.isArray(response.data)) throw new Error('Respuesta inesperada de /Estados');
+              dispatch(setEstados(response.data));
+              guardarCache('estados', response.data);
+            })
+            .catch((error) => {
+              console.warn('No se pudo actualizar el listado de estados', error);
+            });
         },[]);
     
         // Obtener la variable del selectedYear de la URL

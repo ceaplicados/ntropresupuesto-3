@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 import { useSearchParams } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { Chart } from 'react-chartjs-2';
+import { deflactar, tieneINPC } from '../../utils/inpc';
 import axios from '../../api/axios'
 
 const UnidadesResponsablesCg = ({cgActual}) => {
@@ -139,10 +140,10 @@ const UnidadesResponsablesCg = ({cgActual}) => {
 
     // Deflactar el presupuesto de las unidades responsables
     useEffect(() => {
-        if(unidadesResponsables.length>0 && selectedYear){
+        if(unidadesResponsables.length>0 && selectedYear && tieneINPC(inpc, selectedYear, ...unidadesResponsables.flatMap((ur) => ur.Presupuestos.map((presupuesto) => presupuesto.Anio)))){
             const defactado=unidadesResponsables.map((ur,index) => {
                 const presupuestos=ur.Presupuestos.map((presupuesto) => {
-                    const monto=presupuesto.Monto*inpc[selectedYear]/inpc[presupuesto.Anio];
+                    const monto=deflactar(presupuesto.Monto, presupuesto.Anio, selectedYear, inpc);
                     return {
                         ...presupuesto,
                         Monto: monto

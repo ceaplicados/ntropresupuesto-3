@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { Chart } from 'react-chartjs-2';
+import { deflactar, tieneINPC } from '../../utils/inpc';
 import axios from '../../api/axios';
 import './Historico.css';
 
@@ -98,7 +99,7 @@ const Historico = () => {
     },[estadoActual]);
 
     useEffect(() => {
-        if(historico.length>0){
+        if(historico.length>0 && tieneINPC(inpc, selectedYear, ...historico.map((version) => version.Anio))){
             let labels = [];
             let data = [];
             let dataDiferencias = [];
@@ -108,13 +109,13 @@ const Historico = () => {
             
             historico.map((version) => {
                 labels.push(version.Anio);
-                data.push(version.Monto*inpc[selectedYear]/inpc[version.Anio]);
+                data.push(deflactar(version.Monto, version.Anio, selectedYear, inpc));
             });
             rows=historico.map((version,index) => {
                 let diferencia=null;
-                let monto=version.Monto*inpc[selectedYear]/inpc[version.Anio]
+                let monto=deflactar(version.Monto, version.Anio, selectedYear, inpc)
                 if(index>0){
-                    let montoAnterior=historico[index-1].Monto*inpc[selectedYear]/inpc[historico[index-1].Anio];
+                    let montoAnterior=deflactar(historico[index-1].Monto, historico[index-1].Anio, selectedYear, inpc);
                     diferencia= (monto-montoAnterior)/montoAnterior;
                     dataDiferencias.push(diferencia*100);
                     if(diferencia>0){
@@ -159,7 +160,7 @@ const Historico = () => {
                 chartRefDiferencias.current.update();
             }
         }
-    },[historico,selectedYear,showGraphPresupuesto]);
+    },[historico,selectedYear,inpc,showGraphPresupuesto]);
     return(<>
     <div className='row mb-4'>
         <div className='col-12 mb-2'>

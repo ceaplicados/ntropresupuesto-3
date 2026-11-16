@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { Chart } from 'react-chartjs-2';
 import axios from '../../api/axios';
+import { deflactar } from '../../utils/inpc';
 
 const UnidadPresupuestalUR = ({urActual,presupuestoTotal}) => {
     const selectedYear = useSelector(state => state.parameters.selectedYear);
@@ -99,7 +100,7 @@ const UnidadPresupuestalUR = ({urActual,presupuestoTotal}) => {
                         let monto = null;
                         response.data.presupuesto.length>0 ? monto = response.data.presupuesto[0].Monto : null;
                         let montoDeflactado = null;
-                        monto ? montoDeflactado = (monto / inpc[versionActual.Anio]) * inpc[selectedYear] : null;
+                        monto ? montoDeflactado = deflactar(monto, versionActual.Anio, selectedYear, inpc) : null;
                         return {
                             ...ur,
                             Monto: montoDeflactado,

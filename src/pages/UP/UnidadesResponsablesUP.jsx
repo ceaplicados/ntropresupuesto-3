@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { Chart } from 'react-chartjs-2';
 import axios from '../../api/axios';
+import { deflactar, tieneINPC } from '../../utils/inpc';
 import { Col } from 'react-bootstrap';
 
 const UnidadesResponsablesUP = ({upActual}) => {
@@ -163,7 +164,7 @@ const UnidadesResponsablesUP = ({upActual}) => {
 
     // Deflactar los presupuestos de las unidades responsables
     useEffect(() => {
-        if(presupuestosURs.length>0){
+        if(presupuestosURs.length>0 && tieneINPC(inpc, selectedYear, ...presupuestosURs.flatMap((ur) => ur.presupuesto.map((presupuesto) => presupuesto.Anio)))){
             // Deflactar para la gráfica y tabla de Actual
             const actual= presupuestosURs.map((ur,index) => {
                 const presupuestoActual = ur.presupuesto.filter((presupuesto) => {
@@ -175,7 +176,7 @@ const UnidadesResponsablesUP = ({upActual}) => {
                 let presupuestoDeflactado = null;
                 const color = getColor(index);
                 if(presupuestoActual.length>0){
-                    presupuestoDeflactado = presupuestoActual[0].Monto/ inpc[presupuestoActual[0].Anio]*inpc[selectedYear];
+                    presupuestoDeflactado = deflactar(presupuestoActual[0].Monto, presupuestoActual[0].Anio, selectedYear, inpc);
                 } 
                 return {
                     ... ur.unidadResponsable,
@@ -189,7 +190,7 @@ const UnidadesResponsablesUP = ({upActual}) => {
             const historico= presupuestosURs.map((ur,index) => {
                 const color = getColor(index);
                 const presupuestoHistorico = ur.presupuesto.map((presupuesto) => {
-                    const montoDeflactado = presupuesto.Monto*inpc[selectedYear]/inpc[presupuesto.Anio];
+                    const montoDeflactado = deflactar(presupuesto.Monto, presupuesto.Anio, selectedYear, inpc);
                     return {
                         ...presupuesto,
                         Monto: montoDeflactado
